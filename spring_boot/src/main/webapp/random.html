@@ -77,7 +77,7 @@ table {
 						//获取开奖结果的第一名
 						var first = cResult.substring(0,2);
 						if(first == '10')
-							first == 0;
+							first = 0;
 						else first = first.replace("0",'');
 						console.log(first);
 						//判断是否中奖
@@ -87,7 +87,7 @@ table {
 							if(failCount>1){
 								//当前连挂数
 								$("#g_"+failCount).text(($("#g_"+failCount).text()*1+1));
-								var key = nowD+"_dj_"+failCount;
+								var key = nowD+"_rd_"+failCount;
 								var count = $.LS.get(key);
 								count = count?count:0;
 								count++;
