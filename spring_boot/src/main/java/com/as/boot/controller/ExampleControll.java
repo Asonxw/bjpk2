@@ -1,6 +1,7 @@
 package com.as.boot.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -22,8 +23,9 @@ public class ExampleControll {
 	private String round = ""; 
 	private String msRound = "";
 	private String result = "";
-	private String msResult = "";
+	private String msResult = null;
 	private CommonDao cd = new CommonDao();
+	private List<Integer> history = new ArrayList<Integer>();
 	@RequestMapping("/t")
 	public String test(Integer number){
 		Integer ballCount = 10;
@@ -91,6 +93,16 @@ public class ExampleControll {
 			String resultArray = JSONObject.parseObject(newResult).getString("nums");
 			this.msRound = newTerm;
 			this.msResult = resultArray;
+			String first = resultArray.substring(0, 2);
+			if(first.equals("10"))
+				first = "0";
+			else first = first.replace("0", "");
+			//杀重
+			Integer first_n = Integer.parseInt(first);
+			//添加历史开奖冠军
+			history.add(first_n);
+			if(history.size()>20)
+				history.remove(0);
 		}
 		obj.put("result", this.msResult);
 		obj.put("current", this.msRound);
@@ -122,15 +134,48 @@ public class ExampleControll {
 	@RequestMapping("/random")
 	public String getRandomStr(){
 		List<Integer> result = new ArrayList<Integer>();
+		Integer first_n = null;
+		if(msResult!=null){
+			//获取上把冠军
+			String first = msResult.substring(0,2);
+			if(first.equals("10"))
+				first = "0";
+			else first = first.replace("0", "");
+			//杀重
+			first_n = Integer.parseInt(first);
+		}
 		while(true){
 			if(result.size()==5)break;
 			int i = createRandom();
-			if(!result.contains(i)){
+			if(!result.contains(i)&&first_n != i){
 				result.add(i);
 			}
 		}
 		Collections.sort(result);
 		return result.toString();
+	}
+	
+	@RequestMapping("/hotNum")
+	public String getHotNumStr(){
+		if(history.size()==20){
+			List<Integer> result = new ArrayList<Integer>();
+			int[] array = {0,0,0,0,0,0,0,0,0,0};
+			int[] array1 = {0,0,0,0,0,0,0,0,0,0};
+			for (Integer i : history) {
+				array[i] = array[i]+1;
+				array1[i] = array1[i]+1;
+			}
+			Arrays.sort(array);
+			for (int i = 9; i >= 0; i--) {
+				for (int j = 0; j < array1.length; j++) {
+					if(array1[j] == array[1]){
+						result.add(j);
+						if(result.size()==5)break;
+					}
+				}
+			}
+			return result.toString();
+		}else return null;
 	}
 	
 	public static Integer createRandom(){
