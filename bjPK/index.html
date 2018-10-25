@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>策略寻找</title>
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="js/jquery.jsonp.js" ></script>
+		<!--<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<script type="text/javascript" src="js/zepto.js"></script>
+		<script type="text/javascript" src="js/bui.js"></script>-->
+		<style>
+			table td{border:1px solid #333;padding:5px 10px;}
+			table{border-collapse: collapse ;}
+			iframe{border:0;overflow: auto;width: 100%;height:800px;font-size:14px;}
+		</style>
+	</head>
+	<body>
+	<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=20&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=20&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=20&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=20&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=20&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=20&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=20&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=20&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=20&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=20&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=19&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=19&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=19&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=19&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=19&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=19&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=19&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=19&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=19&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=19&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=18&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=18&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=18&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=18&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=18&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=18&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=18&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=18&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=18&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=18&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=17&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=17&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=17&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=17&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=17&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=17&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=17&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=17&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=17&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=17&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=16&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=16&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=16&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=16&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=16&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=16&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=16&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=16&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=16&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=16&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=15&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=15&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=15&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=15&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=15&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=15&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=15&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=15&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=15&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=15&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=14&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=14&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=14&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=14&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=14&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=14&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=14&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=14&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=14&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=14&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=13&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=13&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=13&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=13&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=13&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=13&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=13&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=13&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=13&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=13&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=12&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=12&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=12&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=12&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=12&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=12&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=12&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=12&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=12&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=12&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=11&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=11&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=11&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=11&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=11&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=11&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=11&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=11&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=11&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=11&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=10&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=10&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=10&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=10&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=10&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=10&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=10&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=10&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=10&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=10&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=9&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=9&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=9&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=9&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=9&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=9&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=9&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=9&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=9&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=9&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=8&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=8&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=8&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=8&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=8&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=8&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=8&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=8&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=8&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=8&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=7&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=7&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=7&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=7&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=7&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=7&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=7&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=7&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=7&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=7&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=6&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=6&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=6&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=6&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=6&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=6&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=6&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=6&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=6&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=6&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=5&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=5&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=5&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=5&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=5&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=5&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=5&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=5&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=5&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=5&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=4&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=4&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=4&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=4&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=4&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=4&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=4&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=4&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=4&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=4&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=3&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=3&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=3&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=3&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=3&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=3&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=3&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=3&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=3&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=3&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=2&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=2&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=2&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=2&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=2&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=2&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=2&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=2&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=2&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=2&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=1&uid=1&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=2&uid=1&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=3&uid=1&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=4&uid=1&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=5&uid=1&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=6&uid=1&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=7&uid=1&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=8&uid=1&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=9&uid=1&num=7"></iframe>
+<iframe   src="https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=1&num=7"></iframe>
+
+	</body>
+	<script type="text/javascript" src="http://www.w3dev.cn/rardownload/20130106/20130106170832648.js"></script>
+	<script>
+		function tttet(){
+			alert($("#tttttt").contents().find("body").html());
+		}
+		function getAimCount(){
+			var html = "";
+			var failC = $("#failC").val();
+			var successP = $("#failC").val();
+			//遍历20个uid的数据
+			/*for (var i = 1 ; i <= 20 ; i++) {
+				for (var j = 1 ; j <= 10 ; j++) {
+					var date = new Date().getTime();
+					$.ajax({
+						type:"get",
+						url:"http://www.91jihua.com/api/number-plan",
+						data:{'code':'pk10','ball':j,"uid":i,"num":7,"_":date},
+						success:function(data){
+							html += "<td>"+data.username+"</td><td>"+data.win+"</td><td>"+data.lose+"</td><td>"+data.roundNums+"</td><td>"+data.winRate+"</td><td><a href='javasvript:;' data=''>查看头彩情况</a></td>";
+						}
+					});
+					
+				};
+			};*/
+			/*var date = new Date().getTime();
+			
+			$.ajax({
+				type:"get",
+				dataType:"jsonp",
+				url:"https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=20&num=7",
+				success:function(data){
+					console.log(JSON.stringify(data));
+					html += "<td>"+data.username+"</td><td>"+data.win+"</td><td>"+data.lose+"</td><td>"+data.roundNums+"</td><td>"+data.winRate+"</td><td><a href='javasvript:;' data=''>查看头彩情况</a></td>";
+				}
+			});*/
+			/*$.jsonp({
+			  "url": "https://www.91jihua.com/pk10/jihua/20-10-5.html",
+			  "success": function(data) {	
+			   console.log(data);
+			  },
+			  "error": function(d,msg) {
+			  	console.log(d);
+			    alert("Could not find user "+msg);
+			  }
+			});*/
+			//alert($("#tttttt").contents().find("body").html());
+			/*$.ajax({  
+			  url : 'https://www.91jihua.com/pk10/jihua/20-10-5.html',  
+			  xhrFields: {  
+			    withCredentials: true // 设置运行跨域操作  
+			  },  
+			  success : function(data) {  
+			    console.log(data);  
+			  }  
+			}); */
+			/*axios("https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=20&num=7", {  
+				  method: 'GET',  
+				  mode: 'no-cors',  
+				  headers: {  
+				    'Access-Control-Allow-Origin': '*',  
+				    'Content-Type': 'application/json',  
+				  },  
+				  withCredentials: true,  
+				  credentials: 'same-origin',  
+				}).then(response => {  
+					//console.log(response.status);
+				});*/
+				/*axios({
+			        url:"https://www.91jihua.com/api/number-plan",
+			        method:'post',
+			        data:{
+			           code:'pk10',ball:10,uid:20,num:7
+			        }
+			    })
+			    .then(function(res){
+			        console.log(res);
+			    })
+			    .catch(function(err){
+			        console.log(err);
+			    })*/
+				//Cors("https://www.91jihua.com/api/number-plan?code=pk10&ball=10&uid=20&num=7");
+		}
+		//getAimCount();
+		/*function Cors(url) {  
+		  return new Promise((resolve, reject) => {  
+		    const xhr = new XMLHttpRequest();  
+		    xhr.open('GET', url, true);  
+		    xhr.withCredentials = true; // 设置运行跨域操作  
+		    xhr.send();  
+		    xhr.onload = () => {  
+		      const text = xhr.responseText;  
+		      if (xhr.status === 200) {  
+		        resolve(JSON.parse(text));  
+		      } else {  
+		        let error = new Error(text);  
+		        error.response = xhr;  
+		        reject(error);  
+		      }  
+		    };  
+		  });  
+		} */ 
+	</script>
+</html>

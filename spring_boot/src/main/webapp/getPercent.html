@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			textarea{width:100%;height:200px;}
+			table td{border:1px solid #333;padding:5px 10px;line-height: 7px;}
+			table{border-collapse: collapse ;width:100%;}
+		</style>
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+	</head>
+	<body>
+		<p>业务配置</p>
+		<div>
+			<p>中彩率大于等于<input type="text" id="successP" value = "0,50,70,90"/>%；<button onclick="getData();">执行数据</button></p>
+		</div>
+		<p>推荐策略</p>
+		<div id="goodChoise">
+			
+		</div>
+		<button onclick="getData();">获取数据</button>
+		<p>数据结果：</p>
+		<table>
+			<thead>
+				<tr>
+					<td>名次</td>
+					<td>选手号码</td>
+					<td>出现次数</td>
+					<td>出现率</td>
+					<td>前七个概率总和</td>
+				</tr>
+			</thead>
+			<tbody id="result">
+			</tbody>
+		</table>
+		<script>
+			function getData(){
+				$.ajax({
+					type:"post",
+					url:"http://47.52.245.228:8080/test/t",
+					data:{number:7},
+					success:function(data){
+						data = $.parseJSON(data);
+						var dataArray = data.result.split("@");
+						var successP = $("#successP").val();
+						var spArray = successP.split(",");
+						var html = "";
+						for (var i = 0; i < spArray.length; i++) {
+							if(spArray[i])
+								html += getDataItem(spArray[i],dataArray);
+						}
+						$("#goodChoise").html(html);
+					}
+				});
+			}
+			function getDataItem(successP,dataArray){
+				var html = "";
+				//将所有对象转为json并存储
+				var dataJsonArray = [];
+				for (var i = 0; i < dataArray.length; i++) {
+					try{
+						if(dataArray[i])
+							dataJsonArray[i] = $.parseJSON(dataArray[i].trim());
+					}catch(err){alert(dataArray[i].trim());}
+				}
+				var html = "";
+				var maxPencent = 0;
+				for (var i = 1; i <= 10; i++) {
+					var tempHtml = "";
+					var time = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,};
+					for (var j = 0,jl = dataJsonArray.length; j < jl; j++) {
+						//获取投注名次为i且大于目标中彩率的所有投注策略
+						if(dataJsonArray[j]&&dataJsonArray[j].winRate>=successP&&dataJsonArray[j].list[0].ball==i){
+							var numArray = dataJsonArray[j].list[0].number.split(",");
+							for (var k = 0; k < numArray.length; k++) {
+								var _index = numArray[k]*1;
+								time[_index] = time[_index]+1;
+							}
+						}
+					}
+					var pencents = [];
+					var firstHtml = "";
+					for (var j = 0; j < 10; j++) {
+						pencents[j] = time[j+1]/20;
+						if(j == 0)
+							firstHtml +="<tr><td rowspan='10'>第"+i+"名</td><td>"+(j+1)+"</td><td>"+time[1]+"</td><td>"+(time[1]*100/20)+"%</td>"
+						else
+							tempHtml +="<tr><td>"+(j+1)+"</td><td>"+time[j+1]+"</td><td>"+(time[j+1]*100/20)+"%</td></tr>"
+						pencents[j] = time[j+1];
+					}
+					//排序
+					var aimpencents = pencents.sort(sortNumber);
+					var count7 = 0;
+					var pecentStr = "";
+					var tjStr = [];
+					var rStr = "";
+					var c = 0;
+					for (var j = 9; j > 2; j--) {
+						count7 += aimpencents[j];
+						pecentStr += aimpencents[j]*100/20+",";
+						if(rStr.indexOf(aimpencents[j])<0){
+							for (var k in time) {
+								if(time[k] == aimpencents[j]){
+									if(c == 8)break;
+									tjStr[c] = k;
+									c++;
+								}
+							}
+						}
+						rStr += aimpencents[j]+",";
+					}
+					//获取概率排行策略
+					pecentStr = pecentStr.substring(0,pecentStr.length-1);
+					//tjStr = tjStr.substring(0,tjStr.length-1);
+					//var tempArr = tjStr.split(",");
+					//计算前七个概率总和及推荐策略
+					firstHtml += "<td rowspan='10' data='"+(count7*100/20)+"'>"+(count7*100/20)+"%，概率排行："+pecentStr+"，推荐策略："+tjStr.sort(sortNumber);+"</td></tr>";
+					html += firstHtml+tempHtml;
+					if(maxPencent<(count7*100/20))maxPencent = (count7*100/20); 
+				}
+				if(html)
+					$("#result").html(html);
+				else $("#result").html("<tr><td colspan='8'>无匹配数据</td></tr>");
+				$("td[data='"+maxPencent+"']").css("background","#efefef");
+				var chooseHtml = "<p><b>"+successP+"%策略</b></p>";
+				$("td[data='"+maxPencent+"']").each(function(){
+					chooseHtml+="<p style='background:#efefef;'>"+$(this).parent().find("td").eq(0).text()+"——"+$(this).text()+"</p>";
+				});
+				return chooseHtml;
+			}
+			function changeTrim(e){
+				var str = $(e).val().trim();
+				str = str.replace(new RegExp(' ','gi'),"");
+				str = str.replace(new RegExp('\n','gi'),"");
+				str = str.replace(new RegExp('{"code":0,"message"','gi'),'@{"code":0,"message"');
+				str = str.substring(1,str.length);//去除第一个@
+				$(e).val(str);
+			}
+			function sortNumber(a,b){
+			  return a - b;
+			}
+		</script>
+	</body>
+</html>

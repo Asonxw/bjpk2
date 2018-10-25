@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			textarea{width:100%;height:200px;}
+			table td{border:1px solid #333;padding:5px 10px;}
+			table{border-collapse: collapse ;width:100%;}
+		</style>
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+	</head>
+	<body>
+		<p>业务配置</p>
+		<div>
+			<p>连续失败数大于等于<input type="text" id="failC" value="2"/>；</p>
+			<p>中彩率大于等于<input type="text" id="successP" value = "70"/>；</p>
+		</div>
+		<p>数据结果：</p>
+		<table>
+			<thead>
+				<tr>
+					<td>名称</td>
+					<td>已中彩数</td>
+					<td>已失彩数</td>
+					<td>总局数</td>
+					<td>中彩率</td>
+					<td>赛车排名</td>
+					<td>连挂次数</td>
+					<td>操作</td>
+					
+				</tr>
+			</thead>
+			<tbody id="result">
+				
+				
+			</tbody>
+		</table>
+		<p>填入数据</p>
+		<div><textarea onchange="changeTrim(this);" style="overflow: hidden;" id="textArea"></textarea></div>
+		<button onclick="getData();">执行数据</button>
+		<script>
+			function getData(){
+				var html = "";
+				var failC = $("#failC").val();
+				failC = failC?failC:2;
+				var successP = $("#successP").val();
+				successP = successP?successP:70;
+				var dataStr = $("#textArea").val().trim();
+				var dataArray = dataStr.split("@");
+				var html = "";
+				for (var i = 0; i < dataArray.length; i++) {
+					if(dataArray[i].trim().length>0){
+						try {
+							 var dataItem = $.parseJSON(dataArray[i].trim());
+							//获取百分比
+							var winP = dataItem.winRate;
+							//获取连续失败数
+							var listArray = dataItem.list;
+							var failCItem = 0;
+							for (var j = 0; j < listArray.length; j++) {
+								if(j+1 != listArray.length){
+									//跳过第一个
+									if(listArray[j+1].win == 2){
+										failCItem++;
+									}else
+										break;
+								}else break;
+							}
+							if(winP>=successP&&failCItem>=failC){
+								html += "<tr><td>"+dataItem.username+"</td><td>"+dataItem.win+"</td><td>"+dataItem.lose+"</td><td>"+dataItem.roundNums+"</td><td>"+dataItem.winRate+"</td><td>"+dataItem.list[0].ball+"</td><td>"+failCItem+"</td><td><a href='https://www.91jihua.com/pk10/jihua/"+dataItem.list[0].userid+"-"+dataItem.list[0].ball+"-7.html' target='_blank'>查看投彩情况</a></td></tr>";
+							}
+						} catch(e) {
+							 console.log( e);
+							 console.log(dataArray[i].trim());
+						}
+						
+					}
+				}
+				if(html)
+					$("#result").html(html);
+				else $("#result").html("<tr><td colspan='8'>无匹配数据</td></tr>");
+			}
+			function changeTrim(e){
+				var str = $(e).val().trim();
+				str = str.replace(new RegExp(' ','gi'),"");
+				str = str.replace(new RegExp('\n','gi'),"");
+				str = str.replace(new RegExp('{"code":0,"message"','gi'),'@{"code":0,"message"');
+				str = str.substring(1,str.length);//去除第一个@
+				$(e).val(str);
+			}
+		</script>
+	</body>
+</html>

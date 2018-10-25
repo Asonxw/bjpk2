@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>叠加算法</title>
+<style>
+textarea {
+	width: 100%;
+	height: 200px;
+}
+
+table td {
+	border: 1px solid #333;
+	padding: 5px 10px;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+</style>
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="js/sgutil.js"></script>
+<script type="text/javascript" src="js/ls.js"></script>
+</head>
+<body>
+	<p>业务配置</p>
+	<div>
+		<p>
+			连续失败数大于等于<input type="text" id="failC" value="1" />；
+		</p>
+	</div>
+	<p>数据结果：</p>
+	<table>
+		<thead>
+			<tr>
+				<td>名称</td>
+				<td>已中彩数</td>
+				<td>已失彩数</td>
+				<td>总局数</td>
+				<td>中彩率</td>
+				<td>投注赛车排名</td>
+				<td>连挂次数</td>
+				<td>推荐策略</td>
+				<td>操作</td>
+			</tr>
+		</thead>
+		<tbody id="result">
+		</tbody>
+	</table>
+	<button onclick="getData();">获取数据</button>
+	<button onclick="startTime(this);" id="startTime">自动获取</button>
+	<button onclick="stopTime(this);" disabled="disabled" id="stopTime">停止自动获取</button>
+	<button onclick="randomNum();">随机选择</button>
+	<p id="loadding"></p>
+	<p>历史记录</p>
+	<table>
+		<tbody id="result">
+			<tr>
+				<td>一挂次数：<span id="g_1"></span></td>
+				<td>二挂次数：<span id="g_2"></span></td>
+				<td>三挂次数：<span id="g_3"></span></td>
+				<td>四挂次数：<span id="g_4"></span></td>
+				<td>五挂次数：<span id="g_5"></span></td>
+				<td>六挂次数：<span id="g_6"></span></td>
+			</tr>
+			<tr>
+				<td>命中数：<span id="g_1_mz"></span></td>
+				<td>命中数：<span id="g_2_mz"></span></td>
+				<td>命中数：<span id="g_3_mz"></span></td>
+				<td>命中数：<span id="g_4_mz"></span></td>
+				<td>命中数：<span id="g_5_mz"></span></td>
+				<td>命中数：<span id="g_6_mz"></span></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<p>上把结果：</p>
+	<table>
+		<thead>
+			<tr>
+				<td>中奖率</td>
+				<td>投注赛车排名</td>
+				<td>连挂次数</td>
+				<td>推荐策略</td>
+				<td>结果情况</td>
+			</tr>
+		</thead>
+		<tbody id="result_his">
+		</tbody>
+	</table>
+	<script  type="text/javascript">
+			function randomNum(){
+				var count = $("#result").find("tr").length;
+				var w = count;
+				var num = Math.random()*count + 1;
+				num = Math.floor(num);
+				$("#result").find("tr").eq(num-1).css("background","#F3F3F3");
+			}
+			var time = "";
+			var nowD = "";
+			$(function(){
+				nowD = new Date().format("yyyy_MM_dd");
+				console.log(round);
+				refreshFail();
+			});
+			function startTime(e){
+				time = setInterval(function(){
+					getData();
+				},25000);//30s刷新一次数据
+				$(e).text("自动获取数据中...");
+				$("#stopTime").removeAttr("disabled");
+				$(e).attr("disabled","disabled");
+			}
+			
+			function stopTime(e){
+				clearInterval(time);
+				$("#startTime").text("自动获取");
+				$(e).attr("disabled","disabled");
+				$("#startTime").removeAttr("disabled");
+			}
+			var tjObject = [];
+			var kjResult = [];
+			function getData(){
+				var html = "";
+				var failC = $("#failC").val();
+				failC = failC?failC:2;
+				$("#loadding").text("正在获取数据...");
+				$.ajax({
+					type:"post",
+					url:"http://localhost:8080/test/t",
+					data:{number:7},
+					success:function(data){
+						data = $.parseJSON(data);
+						tjObject = [];
+						var dataArray = data.result.split("@");
+						var html = "";
+						var _flag = false;
+						var _ball = 0;
+						var tjCount = 0;
+						for (var i = 0; i < dataArray.length; i++) {
+							if(dataArray[i].trim().length>0){
+								try {
+									var dataItem = $.parseJSON(dataArray[i].trim());
+									_ball = dataItem.list[0].ball;
+									//获取连续失败数
+									var listArray = dataItem.list;
+									var failCItem = 0;
+									//判断是否为重复数据
+									if(i == 0 && round != dataItem.list[0].round){
+										round = dataItem.list[0].round;
+										$.LS.set("round_dj",round);
+										//不为重复数据
+										_flag = true;//需要记录连挂记录
+										kjResult = data.newResult.split(",");
+										//刷新命中次数
+										refreshResult(kjResult);
+									}
+									var arryL = listArray.length;
+									var tjStr = 0;
+									for (var j = arryL-1; j > 0; j--) {//从后往前跳过第一个
+										if(listArray[j].win == 2){
+											if(!tjStr)
+												tjStr = listArray[j].number.replace("10","x");
+											else{
+												//如果连续失败则进行比较目标策略是否能中当前结果
+												//取得中彩项
+												var trueStr = listArray[j]["n"+_ball];
+												//将策略中的10替换为X字符
+												trueStr = trueStr == "10"?"x":trueStr;
+												if(tjStr.indexOf(trueStr)<0){
+													//未中奖，失败数+1
+													failCItem++;
+												}else{
+													//已中奖，更新推荐策略并重置失败数
+													tjStr = listArray[j].number.replace("10","x");
+													failCItem = 0;
+												}
+											}
+										}else{
+											tjStr = 0;//遇到成功的则需重置
+											failCItem = 0;
+										}
+									}
+									if(_flag&&failCItem>=failC){
+										var key = nowD+"_dj_"+failCItem;
+										var count = $.LS.get(key);
+										count = count?count:0;
+										count++;
+										$.LS.set(key, count);
+									}
+									if(failCItem>=failC){
+										tjObject[tjCount] = {"ball":dataItem.list[0].ball,"time":failCItem,"tjStr":tjStr,"pecent":dataItem.winRate};
+										html += "<tr><td>"+dataItem.username+"</td><td>"+dataItem.win+"</td><td>"+dataItem.lose+"</td><td>"+dataItem.roundNums+"</td><td>"+dataItem.winRate+"</td><td>"+dataItem.list[0].ball+"</td><td>"+failCItem+"</td><td>"+tjStr+"</td><td><a href='https://www.91jihua.com/pk10/jihua/"+dataItem.list[0].userid+"-"+dataItem.list[0].ball+"-7.html' target='_blank'>查看投彩情况</a></td></tr>";
+										tjCount++;
+									}
+								} catch(e) {
+									 console.log( e);
+									 console.log(dataArray[i].trim());
+								}
+							}
+						}
+						if(html)
+							$("#result").html(html);
+						else $("#result").html("<tr><td colspan='9'>无匹配数据</td></tr>");
+						$("#loadding").text("获取成功!");
+						if(tjObject.length>0)$.LS.set("tjList",JSON.stringify(tjObject));
+						else $.LS.set("tjList",0);
+						//刷新失败记录
+						refreshFail();
+					}
+				});
+			}
+			function refreshFail(){
+				var key = nowD+"_dj_";
+				var time = new Date().format("HHmmss");
+				var g1 = $.LS.get(key+"1")?$.LS.get(key+"1"):0;
+				var g2 = $.LS.get(key+"2")?$.LS.get(key+"2"):0;
+				var g3 = $.LS.get(key+"3")?$.LS.get(key+"3"):0;
+				var g4 = $.LS.get(key+"4")?$.LS.get(key+"4"):0;
+				var g5 = $.LS.get(key+"5")?$.LS.get(key+"5"):0;
+				var g6 = $.LS.get(key+"6")?$.LS.get(key+"6"):0;
+				var g7 = $.LS.get(key+"7")?$.LS.get(key+"7"):0;
+				console.log(g1+","+g2+","+g3+","+g4+","+g5);
+				$("#g_1").text(g1 + "个");
+				$("#g_2").text(g2 + "个");
+				$("#g_3").text(g3 + "个");
+				$("#g_4").text(g4 + "个");
+				$("#g_5").text(g5 + "个");
+				$("#g_6").text(g6 + "个");
+				$("#g_7").text(g7 + "个");
+				//每晚十一点五十左右上传数据
+				if(time.indexOf("235") == 0){
+					var mz_key = nowD+"_djmz_";
+					var g1_p = parseInt((($.LS.get(mz_key+"1")?$.LS.get(mz_key+"1"):0)/g1)*100);
+					var g2_p = parseInt((($.LS.get(mz_key+"2")?$.LS.get(mz_key+"2"):0)/g2)*100);
+					var g3_p = parseInt((($.LS.get(mz_key+"3")?$.LS.get(mz_key+"3"):0)/g3)*100);
+					var g4_p = parseInt((($.LS.get(mz_key+"4")?$.LS.get(mz_key+"4"):0)/g4)*100);
+					var g5_p = parseInt((($.LS.get(mz_key+"5")?$.LS.get(mz_key+"5"):0)/g5)*100);
+					var g6_p = parseInt((($.LS.get(mz_key+"6")?$.LS.get(mz_key+"6"):0)/g6)*100);
+					$.ajax({
+						type:"post",
+						url:"http://localhost:8080/test/history_g_dj",
+						data:{g1:g1_p,g2:g2_p,g3:g3_p,g4:g4_p,g5:g5_p,g6:g6_p,g7:0},
+						success:function(data){
+							
+						}
+					});
+				}
+			}
+			//刷新命中次数
+			function refreshResult(result){
+				try{
+					var tjList = $.LS.get("tjList");
+					tjList = $.parseJSON(tjList);
+					var html = "";
+					for(var i in tjList){
+						var $this = $(this);
+						//获取投注名次及策略
+						var ball = tjList[i].ball;
+						var tjStr = tjList[i].tjStr;
+						var pecent = tjList[i].pecent;
+						//获取策略连挂次数
+						var time = tjList[i].time;
+						//获取结果的目标名次的选手
+						var resultSc = result[ball-1];
+						resultSc = resultSc == '10'?'x':resultSc;
+						if(tjStr.indexOf(resultSc)>=0){
+							var key = nowD+"_djmz_"+time;
+							var count = $.LS.get(key);
+							count = count?count:0;
+							count++;
+							$.LS.set(key, count);
+							html += "<tr><td>"+pecent+"%</td><td>"+ball+"</td><td>"+time+"</td><td>"+tjStr+"</td><td style='color:#3F9F00;'>中</td></tr>";
+						}else
+							html += "<tr><td>"+pecent+"%</td><td>"+ball+"</td><td>"+time+"</td><td>"+tjStr+"</td><td style='color:red;'>挂</td></tr>";
+					}
+					$("#result_his").html(html);
+				}catch(err){
+					console.log(err);
+				}
+				var key = nowD+"_djmz_";
+				var g1 = $.LS.get(key+"1")?$.LS.get(key+"1"):0;
+				var g2 = $.LS.get(key+"2")?$.LS.get(key+"2"):0;
+				var g3 = $.LS.get(key+"3")?$.LS.get(key+"3"):0;
+				var g4 = $.LS.get(key+"4")?$.LS.get(key+"4"):0;
+				var g5 = $.LS.get(key+"5")?$.LS.get(key+"5"):0;
+				var g6 = $.LS.get(key+"6")?$.LS.get(key+"6"):0;
+				$("#g_1_mz").text(g1 + "个");
+				$("#g_2_mz").text(g2 + "个");
+				$("#g_3_mz").text(g3 + "个");
+				$("#g_4_mz").text(g4 + "个");
+				$("#g_5_mz").text(g5 + "个");
+				$("#g_6_mz").text(g6 + "个");
+				
+			}
+		</script>
+</body>
+</html>

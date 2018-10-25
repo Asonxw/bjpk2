@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>连续算法</title>
+<style>
+textarea {
+	width: 100%;
+	height: 200px;
+}
+
+table td {
+	border: 1px solid #333;
+	padding: 5px 10px;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+</style>
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="js/sgutil.js"></script>
+<script type="text/javascript" src="js/ls.js"></script>
+</head>
+<body>
+	<p>业务配置</p>
+	<div>
+		<p>
+			连续失败数大于等于<input type="text" id="failC" value="4" />；
+		</p>
+		<p>
+			中彩率大于等于<input type="text" id="successP" value="0" />；
+		</p>
+	</div>
+	<p>数据结果：</p>
+	<table>
+		<thead>
+			<tr>
+				<td>名称</td>
+				<td>已中彩数</td>
+				<td>已失彩数</td>
+				<td>总局数</td>
+				<td>中彩率</td>
+				<td>投注赛车排名</td>
+				<td>连挂次数</td>
+				<td>推荐策略</td>
+				<td>操作</td>
+			</tr>
+		</thead>
+		<tbody id="result">
+		</tbody>
+	</table>
+	<button onclick="getData();">获取数据</button>
+	<button onclick="startTime(this);" id="startTime">自动获取</button>
+	<button onclick="stopTime(this);" disabled="disabled" id="stopTime">停止自动获取</button>
+	<p id="loadding"></p>
+	<p>历史记录</p>
+	<p>
+		四挂次数：<span id="g_4"></span> &nbsp;&nbsp;|&nbsp;&nbsp; 五挂次数：<span
+			id="g_5"></span> &nbsp;&nbsp;|&nbsp;&nbsp; 六挂次数：<span id="g_6"></span>
+		&nbsp;&nbsp;|&nbsp;&nbsp; 七挂次数：<span id="g_7"></span>
+	</p>
+	&nbsp;&nbsp;|&nbsp;&nbsp; 八挂次数：
+	<span id="g_8"></span>
+	</p>
+	<script  type="text/javascript">
+			var time = "";
+			var nowD = "";
+			var round = $.LS.get("round");
+			$(function(){
+				nowD = new Date().format("yyyy_MM_dd");
+				console.log(round);
+				refreshFail();
+			});
+			function startTime(e){
+				time = setInterval(function(){
+					getData();
+				},25000);//30s刷新一次数据
+				$(e).text("自动获取数据中...");
+				$("#stopTime").removeAttr("disabled");
+				$(e).attr("disabled","disabled");
+			}
+			
+			function stopTime(e){
+				clearInterval(time);
+				$("#startTime").text("自动获取");
+				$(e).attr("disabled","disabled");
+				$("#startTime").removeAttr("disabled");
+			}
+			
+			function getData(){
+				var html = "";
+				var failC = $("#failC").val();
+				failC = failC?failC:2;
+				var successP = $("#successP").val();
+				successP = successP?successP:70;
+				$("#loadding").text("正在获取数据...");
+				$.ajax({
+					type:"post",
+					url:"http://localhost:8080/test/t",
+					data:{number:7},
+					success:function(data){
+						data = $.parseJSON(data);
+						var dataArray = data.result.split("@");
+						var html = "";
+						var _flag = false;
+						for (var i = 0; i < dataArray.length; i++) {
+							if(dataArray[i].trim().length>0){
+								try {
+									 var dataItem = $.parseJSON(dataArray[i].trim());
+									//获取百分比
+									var winP = dataItem.winRate;
+									//获取连续失败数
+									var listArray = dataItem.list;
+									var failCItem = 0;
+									//判断是否为重复数据
+									if(i == 0 && round != dataItem.list[0].round){
+										round = dataItem.list[0].round;
+										$.LS.set("round",round);
+										//不为重复数据
+										_flag = true;//需要记录连挂记录
+									}
+										
+									for (var j = 0; j < listArray.length; j++) {
+										if(j+1 != listArray.length){
+											//跳过第一个
+											if(listArray[j+1].win == 2){
+												failCItem++;
+											}else
+												break;
+										}else break;
+									}
+									if(_flag&&winP>=successP&&failCItem>=failC){
+										var key = nowD+"_"+failCItem;
+										var count = $.LS.get(key);
+										count = count?count:0;
+										count++;
+										$.LS.set(key, count);
+										console.log(key);
+									}
+									if(winP>=successP&&failCItem>=failC){
+										html += "<tr><td>"+dataItem.username+"</td><td>"+dataItem.win+"</td><td>"+dataItem.lose+"</td><td>"+dataItem.roundNums+"</td><td>"+dataItem.winRate+"</td><td>"+dataItem.list[0].ball+"</td><td>"+failCItem+"</td><td>"+dataItem.list[0].number+"</td><td><a href='https://www.91jihua.com/pk10/jihua/"+dataItem.list[0].userid+"-"+dataItem.list[0].ball+"-7.html' target='_blank'>查看投彩情况</a></td></tr>";
+									}
+								} catch(e) {
+									 console.log( e);
+									 console.log(dataArray[i].trim());
+								}
+							}
+						}
+						if(html)
+							$("#result").html(html);
+						else $("#result").html("<tr><td colspan='9'>无匹配数据</td></tr>");
+						$("#loadding").text("获取成功!");
+						//刷新失败记录
+						refreshFail();
+					}
+				});
+			}
+			
+			function refreshFail(){
+				var key = nowD+"_";
+				var time = new Date().format("HHmmss");
+				console.log($.LS.get(key+"4")+","+$.LS.get(key+"5")+","+$.LS.get(key+"6")+","+$.LS.get(key+"7")+","+$.LS.get(key+"8"));
+				var g4 = $.LS.get(key+"4")?$.LS.get(key+"4"):0;
+				var g5 = $.LS.get(key+"5")?$.LS.get(key+"5"):0;
+				var g6 = $.LS.get(key+"6")?$.LS.get(key+"6"):0;
+				var g7 = $.LS.get(key+"7")?$.LS.get(key+"7"):0;
+				var g8 = $.LS.get(key+"8")?$.LS.get(key+"8"):0;
+				$("#g_4").text(g4 + "个");
+				$("#g_5").text(g5 + "个");
+				$("#g_6").text(g6 + "个");
+				$("#g_7").text(g7 + "个");
+				$("#g_8").text(g8 + "个");
+				//每晚十一点五十左右上传数据
+				if(time.indexOf("235") == 0){
+					$.ajax({
+						type:"post",
+						url:"http://localhost:8080/test/history_g",
+						data:{g4:g4,g5:g5,g6:g6,g7:g7,g8:g8},
+						success:function(data){
+							
+						}
+					});
+				}
+			}
+		</script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="js/sgutil.js"></script>
+<script type="text/javascript" src="js/ls.js"></script>
+</head>
+<style>
+textarea {
+	width: 100%;
+	height: 200px;
+}
+
+table td {
+	border: 1px solid #333;
+	padding: 5px 10px;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+</style>
+<body>
+	<p id="cl"></p>
+	<button onclick="random();">生成策略</button>
+	<td>二挂次数：<span id="g_2"></span></td>
+	<td>三挂次数：<span id="g_3"></span></td>
+	<td>四挂次数：<span id="g_4"></span></td>
+	<td>五挂次数：<span id="g_5"></span></td>
+	<td>六挂次数：<span id="g_6"></span></td>
+	<td>七挂次数：<span id="g_7"></span></td>
+	<td>八挂次数：<span id="g_8"></span></td>
+	<table>
+		<thead>
+			<tr>
+				<td>期数</td>
+				<td>策略</td>
+				<td>开奖结果</td>
+				<td>中奖情况</td>
+			</tr>
+		</thead>
+		<tbody id="result">
+			
+		</tbody>
+	</table>
+</body>
+	<script type="text/javascript">
+		var cl = '';
+		var round = 0;
+		var timer = null;
+		var failCount = 0;
+		var nowD = "";
+		$(function(){
+			nowD = new Date().format("yyyy_MM_dd");
+			random();
+			timer = setInterval(function(){
+				getCurrentResult();
+			},1500);
+			refreshFail();
+		});
+		function getCurrentResult(){
+			$.ajax({
+				type:"post",
+				url:"http://localhost:8080/test/getCurrent",
+				success:function(data){
+					data = $.parseJSON(data);
+					//开奖最新期数
+					var cRound = data.current*1;
+					if(cRound == round)return;
+					var html = '';
+					//判断期数是否延续
+					if(round == (cRound-1)){
+						var cResult = data.result;
+						//获取开奖结果的第一名
+						var first = cResult.substring(0,2);
+						if(first == '10')
+							first == 0;
+						else first = first.replace("0",'');
+						console.log(first);
+						//判断是否中奖
+						var flag = cl.indexOf(first)>=0?true:false;
+						html = "<tr><td>"+cRound+"</td><td>"+cl+"</td><td>"+data.result+"</td><td>"+(flag?"<span style='color:#3F9F00;'>中</span>":"<span style='color:red;'>挂</span>")+"</td></tr>";
+						if(flag){
+							if(failCount>1){
+								//当前连挂数
+								$("#g_"+failCount).text(($("#g_"+failCount).text()*1+1));
+								var key = nowD+"_dj_"+failCount;
+								var count = $.LS.get(key);
+								count = count?count:0;
+								count++;
+								$.LS.set(key, count);
+							}
+							failCount = 0;
+						}else failCount++;
+					}else{
+						html = "<tr><td>"+(round+1)+"</td><td>"+cl+"</td><td><span style='color:#bbb;'>丢失</span></td><td><span style='color:#bbb;'>丢失</span></td></tr>";
+						failCount = 0;
+					}
+					refreshFail();
+					round = cRound;
+					random();
+					$("#result").prepend(html);
+				}
+			});
+		}
+		
+		function refreshFail(){
+			var key = nowD+"_rd_";
+			var time = new Date().format("HHmmss");
+			var g2 = $.LS.get(key+"2")?$.LS.get(key+"2"):0;
+			var g3 = $.LS.get(key+"3")?$.LS.get(key+"3"):0;
+			var g4 = $.LS.get(key+"4")?$.LS.get(key+"4"):0;
+			var g5 = $.LS.get(key+"5")?$.LS.get(key+"5"):0;
+			var g6 = $.LS.get(key+"6")?$.LS.get(key+"6"):0;
+			var g7 = $.LS.get(key+"7")?$.LS.get(key+"7"):0;
+			var g8 = $.LS.get(key+"8")?$.LS.get(key+"8"):0;
+			$("#g_2").text(g2 + "个");
+			$("#g_3").text(g3 + "个");
+			$("#g_4").text(g4 + "个");
+			$("#g_5").text(g5 + "个");
+			$("#g_6").text(g6 + "个");
+			$("#g_7").text(g7 + "个");
+			$("#g_8").text(g8 + "个");
+		}
+		
+		function random(){
+			$.ajax({
+				type:"post",
+				url:"http://localhost:8080/test/random",
+				success:function(data){
+					$("#cl").text(data);
+					$("title").text(data);
+					cl = data;
+				}
+			});
+		}
+	</script>
+</html>
