@@ -180,6 +180,32 @@ public class ExampleControll {
 		}else return null;
 	}
 	
+	@RequestMapping("/get15")
+	public String get15(){
+			List<Integer> result = new ArrayList<Integer>();
+			String[] rArray = msResult.split(",");
+			for (int i = 0; i < 5; i++) {
+				int item = Integer.parseInt(rArray[i]);
+				if(item == 10)item = 0;
+				result.add(item);
+			}
+			Collections.sort(result);
+			return result.toString();
+	}
+	
+	@RequestMapping("/get26")
+	public String get26(){
+			List<Integer> result = new ArrayList<Integer>();
+			String[] rArray = msResult.split(",");
+			for (int i = 1; i < 6; i++) {
+				int item = Integer.parseInt(rArray[i]);
+				if(item == 10)item = 0;
+				result.add(item);
+			}
+			Collections.sort(result);
+			return result.toString();
+	}
+	
 	public static Integer createRandom(){
 		return (int)(Math.random()*10);
 	}
