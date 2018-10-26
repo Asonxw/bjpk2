@@ -168,11 +168,12 @@ public class ExampleControll {
 			Arrays.sort(array);
 			for (int i = 9; i >= 0; i--) {
 				for (int j = 0; j < array1.length; j++) {
-					if(array1[j] == array[1]){
-						result.add(j);
+					if(array1[j] == array[i]){
+						if(!result.contains(j))result.add(j);
 						if(result.size()==5)break;
 					}
 				}
+				if(result.size()==5)break;
 			}
 			return result.toString();
 		}else return null;
