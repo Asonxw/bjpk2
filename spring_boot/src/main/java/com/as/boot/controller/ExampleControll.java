@@ -175,6 +175,7 @@ public class ExampleControll {
 				}
 				if(result.size()==5)break;
 			}
+			Collections.sort(result);
 			return result.toString();
 		}else return null;
 	}
