@@ -103,6 +103,7 @@ table {
 				//if(cRound == round)return;
 				var html = '';
 				var cResult = hItemarray[1];
+				var _first = '';
 				msResult = cResult;
 				//判断期数是否延续
 				if(round == (cRound-1)){
@@ -111,6 +112,7 @@ table {
 					if(first == '10')
 						first = 0;
 					else first = first.replace("-",'');
+					_first = parseInt(first);
 					//判断是否中奖
 					var flag = cl.indexOf(first)>=0?true:false;
 					html = "<tr><td>"+cRound+"</td><td>"+cl+"</td><td>"+msResult+"</td><td>"+(flag?"<span style='color:#3F9F00;'>中</span>":"<span style='color:red;'>挂</span>")+"</td></tr>";
@@ -132,7 +134,9 @@ table {
 				}
 				refreshFail();
 				round = cRound;
-				tab012();
+				//冠军偶数用策略1，奇数用策略2
+				if(_first % 2==0|| _first == 0)random();
+				else random_fc();
 				$("#result").prepend(html);
 			}
 			$("#count").text(xxcount);
@@ -155,6 +159,7 @@ table {
 				var html = '';
 				var cResult = hItemarray[1];
 				msResult = cResult;
+				var _first = '';
 				//判断期数是否延续
 				if(round == (cRound-1)){
 					//获取开奖结果的第一名
@@ -162,6 +167,7 @@ table {
 					if(first == '10')
 						first = 0;
 					else first = first.replace("-",'');
+					_first = parseInt(first);
 					//判断是否中奖
 					var flag = cl.indexOf(first)>=0?true:false;
 					html = "<tr><td>"+cRound+"</td><td>"+cl+"</td><td>"+msResult+"</td><td>"+(flag?"<span style='color:#3F9F00;'>中</span>":"<span style='color:red;'>挂</span>")+"</td></tr>";
@@ -183,7 +189,9 @@ table {
 				}
 				refreshFail();
 				round = cRound;
-				random2();
+				//冠军偶数用策略1，奇数用策略2
+				if(_first % 2==0|| _first == 0)random();
+				else random_fc();
 				$("#result").prepend(html);
 			}
 			$("#count").text(xxcount);
