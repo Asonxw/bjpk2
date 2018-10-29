@@ -206,6 +206,62 @@ public class ExampleControll {
 			return result.toString();
 	}
 	
+	@RequestMapping("/getCut")
+	public String getCut(){
+			List<Integer> result = new ArrayList<Integer>();
+			String[] rArray = msResult.split(",");
+			//获取第一名
+			Integer first = Integer.parseInt(rArray[0]);
+			first = first==10?0:first;
+			//获取当期尾号
+			Integer w = Integer.parseInt(msRound.substring(8, msRound.length())) + 1;
+			if(w==10)w=0;
+			for (int i = 9; i < 10; i--) {
+				int item = Integer.parseInt(rArray[i]);
+				item = Math.abs(item - w);
+				if(item == 10)item = 0;
+				if(!result.contains(item)&&first!=item)result.add(item);
+				if(result.size() == 5)break;
+			}
+			Collections.sort(result);
+			return result.toString();
+	}
+	
+	@RequestMapping("/getCut2")
+	public String getCut2(){
+			List<Integer> result = new ArrayList<Integer>();
+			String[] rArray = msResult.split(",");
+			//获取当期尾号
+			Integer w = Integer.parseInt(msRound.substring(8, msRound.length()));
+			for (int i = 9; i < 10; i--) {
+				int item = Integer.parseInt(rArray[i]);
+				item = Math.abs(item - w);
+				if(item == 10)item = 0;
+				if(!result.contains(item))result.add(item);
+				if(result.size() == 5)break;
+			}
+			Collections.sort(result);
+			return result.toString();
+	}
+	
+	@RequestMapping("/getCut3")
+	public String getCut3(){
+			List<Integer> result = new ArrayList<Integer>();
+			String[] rArray = msResult.split(",");
+			//获取当期尾号
+			Integer w = Integer.parseInt(msRound.substring(8, msRound.length())) + 1;
+			for (int i = 9; i < 10; i--) {
+				int item = Integer.parseInt(rArray[i]);
+				if(item<w)item += 10;
+				item =item - w;
+				if(item == 10)item = 0;
+				if(!result.contains(item))result.add(item);
+				if(result.size() == 5)break;
+			}
+			Collections.sort(result);
+			return result.toString();
+	}
+	
 	public static Integer createRandom(){
 		return (int)(Math.random()*10);
 	}

@@ -35,12 +35,6 @@ table {
 	<td>八挂次数：<span id="g_8"></span></td>
 	<td>九挂次数：<span id="g_9"></span></td>
 	<td>十挂次数：<span id="g_10"></span></td>
-	<td>十一挂次数：<span id="g_11"></span></td>
-	<br/>
-	<td>十二挂次数：<span id="g_12"></span></td>
-	<td>13挂次数：<span id="g_13"></span></td>
-	<td>14挂次数：<span id="g_14"></span></td>
-	<td>15挂次数：<span id="g_15"></span></td>
 	<table>
 		<thead>
 			<tr>
@@ -93,7 +87,7 @@ table {
 							if(failCount>1){
 								//当前连挂数
 								$("#g_"+failCount).text(($("#g_"+failCount).text()*1+1));
-								var key = "rd_"+failCount;
+								var key = "cut3_"+failCount;
 								var count = $.LS.get(key);
 								count = count?count:0;
 								count++;
@@ -114,7 +108,7 @@ table {
 		}
 		
 		function refreshFail(){
-			var key = "rd_";
+			var key = "cut3_";
 			var time = new Date().format("HHmmss");
 			var g2 = $.LS.get(key+"2")?$.LS.get(key+"2"):0;
 			var g3 = $.LS.get(key+"3")?$.LS.get(key+"3"):0;
@@ -125,11 +119,6 @@ table {
 			var g8 = $.LS.get(key+"8")?$.LS.get(key+"8"):0;
 			var g9 = $.LS.get(key+"9")?$.LS.get(key+"9"):0;
 			var g10 = $.LS.get(key+"10")?$.LS.get(key+"10"):0;
-			var g11 = $.LS.get(key+"11")?$.LS.get(key+"11"):0;
-			var g12 = $.LS.get(key+"12")?$.LS.get(key+"12"):0;
-			var g13 = $.LS.get(key+"13")?$.LS.get(key+"13"):0;
-			var g14 = $.LS.get(key+"14")?$.LS.get(key+"14"):0;
-			var g15 = $.LS.get(key+"15")?$.LS.get(key+"15"):0;
 			$("#g_2").text(g2 + "个");
 			$("#g_3").text(g3 + "个");
 			$("#g_4").text(g4 + "个");
@@ -139,17 +128,12 @@ table {
 			$("#g_8").text(g8 + "个");
 			$("#g_9").text(g9 + "个");
 			$("#g_10").text(g10 + "个");
-			$("#g_11").text(g11 + "个");
-			$("#g_12").text(g12 + "个");
-			$("#g_13").text(g13 + "个");
-			$("#g_14").text(g14 + "个");
-			$("#g_15").text(g15 + "个");
 		}
 		
 		function random(){
 			$.ajax({
 				type:"post",
-				url:"http://localhost:8080/test/random",
+				url:"http://localhost:8080/test/getCut3",
 				success:function(data){
 					$("#cl").text(data);
 					$("title").text(data);
