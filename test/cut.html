@@ -1,0 +1,409 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="js/sgutil.js"></script>
+<script type="text/javascript" src="js/ls.js"></script>
+</head>
+<style>
+textarea {
+	width: 100%;
+	height: 200px;
+}
+
+table td {
+	border: 1px solid #333;
+	padding: 5px 10px;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+</style>
+<body>
+	<p id="cl"></p>
+	<td>2挂次数：<span id="g_2"></span></td>
+	<td>3挂次数：<span id="g_3"></span></td>
+	<td>4挂次数：<span id="g_4"></span></td>
+	<td>5挂次数：<span id="g_5"></span></td>
+	<td>6挂次数：<span id="g_6"></span></td>
+	<td>7挂次数：<span id="g_7"></span></td>
+	<td>8挂次数：<span id="g_8"></span></td>
+	<td>9挂次数：<span id="g_9"></span></td>
+	<td>10挂次数：<span id="g_10"></span></td>
+	<td>11挂次数：<span id="g_11"></span></td>
+	<td>12挂次数：<span id="g_12"></span></td>
+	<br/>
+	<td>13挂次数：<span id="g_13"></span></td>
+	<td>14挂次数：<span id="g_14"></span></td>
+	<td>15挂次数：<span id="g_15"></span></td>
+	<td>16挂次数：<span id="g_16"></span></td>
+	<td>17挂次数：<span id="g_17"></span></td>
+	<td>18挂次数：<span id="g_18"></span></td>
+	<td>19挂次数：<span id="g_19"></span></td>
+	<td>20挂次数：<span id="g_20"></span></td>
+	<td>21挂次数：<span id="g_21"></span></td>
+	<td>22挂次数：<span id="g_22"></span></td>
+	<td>23挂次数：<span id="g_23"></span></td>
+	<br/>
+	<td>24挂次数：<span id="g_24"></span></td>
+	<td>25挂次数：<span id="g_25"></span></td>
+	<p>
+	请输入历史开奖
+	<textarea id="history"></textarea>
+	<button onclick="getCurrentResult();">开始执行</button>
+	<button onclick="resetResult();">重置结果</button>
+	共 <span id="count"></span> 期
+	</p>
+	<table>
+		<thead>
+			<tr>
+				<td>期数</td>
+				<td>策略</td>
+				<td>开奖结果</td>
+				<td>中奖情况</td>
+			</tr>
+		</thead>
+		<tbody id="result">
+			
+		</tbody>
+	</table>
+</body>
+	<script type="text/javascript">
+		var cl = '';
+		var round = 0;
+		var timer = null;
+		var failCount = 0;
+		var msResult = null;
+		var xxcount = 0;
+		$(function(){
+			/*random();
+			timer = setInterval(function(){
+				getCurrentResult();
+			},1500);
+			refreshFail();*/
+			refreshFail();
+		});
+		function getCurrentResult(){
+			//获取历史开奖
+			var hStr = $("#history").val().trim();
+			var hArray = hStr.split(";");
+			console.log(hArray.length);
+			//倒序遍历
+			for (var i = hArray.length-1;i >= 0; i--) {
+				xxcount++;
+				var hItem = hArray[i];
+				var hItemarray = hItem.split(",");
+				//开奖期数
+				//开奖最新期数
+				var cRound = hItemarray[0]*1;
+				//if(cRound == round)return;
+				var html = '';
+				var cResult = hItemarray[1];
+				msResult = cResult;
+				//判断期数是否延续
+				if(round == (cRound-1)){
+					//获取开奖结果的第一名
+					var first = cResult.substring(0,2);
+					if(first == '10')
+						first = 0;
+					else first = first.replace("-",'');
+					//判断是否中奖
+					var flag = cl.indexOf(first)>=0?true:false;
+					html = "<tr><td>"+cRound+"</td><td>"+cl+"</td><td>"+msResult+"</td><td>"+(flag?"<span style='color:#3F9F00;'>中</span>":"<span style='color:red;'>挂</span>")+"</td></tr>";
+					if(flag){
+						if(failCount>1){
+							//当前连挂数
+							$("#g_"+failCount).text(($("#g_"+failCount).text()*1+1));
+							var key = "cut4_"+failCount;
+							var count = $.LS.get(key);
+							count = count?count:0;
+							count++;
+							$.LS.set(key, count);
+						}
+						failCount = 0;
+					}else failCount++;
+				}else{
+					html = "<tr><td>"+(round+1)+"</td><td>"+cl+"</td><td><span style='color:#bbb;'>丢失</span></td><td><span style='color:#bbb;'>丢失</span></td></tr>";
+					failCount = 0;
+				}
+				refreshFail();
+				round = cRound;
+				maxAndMin2();
+				$("#result").prepend(html);
+			}
+			$("#count").text(xxcount);
+		}
+		
+		function refreshFail(){
+			var key = "cut4_";
+			var time = new Date().format("HHmmss");
+			var g2 = $.LS.get(key+"2")?$.LS.get(key+"2"):0;
+			var g3 = $.LS.get(key+"3")?$.LS.get(key+"3"):0;
+			var g4 = $.LS.get(key+"4")?$.LS.get(key+"4"):0;
+			var g5 = $.LS.get(key+"5")?$.LS.get(key+"5"):0;
+			var g6 = $.LS.get(key+"6")?$.LS.get(key+"6"):0;
+			var g7 = $.LS.get(key+"7")?$.LS.get(key+"7"):0;
+			var g8 = $.LS.get(key+"8")?$.LS.get(key+"8"):0;
+			var g9 = $.LS.get(key+"9")?$.LS.get(key+"9"):0;
+			var g10 = $.LS.get(key+"10")?$.LS.get(key+"10"):0;
+			var g11 = $.LS.get(key+"11")?$.LS.get(key+"11"):0;
+			var g12 = $.LS.get(key+"12")?$.LS.get(key+"12"):0;
+			var g13 = $.LS.get(key+"13")?$.LS.get(key+"13"):0;
+			var g14 = $.LS.get(key+"14")?$.LS.get(key+"14"):0;
+			var g15 = $.LS.get(key+"15")?$.LS.get(key+"15"):0;
+			var g16 = $.LS.get(key+"16")?$.LS.get(key+"16"):0;
+			var g17 = $.LS.get(key+"17")?$.LS.get(key+"17"):0;
+			var g18 = $.LS.get(key+"18")?$.LS.get(key+"18"):0;
+			var g19 = $.LS.get(key+"19")?$.LS.get(key+"19"):0;
+			var g20 = $.LS.get(key+"20")?$.LS.get(key+"20"):0;
+			var g21 = $.LS.get(key+"21")?$.LS.get(key+"21"):0;
+			var g22 = $.LS.get(key+"22")?$.LS.get(key+"22"):0;
+			var g23 = $.LS.get(key+"23")?$.LS.get(key+"23"):0;
+			var g24 = $.LS.get(key+"24")?$.LS.get(key+"24"):0;
+			var g25 = $.LS.get(key+"25")?$.LS.get(key+"25"):0;
+			$("#g_2").text(g2 + "个");
+			$("#g_3").text(g3 + "个");
+			$("#g_4").text(g4 + "个");
+			$("#g_5").text(g5 + "个");
+			$("#g_6").text(g6 + "个");
+			$("#g_7").text(g7 + "个");
+			$("#g_8").text(g8 + "个");
+			$("#g_9").text(g9 + "个");
+			$("#g_10").text(g10 + "个");
+			$("#g_11").text(g11 + "个");
+			$("#g_12").text(g12 + "个");
+			$("#g_13").text(g13 + "个");
+			$("#g_14").text(g14 + "个");
+			$("#g_15").text(g15 + "个");
+			$("#g_16").text(g16 + "个");
+			$("#g_17").text(g17 + "个");
+			$("#g_18").text(g18 + "个");
+			$("#g_19").text(g19 + "个");
+			$("#g_20").text(g20 + "个");
+			$("#g_21").text(g21 + "个");
+			$("#g_22").text(g22 + "个");
+			$("#g_23").text(g23 + "个");
+			$("#g_24").text(g24 + "个");
+			$("#g_25").text(g25 + "个");
+		}
+		
+		function random3(){
+			var result = [];
+			var rArray = msResult.split("-");
+			var msRound = round+"";
+			//获取当期尾号
+			var w = parseInt(msRound.substring(msRound.length-1, msRound.length))+1;
+			for (var i = 9; i < 10; i--) {
+				var item = parseInt(rArray[i]);
+				if(item<w)item += 10;
+				item =item - w;
+				if(item == 10)item = 0;
+				if(!contains(result,item))result[result.length] = item;
+				if(result.length == 5)break;
+			}
+			cl = result.toString();
+		}
+		
+		function random3_fc(){
+			var result = [];
+			var rArray = msResult.split("-");
+			//获取第一名
+			var first = rArray[0];
+			var msRound = round+"";
+			//获取当期尾号
+			var w = parseInt(msRound.substring(msRound.length-1, msRound.length))+1;
+			for (var i = 9; i < 10; i--) {
+				var item = parseInt(rArray[i]);
+				if(item<w)item += 10;
+				item =item - w;
+				if(item == 10)item = 0;
+				if(!contains(result,item)&&first!=item)result[result.length] = item;
+				if(result.length == 5)break;
+			}
+			cl = result.toString();
+		}
+		
+		function random2(){
+			var result = [];
+			var rArray = msResult.split("-");
+			var msRound = round+"";
+			//获取当期尾号
+			var w = parseInt(msRound.substring(msRound.length-1, msRound.length));
+			for (var i = 9; i < 10; i--) {
+				var item = parseInt(rArray[i]);
+				item =Math.abs(item - w);
+				if(item == 10)item = 0;
+				if(!contains(result,item))result[result.length] = item;
+				if(result.length == 5)break;
+			}
+			cl = result.toString();
+		}
+		
+		function random2_fc(){
+			var result = [];
+			//获取本期开奖结果数组
+			var rArray = msResult.split("-");
+			//获取本期第一名
+			var first = rArray[0];
+			var msRound = round+"";
+			//获取当期尾号
+			var w = parseInt(msRound.substring(msRound.length-1, msRound.length));
+			//从尾遍历本期开奖，用后五位减去本期期数尾数取绝对值，并删除冠军重码
+			for (var i = 9; i < 10; i--) {
+				var item = parseInt(rArray[i]);
+				//减当期尾号并取绝对值
+				item =Math.abs(item - w);
+				if(item == 10)item = 0;
+				//判断是否已存在且不同于本期冠军
+				if(!contains(result,item)&&first!=item)result[result.length] = item;
+				if(result.length == 5)break;
+			}
+			//赋值下期投注策略
+			cl = result.toString();
+		}
+		
+		function random(){
+			var result = [];
+			var rArray = msResult.split("-");
+			var msRound = round+"";
+			//获取当期尾号
+			var w = parseInt(msRound.substring(msRound.length-1, msRound.length))+1;
+			if(w==10)w=0;
+			for (var i = 9; i < 10; i--) {
+				var item = parseInt(rArray[i]);
+				item =Math.abs(item - w);
+				if(item == 10)item = 0;
+				if(!contains(result,item))result[result.length] = item;
+				if(result.length == 5)break;
+			}
+			cl = result.toString();
+		}
+		
+		function random_fc(){
+			var result = [];
+			var rArray = msResult.split("-");
+			//获取第一名
+			var first = rArray[0]=='10'?0:rArray[0];
+			var msRound = round+"";
+			//获取当期尾号
+			var w = parseInt(msRound.substring(msRound.length-1, msRound.length))+1;
+			if(w==10)w=0;
+			for (var i = 9; i < 10; i--) {
+				var item = parseInt(rArray[i]);
+				item =Math.abs(item - w);
+				if(item == 10)item = 0;
+				//防重
+				if(!contains(result,item)&&first!=item)result[result.length] = item;
+				if(result.length == 5)break;
+			}
+			cl = result.toString();
+		}
+		
+		function random4_fc(){
+			var result = [];
+			var rArray = msResult.split("-");
+			//获取第一名
+			var first = rArray[0]=='10'?0:rArray[0];
+			var msRound = round+"";
+			//获取当期尾号
+			var w = parseInt(msRound.substring(msRound.length-1, msRound.length))+1;
+			if(w==10)w=0;
+			for (var i = 0; i < 10; i++) {
+				var item = parseInt(rArray[i]);
+				item =Math.abs(item - w);
+				if(item == 10)item = 0;
+				//防重
+				if(!contains(result,item)&&first!=item)result[result.length] = item;
+				if(result.length == 5)break;
+			}
+			cl = result.toString();
+		}
+		//开大投大开小投小策略
+		function maxAndMin(){
+			var result = [];
+			var rArray = msResult.split("-");
+			//获取第一名
+			var first = rArray[0];
+			first = parseInt(first);
+			if(first>5)cl = "6,7,8,9,0";
+			else cl = "1,2,3,4,5";
+			
+		}
+		
+		//开大投大开小投小策略
+		function maxAndMin2(){
+			var result = [];
+			var rArray = msResult.split("-");
+			//获取第一名
+			var first = rArray[0];
+			first = parseInt(first);
+			if(first>5)cl = "6,7,8,9,0";
+			else cl = "1,2,3,4,5";
+			first = first==10?0:first;
+			cl = cl.replace(first,"");
+		}
+		
+		//开大投大开小投小策略-去重，大则加3，小则加8
+		function maxAndMin_fc(){
+			var result = [];
+			var rArray = msResult.split("-");
+			//获取第一名
+			var first = rArray[0];
+			first = parseInt(first);
+			if(first>5){
+				cl = "6,7,8,9,0";
+				if(first==10)first = '0';
+				else first = first + "";
+				cl = cl.replace(first,"3");
+			}else{
+				cl = "1,2,3,4,5";
+				first = first + "";
+				cl = cl.replace(first,"8");
+			}
+			
+		}
+		
+		function contains(array, item){
+			for(var i = 0; i<array.length;i++){
+				if(array[i] == item)return true;
+			}
+			return false;
+		}
+		
+		
+		
+		function resetResult(){
+			var key = "cut4_";
+			$.LS.set(key+"2",0);
+			$.LS.set(key+"3",0);
+			$.LS.set(key+"4",0);
+			$.LS.set(key+"5",0);
+			$.LS.set(key+"6",0);
+			$.LS.set(key+"7",0);
+			$.LS.set(key+"8",0);
+			$.LS.set(key+"9",0);
+			$.LS.set(key+"10",0);
+			$.LS.set(key+"11",0);
+			$.LS.set(key+"12",0);
+			$.LS.set(key+"13",0);
+			$.LS.set(key+"14",0);
+			$.LS.set(key+"15",0);
+			$.LS.set(key+"16",0);
+			$.LS.set(key+"17",0);
+			$.LS.set(key+"18",0);
+			$.LS.set(key+"19",0);
+			$.LS.set(key+"20",0);
+			$.LS.set(key+"21",0);
+			$.LS.set(key+"22",0);
+			$.LS.set(key+"23",0);
+			$.LS.set(key+"24",0);
+			$.LS.set(key+"25",0);
+			$("#result").find("tr").remove();
+			refreshFail();
+		}
+	</script>
+</html>

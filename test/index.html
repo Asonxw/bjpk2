@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	</head>
+	<style>
+		*{margin:0px;padding:0px;}
+		
+	</style>
+	<body>
+		<div id="box" style="width:300px;height:300px;border:1px solid red;position:relative;margin-top:200px;margin-left:200px;">
+			<div id="p1" style="position: absolute;top:10px;left: 5px;width: 5px;height:5px;background: red;"></div>
+			<div id="p2" style="position: absolute;right: 5px;bottom: 10px;width:5px;height:5px;background: red;"></div>
+			<div id="line1" style="height:4px;background: black;position: absolute;"></div>
+		</div>
+		<div>
+			
+			已成功导入<div id="xxx" item='vo'>{$vo.dfdsf.df}</div>条
+			<c:forEach item="${content}" var="iten">
+				<tr>
+					<td>${iten.index}</td>
+					<td>${iten.name}</td>
+					<td>${iten.error}</td>
+				</tr>
+			</c:forEach>
+			
+			[dfdsf] = dsfds
+			<table>
+				<tbody>
+					
+				</tbody>
+			</table>
+		</div>
+		<script src="js/jquery.min.js"></script>
+		<script>
+			$(function(){
+				var data = {total_num:3,success_num:2,error_num:1,error_detail:[{warning:"手机格式不匹配",content:["呜呜呜"," "]},2,3]};
+				console.log(data.error_detail[0]);
+				var h = "";
+				for(var i = 0,il = data.error_detail.length;i<il;i++){
+					alert(data.error_detail[i]);
+					h+="<p>"++"</p>"
+				}
+				$("#xxx").html("已成功导入"+data.total_num+"条，失败"+data.error_num+);
+				succees:function(obj){
+					console.log(obj);
+					
+				}
+				/*var boxLeft = $("#box").offset().left;
+				var boxTop = $("#box").offset().top;
+				var p1Left = $("#p1").offset().left;
+				var p1Top = $("#p1").offset().top;
+				var x = $("#p2").offset().left - p1Left ;
+				var y = $("#p2").offset().top - p1Top;
+				var z =Math.sqrt( x*x + y*y);
+				var sinY = y/z;
+				var jd = 180*Math.asin(sinY)/Math.PI;
+				var z2 = z/2;
+				var y2 = z2 * Math.sin(jd);
+				alert(y2);*/
+				/*
+				var x2l = z2 - y2 - $("#line1").height();
+				*/
+				//alert(180*Math.asin(sinY)/Math.PI);
+				//alert(sinY*180/3.04);
+				//$("#line1").css({"width":z+"px","left":(p1Left-boxLeft )+"px","top":(p1Top-boxTop)+"px","transform":"rotate("+jd+"deg)"});
+			});
+		</script>
+	</body>
+</html>
