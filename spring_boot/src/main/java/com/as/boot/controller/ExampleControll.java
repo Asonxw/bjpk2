@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -132,9 +133,12 @@ public class ExampleControll {
 	}
 	
 	@RequestMapping("/random")
-	public String getRandomStr(){
+	public String getRandomStr(Integer first_n){
+		history.add(first_n);
+		if(history.size()>20)
+			history.remove(0);
 		List<Integer> result = new ArrayList<Integer>();
-		Integer first_n = null;
+		first_n = null;
 		if(msResult!=null){
 			//获取上把冠军
 			String first = msResult.substring(0,2);
@@ -156,9 +160,13 @@ public class ExampleControll {
 	}
 	
 	@RequestMapping("/hotNum")
-	public String getHotNumStr(){
+	public String getHotNumStr(Integer first_n){
+		history.add(first_n);
+		if(history.size()>20)
+			history.remove(0);
+		List<Integer> result = new ArrayList<Integer>();
+		first_n = null;
 		if(history.size()==20){
-			List<Integer> result = new ArrayList<Integer>();
 			int[] array = {0,0,0,0,0,0,0,0,0,0};
 			int[] array1 = {0,0,0,0,0,0,0,0,0,0};
 			for (Integer i : history) {
@@ -167,13 +175,23 @@ public class ExampleControll {
 			}
 			Arrays.sort(array);
 			for (int i = 9; i >= 0; i--) {
+				List<Integer> _t_array = new ArrayList<Integer>();
+				//取出目标字数的号码
 				for (int j = 0; j < array1.length; j++) {
-					if(array1[j] == array[i]){
-						if(!result.contains(j))result.add(j);
-						if(result.size()==5)break;
-					}
+					//获取次数为_array[i]个的号码
+					if(array1[j] == array[i])
+						_t_array.add(j);
 				}
-				if(result.size()==5)break;
+				//倒叙遍历历史开奖，得出最近出现优先的策略
+				for (int j = history.size()-1; j >=0 ; j--) {
+					for (int k = 0; k < _t_array.size(); k++) {
+						if(history.get(j) == _t_array.get(k))
+							if(!result.contains(history.get(j)))result.add(history.get(j));
+						if(result.size()==7)break;
+					}
+					if(result.size()==7)break;
+				}
+				if(result.size()==7)break;
 			}
 			Collections.sort(result);
 			return result.toString();

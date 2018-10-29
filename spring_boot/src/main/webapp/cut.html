@@ -80,7 +80,6 @@ table {
 		var msResult = null;
 		var xxcount = 0;
 		var firstArray = [];
-		var iii = 0;
 		$(function(){
 			/*random();
 			timer = setInterval(function(){
@@ -94,12 +93,14 @@ table {
 			var hStr = $("#history").val().trim();
 			var hArray = hStr.split(";");
 			console.log(hArray.length);
+			var iii = 0;
 			//倒序遍历
 			for (var i = hArray.length-1;i >= 0; i--) {
 				xxcount++;
 				iii++;
 				var _index = iii%19;
 				if(iii == 20)iii=0;
+				
 				var hItem = hArray[i];
 				var hItemarray = hItem.split(",");
 				//开奖期数
@@ -140,7 +141,7 @@ table {
 				refreshFail();
 				round = cRound;
 				firstArray[iii] = _first;
-				hot();
+				hot(_first);
 				$("#result").prepend(html);
 			}
 			$("#count").text(xxcount);
@@ -154,9 +155,6 @@ table {
 			//倒序遍历
 			for (var i = 0;i < hArray.length-1; i++) {
 				xxcount++;
-				iii++;
-				var _index = iii%19;
-				if(iii == 20)iii=0;
 				var hItem = hArray[i];
 				var hItemarray = hItem.split(",");
 				//开奖期数
@@ -196,49 +194,10 @@ table {
 				}
 				refreshFail();
 				round = cRound;
-				firstArray[iii] = _first;
 				hot();
 				$("#result").prepend(html);
 			}
 			$("#count").text(xxcount);
-		}
-		
-		function hot(){
-			if(firstArray.length == 20){
-				var result = [];
-				var _array = [0,0,0,0,0,0,0,0,0,0];
-				var _array1 = [0,0,0,0,0,0,0,0,0,0];
-				var ___index = 0;
-				for (var i in firstArray) {
-					___index = firstArray[i];
-					_array[___index] = _array[___index]+1;
-					_array1[___index] = _array1[___index]+1;
-				}
-				console.log(_array1);
-				_array = _array.sort(sortNumber);
-				for (var i = 9; i >= 0; i--) {
-					/*var _t_array = [];
-					for (var j = 0; j < _array1.length; j++) {
-						//获取次数为_array[i]个的号码
-						if(_array1[j] == _array[i])
-							_t_array[_t_array.length] = j;
-					}*/
-					//对获取目标次数的号码进行最近出排序
-					for (var j = 0; j < _array1.length; j++) {
-						//获取次数为_array[i]个的号码
-						if(_array1[j] == _array[i]){
-							if(!contains(result,j))result[result.length] = j;
-							if(result.length==7)break;
-						}
-					}
-					if(result.length==7)break;
-				}
-				cl = result.toString();
-			}
-		}
-		function sortNumber(a,b)
-		{
-		return a - b
 		}
 		
 		function refreshFail(){
@@ -450,6 +409,19 @@ table {
 			cl = cl.replace(first,"");
 		}
 		
+		function hot(var first_n){
+			$.ajax({
+				type:"post",
+				url:"http://localhost:8080/test/hotNum",
+				data:{"first_n":first_n},
+				success:function(data){
+					$("#cl").text(data);
+					$("title").text(data);
+					cl = data;
+				}
+			});
+		}
+		
 		//开大投大开小投小策略-去重，大则加3，小则加8
 		function maxAndMin_fc(){
 			var result = [];
@@ -496,6 +468,8 @@ table {
 			}
 			return false;
 		}
+		
+		
 		
 		function resetResult(){
 			var key = "cut4_";
