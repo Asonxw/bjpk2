@@ -133,25 +133,20 @@ public class ExampleControll {
 	}
 	
 	@RequestMapping("/random")
-	public String getRandomStr(Integer first_n){
-		history.add(first_n);
-		if(history.size()>20)
-			history.remove(0);
+	public String getRandomStr(){
 		List<Integer> result = new ArrayList<Integer>();
-		first_n = null;
+		Integer first_n = null;
 		if(msResult!=null){
 			//获取上把冠军
 			String first = msResult.substring(0,2);
 			if(first.equals("10"))
 				first = "0";
 			else first = first.replace("0", "");
-			//杀重
-			first_n = Integer.parseInt(first);
 		}
 		while(true){
-			if(result.size()==5)break;
+			if(result.size()==7)break;
 			int i = createRandom();
-			if(!result.contains(i)&&first_n != i){
+			if(!result.contains(i)){
 				result.add(i);
 			}
 		}
@@ -162,11 +157,11 @@ public class ExampleControll {
 	@RequestMapping("/hotNum")
 	public String getHotNumStr(Integer first_n){
 		history.add(first_n);
-		if(history.size()>20)
+		if(history.size()>25)
 			history.remove(0);
 		List<Integer> result = new ArrayList<Integer>();
 		first_n = null;
-		if(history.size()==20){
+		if(history.size()==25){
 			int[] array = {0,0,0,0,0,0,0,0,0,0};
 			int[] array1 = {0,0,0,0,0,0,0,0,0,0};
 			for (Integer i : history) {
@@ -185,13 +180,21 @@ public class ExampleControll {
 				//倒叙遍历历史开奖，得出最近出现优先的策略
 				for (int j = history.size()-1; j >=0 ; j--) {
 					for (int k = 0; k < _t_array.size(); k++) {
-						if(history.get(j) == _t_array.get(k))
+						if(history.get(j).equals(_t_array.get(k)))
 							if(!result.contains(history.get(j)))result.add(history.get(j));
 						if(result.size()==7)break;
 					}
 					if(result.size()==7)break;
 				}
 				if(result.size()==7)break;
+			}
+			if(result.size() == 6){
+				//根据顺序只获取到6码，这种情况是20把中只出现了6个号，此时按顺序选择出现次数为0的号
+				for (int i = 0; i < array1.length; i++) {
+					if(array1[i] == 0)
+						if(!result.contains(i))result.add(i);
+					if(result.size()==7)break;
+				}
 			}
 			Collections.sort(result);
 			return result.toString();
