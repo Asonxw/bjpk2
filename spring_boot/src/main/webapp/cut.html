@@ -111,14 +111,15 @@ table {
 				var cResult = hItemarray[1];
 				var _first = '';
 				msResult = cResult;
+				//获取开奖结果的第一名
+				var first = cResult.substring(0,2);
+				if(first == '10')
+					first = 0;
+				else first = first.replace("-",'');
+				_first = parseInt(first);
 				//判断期数是否延续
 				if(round == (cRound-1)){
-					//获取开奖结果的第一名
-					var first = cResult.substring(0,2);
-					if(first == '10')
-						first = 0;
-					else first = first.replace("-",'');
-					_first = parseInt(first);
+					
 					//判断是否中奖
 					var flag = cl.indexOf(first)>=0?true:false;
 					html = "<tr><td>"+cRound+"</td><td>"+cl+"</td><td>"+msResult+"</td><td>"+(flag?"<span style='color:#3F9F00;'>中</span>":"<span style='color:red;'>挂</span>")+"</td></tr>";
@@ -152,6 +153,7 @@ table {
 			var hStr = $("#history").val().trim();
 			var hArray = hStr.split(";");
 			console.log(hArray.length);
+			var iii = 0;
 			//倒序遍历
 			for (var i = 0;i < hArray.length-1; i++) {
 				xxcount++;
@@ -163,18 +165,19 @@ table {
 				//if(cRound == round)return;
 				var html = '';
 				var cResult = hItemarray[1];
-				msResult = cResult;
 				var _first = '';
+				msResult = cResult;
+				//获取开奖结果的第一名
+				var first = cResult.substring(0,2);
+				if(first == '10')
+					first = 0;
+				else first = first.replace("-",'');
+				_first = parseInt(first);
+				var flag = false;
 				//判断期数是否延续
 				if(round == (cRound-1)){
-					//获取开奖结果的第一名
-					var first = cResult.substring(0,2);
-					if(first == '10')
-						first = 0;
-					else first = first.replace("-",'');
-					_first = parseInt(first);
 					//判断是否中奖
-					var flag = cl.indexOf(first)>=0?true:false;
+					flag = cl.indexOf(first)>=0?true:false;
 					html = "<tr><td>"+cRound+"</td><td>"+cl+"</td><td>"+msResult+"</td><td>"+(flag?"<span style='color:#3F9F00;'>中</span>":"<span style='color:red;'>挂</span>")+"</td></tr>";
 					if(flag){
 						if(failCount>1){
@@ -194,10 +197,78 @@ table {
 				}
 				refreshFail();
 				round = cRound;
-				hot();
+				firstArray[iii] = _first;
+				hot(_first);
 				$("#result").prepend(html);
 			}
 			$("#count").text(xxcount);
+		}
+		var _failCount = 0;
+		function hot(first_n){
+			$.ajax({
+				type:"post",
+				url:"http://localhost:8080/test/hotNum",
+				data:{"first_n":first_n},
+				async:false,
+				success:function(data){
+					$("#cl").text(data);
+					$("title").text(data);
+					cl = data;
+				}
+			});
+		}
+		
+		function hot2(first_n,flag){
+			if(flag||!cl){
+				$.ajax({
+					type:"post",
+					url:"http://localhost:8080/test/hotNum",
+					data:{"first_n":first_n},
+					async:false,
+					success:function(data){
+						$("#cl").text(data);
+						$("title").text(data);
+						cl = data;
+					}
+				});
+			 }else{
+				$.ajax({
+					type:"post",
+					url:"http://localhost:8080/test/hotNum",
+					data:{"first_n":first_n},
+					async:false,
+					success:function(data){
+					}
+				});
+			}
+		}
+		
+		function hotTab(first_n,flag){
+			if(!flag)_failCount++;
+			else _failCount = 0;
+			//3把没中则进入连续换号模式
+			if(flag||!cl||_failCount>=3){
+				$.ajax({
+					type:"post",
+					url:"http://localhost:8080/test/hotNum",
+					data:{"first_n":first_n},
+					async:false,
+					success:function(data){
+						$("#cl").text(data);
+						$("title").text(data);
+						cl = data;
+					}
+				});
+			 }else{
+				$.ajax({
+					type:"post",
+					url:"http://localhost:8080/test/hotNum",
+					data:{"first_n":first_n},
+					async:false,
+					success:function(data){
+					}
+				});
+			}
 		}
 		
 		function refreshFail(){
@@ -409,18 +480,6 @@ table {
 			cl = cl.replace(first,"");
 		}
 		
-		function hot(var first_n){
-			$.ajax({
-				type:"post",
-				url:"http://localhost:8080/test/hotNum",
-				data:{"first_n":first_n},
-				success:function(data){
-					$("#cl").text(data);
-					$("title").text(data);
-					cl = data;
-				}
-			});
-		}
 		
 		//开大投大开小投小策略-去重，大则加3，小则加8
 		function maxAndMin_fc(){

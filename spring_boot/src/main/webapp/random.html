@@ -77,6 +77,7 @@ table {
 					var cRound = data.current*1;
 					if(cRound == round)return;
 					var html = '';
+					var flag = false;
 					//判断期数是否延续
 					if(round == (cRound-1)){
 						var cResult = data.result;
@@ -87,7 +88,7 @@ table {
 						else first = first.replace("0",'');
 						console.log(first);
 						//判断是否中奖
-						var flag = cl.indexOf(first)>=0?true:false;
+						flag = cl.indexOf(first)>=0?true:false;
 						html = "<tr><td>"+cRound+"</td><td>"+cl+"</td><td>"+data.result+"</td><td>"+(flag?"<span style='color:#3F9F00;'>中</span>":"<span style='color:red;'>挂</span>")+"</td></tr>";
 						if(flag){
 							if(failCount>1){
@@ -107,7 +108,7 @@ table {
 					}
 					refreshFail();
 					round = cRound;
-					random();
+					random(flag);
 					$("#result").prepend(html);
 				}
 			});
@@ -146,16 +147,18 @@ table {
 			$("#g_15").text(g15 + "个");
 		}
 		
-		function random(){
-			$.ajax({
-				type:"post",
-				url:"http://localhost:8080/test/random",
-				success:function(data){
-					$("#cl").text(data);
-					$("title").text(data);
-					cl = data;
-				}
-			});
+		function random(flag){
+			if(flag || !cl){
+				$.ajax({
+					type:"post",
+					url:"http://localhost:8080/test/random",
+					success:function(data){
+						$("#cl").text(data);
+						$("title").text(data);
+						cl = data;
+					}
+				});
+			}
 		}
 	</script>
 </html>
