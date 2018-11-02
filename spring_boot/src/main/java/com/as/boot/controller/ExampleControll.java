@@ -79,7 +79,7 @@ public class ExampleControll {
 	}
 	
 	@RequestMapping("/getCurrent")
-	public String getCurrent(Integer number){
+	public String getCurrent(){
 		Integer ballCount = 10;
 		Integer useIdCount = 20;
 		StringBuffer sb = new StringBuffer();
@@ -109,6 +109,37 @@ public class ExampleControll {
 		obj.put("current", this.msRound);
 		return JSONObject.toJSONString(obj);
 	}
+	
+	@RequestMapping("/nowkjresult")
+	public String getCurrent_(){
+		Integer ballCount = 10;
+		Integer useIdCount = 20;
+		StringBuffer sb = new StringBuffer();
+		String response = "";
+		String newResult = "";
+		HashMap<String, Object> obj = new HashMap<String, Object>();
+		boolean flag = false;
+		//先判断是否需要更新
+		newResult = HttpFuncUtil.getString("https://www-ry111.com/static/data/80CurIssue.json");
+		String newTerm = JSONObject.parseObject(newResult).getString("issue");
+		if(!newTerm.equals(msRound.toString())){
+			String resultArray = JSONObject.parseObject(newResult).getString("nums");
+			this.msRound = newTerm;
+			this.msResult = resultArray;
+			String first = resultArray.substring(0, 2);
+			if(first.equals("10"))
+				first = "0";
+			else first = first.replace("0", "");
+			//杀重
+			Integer first_n = Integer.parseInt(first);
+			//添加历史开奖冠军
+			history.add(first_n);
+			if(history.size()>20)
+				history.remove(0);
+		}
+		return this.msResult+"-"+this.msRound;
+	}
+	
 	
 	@RequestMapping("/history_g")
 	public void saveHistory(Integer g4,Integer g5,Integer g6,Integer g7,Integer g8){
