@@ -54,7 +54,7 @@ table {
 	<p>
 	请输入历史开奖
 	<textarea id="history"></textarea>
-	<button onclick="getCurrentResult_f();">开始执行</button>
+	<button onclick="getCurrentResult();">开始执行</button>
 	<button onclick="resetResult();">重置结果</button>
 	共 <span id="count"></span> 期
 	</p>
@@ -76,11 +76,15 @@ table {
 		var cl = '';
 		var round = 0;
 		var timer = null;
+		var allSulCount = 0;
+		var allFailCount = 0;
 		var failCount = 0;
 		var msResult = null;
 		var xxcount = 0;
 		var firstArray = [];
 		var iii = 0;
+		var sulCount = 0;
+		var maxZ = 0;
 		$(function(){
 			/*random();
 			timer = setInterval(function(){
@@ -122,7 +126,11 @@ table {
 					var flag = cl.indexOf(first)>=0?true:false;
 					html = "<tr><td>"+cRound+"</td><td>"+cl+"</td><td>"+msResult+"</td><td>"+(flag?"<span style='color:#3F9F00;'>中</span>":"<span style='color:red;'>挂</span>")+"</td></tr>";
 					if(flag){
+						allSulCount++;
+						sulCount++;
 						if(failCount>1){
+							if(failCount>8)
+								console.log(cRound+"---"+failCount+"挂");
 							//当前连挂数
 							$("#g_"+failCount).text(($("#g_"+failCount).text()*1+1));
 							var key = "cut4_"+failCount;
@@ -132,7 +140,12 @@ table {
 							$.LS.set(key, count);
 						}
 						failCount = 0;
-					}else failCount++;
+						if(sulCount > maxZ) maxZ = sulCount;
+					}else{
+						allFailCount++;
+						sulCount = 0;
+						failCount++;
+					} 
 				}else{
 					html = "<tr><td>"+(round+1)+"</td><td>"+cl+"</td><td><span style='color:#bbb;'>丢失</span></td><td><span style='color:#bbb;'>丢失</span></td></tr>";
 					failCount = 0;
@@ -140,10 +153,13 @@ table {
 				refreshFail();
 				round = cRound;
 				firstArray[iii] = _first;
-				random();
+				random_fc();
 				$("#result").prepend(html);
 			}
 			$("#count").text(xxcount);
+			console.log("最大连中为："+maxZ)
+			console.log("中："+allSulCount)
+			console.log("挂："+allFailCount)
 		}
 		
 		function getCurrentResult_f(){
@@ -179,6 +195,8 @@ table {
 					var flag = cl.indexOf(first)>=0?true:false;
 					html = "<tr><td>"+cRound+"</td><td>"+cl+"</td><td>"+msResult+"</td><td>"+(flag?"<span style='color:#3F9F00;'>中</span>":"<span style='color:red;'>挂</span>")+"</td></tr>";
 					if(flag){
+						allSulCount++;
+						sulCount++;
 						if(failCount>1){
 							//当前连挂数
 							$("#g_"+failCount).text(($("#g_"+failCount).text()*1+1));
@@ -189,7 +207,12 @@ table {
 							$.LS.set(key, count);
 						}
 						failCount = 0;
-					}else failCount++;
+						if(sulCount > maxZ) maxZ = sulCount;
+					}else{
+						allFailCount++;
+						sulCount = 0;
+						failCount++;
+					} 
 				}else{
 					html = "<tr><td>"+(round+1)+"</td><td>"+cl+"</td><td><span style='color:#bbb;'>丢失</span></td><td><span style='color:#bbb;'>丢失</span></td></tr>";
 					failCount = 0;
@@ -197,10 +220,13 @@ table {
 				refreshFail();
 				round = cRound;
 				firstArray[iii] = _first;
-				random();
+				random2();
 				$("#result").prepend(html);
 			}
 			$("#count").text(xxcount);
+			console.log("最大连中为："+maxZ)
+			console.log("中："+allSulCount)
+			console.log("挂："+allFailCount)
 		}
 		
 		function refreshFail(){
@@ -387,6 +413,28 @@ table {
 			}
 			cl = result.toString();
 		}
+		
+		function h5CutFirst_fc(){
+			var result = [];
+			var rArray = msResult.split("-");
+			var msRound = round+"";
+			//获取当期尾号
+			var w = parseInt(msRound.substring(msRound.length-1, msRound.length))+1;
+			if(w==10)w=0;
+			for (var i = 9; i >4; i--) {
+				var item = parseInt(rArray[i]);
+				item = item > w?(item-w):(item+10-w);
+				if(item == 10)item = 0;
+				if(!contains(result,item))result[result.length] = item;
+				if(result.length == 5)break;
+			}
+			if(result.length == 4){
+				if(!contains(result,1))result[4] = 1;
+				else if(!contains(result,0))result[4] = 0;
+			}
+			cl = result.toString();
+		}
+		
 		//开大投大开小投小策略
 		function maxAndMin(){
 			var result = [];
