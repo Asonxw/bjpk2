@@ -54,7 +54,7 @@ table {
 	<p>
 	请输入历史开奖
 	<textarea id="history"></textarea>
-	<button onclick="getCurrentResult_f();">开始执行</button>
+	<button onclick="getCurrentResult();">开始执行</button>
 	<button onclick="resetResult();">重置结果</button>
 	共 <span id="count"></span> 期
 	</p>
@@ -140,7 +140,7 @@ table {
 				refreshFail();
 				round = cRound;
 				firstArray[iii] = _first;
-				random();
+				tab012();
 				$("#result").prepend(html);
 			}
 			$("#count").text(xxcount);
@@ -197,10 +197,49 @@ table {
 				refreshFail();
 				round = cRound;
 				firstArray[iii] = _first;
-				random();
+				hot();
 				$("#result").prepend(html);
 			}
 			$("#count").text(xxcount);
+		}
+		
+		function hot(){
+			if(firstArray.length == 20){
+				var result = [];
+				var _array = [0,0,0,0,0,0,0,0,0,0];
+				var _array1 = [0,0,0,0,0,0,0,0,0,0];
+				var ___index = 0;
+				for (var i in firstArray) {
+					___index = firstArray[i];
+					_array[___index] = _array[___index]+1;
+					_array1[___index] = _array1[___index]+1;
+				}
+				console.log(_array1);
+				_array = _array.sort(sortNumber);
+				for (var i = 9; i >= 0; i--) {
+					/*v
+					 * 
+					for (var j = 0; j < _array1.length; j++) {
+						//获取次数为_array[i]个的号码
+						if(_array1[j] == _array[i])
+							_t_array[_t_array.length] = j;
+					}*/
+					//对获取目标次数的号码进行最近出排序
+					for (var j = 0; j < _array1.length; j++) {
+						//获取次数为_array[i]个的号码
+						if(_array1[j] == _array[i]){
+							if(!contains(result,j))result[result.length] = j;
+							if(result.length==7)break;
+						}
+					}
+					if(result.length==7)break;
+				}
+				cl = result.toString();
+			}
+		}
+		function sortNumber(a,b)
+		{
+		return a - b
 		}
 		
 		function refreshFail(){

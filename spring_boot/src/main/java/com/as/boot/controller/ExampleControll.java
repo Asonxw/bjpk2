@@ -253,7 +253,7 @@ public class ExampleControll {
 			List<Integer> result = new ArrayList<Integer>();
 			String[] rArray = msResult.split(",");
 			//获取当期尾号
-			Integer w = Integer.parseInt(msRound.substring(8, msRound.length()));
+			Integer w = Integer.parseInt(msRound.substring(msRound.length() - 1, msRound.length()));
 			for (int i = 9; i < 10; i--) {
 				int item = Integer.parseInt(rArray[i]);
 				item = Math.abs(item - w);

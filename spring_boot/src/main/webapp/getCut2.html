@@ -35,6 +35,8 @@ table {
 	<td>八挂次数：<span id="g_8"></span></td>
 	<td>九挂次数：<span id="g_9"></span></td>
 	<td>十挂次数：<span id="g_10"></span></td>
+	<td>十一挂次数：<span id="g_11"></span></td>
+	<td>十二挂次数：<span id="g_12"></span></td>
 	<table>
 		<thead>
 			<tr>
@@ -119,6 +121,8 @@ table {
 			var g8 = $.LS.get(key+"8")?$.LS.get(key+"8"):0;
 			var g9 = $.LS.get(key+"9")?$.LS.get(key+"9"):0;
 			var g10 = $.LS.get(key+"10")?$.LS.get(key+"10"):0;
+			var g11 = $.LS.get(key+"11")?$.LS.get(key+"11"):0;
+			var g12 = $.LS.get(key+"12")?$.LS.get(key+"12"):0;
 			$("#g_2").text(g2 + "个");
 			$("#g_3").text(g3 + "个");
 			$("#g_4").text(g4 + "个");
@@ -128,6 +132,8 @@ table {
 			$("#g_8").text(g8 + "个");
 			$("#g_9").text(g9 + "个");
 			$("#g_10").text(g10 + "个");
+			$("#g_11").text(g11 + "个");
+			$("#g_12").text(g12 + "个");
 		}
 		
 		function random(){
