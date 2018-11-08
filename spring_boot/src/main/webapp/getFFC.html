@@ -1,0 +1,171 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="js/sgutil.js"></script>
+<script type="text/javascript" src="js/ls.js"></script>
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+</head>
+<style>
+textarea {
+	width: 100%;
+	height: 200px;
+}
+
+table td {
+	border: 1px solid #333;
+	padding: 5px 10px;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+</style>
+<body>
+	<div>
+		<p>
+			投注位置：
+			<span id="putPosition">
+				<label><input type="checkbox" value="0"/>万位</label>
+				<label><input type="checkbox" value="1"/>千位</label>
+				<label><input type="checkbox" value="2"/>百位</label>
+				<label><input type="checkbox" value="3"/>十位</label>
+				<label><input type="checkbox" value="4"/>个位</label>
+			</span>
+		</p>
+		<div>
+			是否由系统生成初始策略：
+			<span id="initClFlag">
+				<label><input type="radio" name="initClFlag" value="1" onclick="toggleInitClFlag(this);" checked="checked"/>是</label>
+				<label><input type="radio" name="initClFlag" value="0" onclick="toggleInitClFlag(this);"/>否</label>
+			</span>
+			<span style="margin-left:10px;">（注：默认随机生成xx个初始策略然后根据连挂再添加）</span>
+			<p id="initClNumBox">
+				系统初始策略生成组数
+				<input type="text" id="initClNum" placeholder="默认30组随机数" value="30"/>
+				<p>理想连挂数 <input type="text" id="aimMaxFail" placeholder="默认为7" value="7"/></p>
+				<p>重置次数 <input type="text" id="maxRestN" placeholder="不填默认为200次获取" value="200"/> （用于防止无限循环，在未搜寻到期望连挂时，超过该次数则强制获取目前的最佳策略）</p>
+			</p>
+			<p id="initClNumBox">
+				系统策略总组数
+				<input type="text" id="clNum" placeholder="默认为50组" value="50"/>
+			</p>
+		</div>
+		<p>
+			统计期数<input type="text" id="historyNum" placeholder="默认为填入的开奖期数"/>
+			<button onclick="$('#historyNum').val(1440*3);">三天</button>
+			<button onclick="$('#historyNum').val(1440*7);">一周</button>
+			<button onclick="$('#historyNum').val(1440*14);">二周</button>
+			<button onclick="$('#historyNum').val(1440*21);">三周</button>
+			<button onclick="$('#historyNum').val(1440*30);">一个月</button>
+		</p>
+		
+	</div>
+	<p id="initClBox" style="display: none;">
+		<span>初始策略(如：01 05 09，多个以空格隔开)</span>
+		<textarea id="initCl" onchange="serializeInitCl(this);"></textarea>
+	</p>
+	<p>
+		<span>历史开奖填入（格式：奖期 开奖结果，奖期与开奖结果用空格或逗号隔开，多条记录回车隔开）</span>
+		<textarea id="historyRound" onchange="sirializeHistory(this);"></textarea>
+		<input type="file" style="display: none;" onchange="readFile(this.files);" id="file"/>
+		<button onclick="$('#file').click();">加载文件</button>
+	</p>
+	<p>
+		<span>策略结果</span>
+		<textarea id="cl"></textarea>
+	</p>
+	<p>策略最大连挂数:<span id="maxFail"></span></p>
+	<button type="button" onclick="getFFC(this);">生成策略</button>
+</body>
+	<script type="text/javascript">
+		function getFFC(e){
+			var $this = $(e);
+			//获取投注位置
+			var putPosition = "";
+			$("#putPosition").find("input:checked").each(function(){
+				putPosition += $(this).val()+",";
+			});
+			if(!putPosition){
+				alert("请选择投注位置！");
+				return;
+			}
+			putPosition = putPosition.substring(0,putPosition.length - 1);
+			//获取initClFlag
+			var initClFlag = $("#initClFlag").find("input:checked").val();
+			//获取initClNum
+			var initClNum = $("#initClNum").val();
+			var initCl = $("#initCl").val();
+			//获取生成策略总组数
+			var clNum = $("#clNum").val();
+			var historyNum = $("#historyNum").val();
+			var historyRound = $("#historyRound").val();
+			var aimMaxFail = $("#aimMaxFail").val();
+			var maxRestN = $("#maxRestN").val();
+			$this.attr("disabled","disabled");
+			$this.text("正在获取策略...");
+			$.ajax({
+				type:"post",
+				url:"http://localhost:8080/test/getFFC",
+				data:{putPosition:putPosition,initClFlag:initClFlag,initClNum:initClNum,initCl:initCl,clNum:clNum,historyNum:historyNum,historyRound:historyRound,aimMaxFail:aimMaxFail,maxRestN:maxRestN},
+				success:function(data){
+					data = $.parseJSON(data);
+					var reg = new RegExp( ',' , "g" )
+					var cl = data.cl.substring(1,data.cl.length -1);
+					$("#cl").text(cl.replace(reg," "));
+					$("#maxFail").text(data.maxFailCount);
+					$this.text("生成策略");
+					$this.removeAttr("disabled");
+				}
+			});
+		}
+
+		function toggleInitClFlag(e){
+			var _value = $(e).val();
+			if(_value == 1){
+				$("#initClNumBox").show();
+				$("#initClBox").hide();
+			}else{
+				$("#initClNumBox").hide();
+				$("#initClBox").show();
+			}
+		}
+		//格式化历史数据
+		function sirializeHistory(e){
+			var _value = $(e).val().trim();
+			var reg = new RegExp( '	' , "g" )
+			var reg_n = new RegExp( '\n' , "g" )
+			_value = _value.replace(reg,",").replace(reg_n,";");
+			$(e).val(_value);
+		}
+		//格式化初始策略
+		function serializeInitCl(e){
+			var _value = $(e).val().trim();
+			var reg = new RegExp( '  ' , "g" )
+			_value = _value.replace(reg,",");
+			$(e).val(_value);
+		}
+		//加载文件
+		function readFile(files){
+			if (files.length) {
+	            var file = files[0];
+	            var reader = new FileReader();//new一个FileReader实例
+	            if (/text+/.test(file.type)) {//判断文件类型，是不是text类型
+	                reader.onload = function() {
+	            		var history = this.result;
+	            		var reg = new RegExp( '	' , "g" )
+	        			var reg_n = new RegExp( '\n' , "g" )
+	            		history = history.replace(reg,",").replace(reg_n,";");
+	                    $('#historyRound').append(history);
+	                }
+	                reader.readAsText(file);
+	            } else if(/image+/.test(file.type)) {//判断文件是不是imgage类型
+	                alert("请选择txt文件！")
+	            }
+	        }
+		}
+	</script>
+</html>
