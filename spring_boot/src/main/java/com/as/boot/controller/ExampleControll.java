@@ -79,7 +79,7 @@ public class ExampleControll {
 	}
 	
 	@RequestMapping("/getCurrent")
-	public String getCurrent(Integer number){
+	public String getCurrent(){
 		Integer ballCount = 10;
 		Integer useIdCount = 20;
 		StringBuffer sb = new StringBuffer();
@@ -109,6 +109,37 @@ public class ExampleControll {
 		obj.put("current", this.msRound);
 		return JSONObject.toJSONString(obj);
 	}
+	
+	@RequestMapping("/nowkjresult")
+	public String getCurrent_(){
+		Integer ballCount = 10;
+		Integer useIdCount = 20;
+		StringBuffer sb = new StringBuffer();
+		String response = "";
+		String newResult = "";
+		HashMap<String, Object> obj = new HashMap<String, Object>();
+		boolean flag = false;
+		//先判断是否需要更新
+		newResult = HttpFuncUtil.getString("https://www-ry111.com/static/data/80CurIssue.json");
+		String newTerm = JSONObject.parseObject(newResult).getString("issue");
+		if(!newTerm.equals(msRound.toString())){
+			String resultArray = JSONObject.parseObject(newResult).getString("nums");
+			this.msRound = newTerm;
+			this.msResult = resultArray;
+			String first = resultArray.substring(0, 2);
+			if(first.equals("10"))
+				first = "0";
+			else first = first.replace("0", "");
+			//杀重
+			Integer first_n = Integer.parseInt(first);
+			//添加历史开奖冠军
+			history.add(first_n);
+			if(history.size()>20)
+				history.remove(0);
+		}
+		return this.msResult+"-"+this.msRound;
+	}
+	
 	
 	@RequestMapping("/history_g")
 	public void saveHistory(Integer g4,Integer g5,Integer g6,Integer g7,Integer g8){
@@ -286,4 +317,134 @@ public class ExampleControll {
 	public static Integer createRandom(){
 		return (int)(Math.random()*10);
 	}
+	
+	@RequestMapping("/getFFC")
+	public String getTXFFCL(String historyRound, Integer historyNum, String putPosition, String initCl, Integer initClFlag, Integer initClNum, Integer clNum, Integer aimMaxFail, Integer maxRestN){
+		//初始化历史开奖
+		String[] historyArr = historyRound.trim().split(";");
+		if(historyNum != null && historyNum > 0)
+			historyArr = Arrays.copyOfRange(historyArr, 0, historyNum);
+		List<String> clList = new ArrayList<String>();
+		//策略组数如果没有设定则默认为50组
+		clNum = clNum==null||clNum==0?50:clNum;
+		Integer failCount = 0;
+		Integer maxFailCount = 0;
+		List<String> maxFailResult = null;
+		//记录最佳策略
+		Integer bestMaxFail = 0;
+		List<String> bestClList = null;
+		//解析需要投注的位置
+		String[] positionArr = putPosition.split(",");
+		Integer[] positionArr_i = new Integer[positionArr.length];
+		for (int i = 0; i < positionArr.length; i++)
+			positionArr_i[i] = Integer.parseInt(positionArr[i]);
+		aimMaxFail = aimMaxFail==null?7:aimMaxFail;
+		//最多重置策略次数
+		maxRestN = maxRestN==null?200:maxRestN;
+		//获取初始策略
+		if(initClFlag == 0 && initCl!=null){
+			String[] initClArr = initCl.split(",");
+			for (String string : initClArr) 
+				clList.add(string);
+		}else{
+			//若无初始策略则用随机数生成固定数量的初始策略
+			initClNum = initClNum == null||initClNum == 0?40:initClNum;
+			clList = createInitFFCCL(initClNum);
+		}
+		//遍历历史开奖
+		while (maxRestN != 0) {
+			//反向循环
+			for (int i = historyArr.length-1; i >= 0; i--) {
+				//获取开奖
+				String item_result = historyArr[i].trim().split(",")[1].trim();
+				String result = "";
+				for (int j = 0, jl = positionArr_i.length; j < jl; j++) 
+					result += item_result.charAt(positionArr_i[j]);
+				if(clList.contains(result)){
+					//中
+					failCount = 0;
+				}else{
+					failCount++;
+					if(failCount > maxFailCount){
+						//更新最大连挂及重置连挂出奖记录
+						maxFailResult = new ArrayList<String>();
+						maxFailResult.add(result);
+						maxFailCount = failCount;
+					}else if(failCount==maxFailCount&&failCount!=0){
+						//添加同级连挂的开奖结果
+						maxFailResult.add(result);
+					}
+				}
+			}
+			
+			//奖最大连挂的开奖结果加入策略
+			if(clList.size()<clNum){
+				for (int i = 0; i < maxFailResult.size(); i++) {
+					if(!clList.contains(maxFailResult.get(i))){
+						clList.add(maxFailResult.get(i));
+						if(clList.size()==clNum)
+							break;
+					}
+				}
+			}
+			//已经没有连挂则退出循环
+			if(maxFailCount == 0)break;
+			if(clList.size()==clNum){
+				
+				if(bestMaxFail==0||bestMaxFail>maxFailCount){
+					bestMaxFail = maxFailCount;
+					bestClList = clList;
+				}
+				//如果连挂小于等于预期，则退出循环返回结果
+				if(maxFailCount <= aimMaxFail){
+					break;
+				}else{
+					//如果不符合预期则重新执行(系统生成随机数的才能重新执行)
+					if(initClFlag == 1){
+						//重置系统随机初始策略
+						clList = createInitFFCCL(initClNum);
+						failCount = 0;
+						maxFailResult = null;
+						//控制循环次数为maxRestN次，防止无限循环
+						maxRestN --;
+					}else break;
+				}
+			}
+			//循环完一期后将最大重新计算
+			if(maxRestN!=0)maxFailCount = 0;
+		}
+		HashMap<String, Object> params = new HashMap<String, Object>();
+		params.put("maxFailCount", bestMaxFail);
+		params.put("cl", bestClList.toString());
+		return JSONObject.toJSONString(params);
+	}
+	
+	public static List<String> createInitFFCCL(Integer initClNum){
+		List<String> list = new ArrayList<String>();
+		for (int i = 0; i < initClNum; i++) {
+			String item = createRandom()+""+createRandom();
+			while (true) {
+				if(list.contains(item))
+					item = createRandom()+""+createRandom();
+				else{
+					list.add(item);
+					break;
+				}
+			}
+		}
+		return list;
+	}
+	
+	/*public static List<String> initCl(Integer initClFlag, Integer , String initCl){
+		List<String> clList = new ArrayList<String>();
+		//获取初始策略
+		if(initClFlag == 0 && initCl!=null){
+			String[] initClArr = initCl.split(",");
+			clList = Arrays.asList(initClArr);
+		}else{
+			//若无初始策略则用随机数生成固定数量的初始策略
+			initClNum = initClNum == null||initClNum == 0?40:initClNum;
+			clList = createInitFFCCL(initClNum);
+		}
+	}*/
 }
