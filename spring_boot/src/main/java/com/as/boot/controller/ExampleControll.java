@@ -1,5 +1,10 @@
 package com.as.boot.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -329,12 +334,15 @@ public class ExampleControll {
 		clNum = clNum==null||clNum==0?50:clNum;
 		Integer failCount = 0;
 		Integer maxFailCount = 0;
-		List<String> maxFailResult = null;
+		Integer historymaxFail = 0;
+		String maxFailResult = null;
 		//记录最佳策略
 		Integer bestMaxFail = 0;
 		List<String> bestClList = null;
 		//解析需要投注的位置
 		String[] positionArr = putPosition.split(",");
+		//获取星数
+		Integer positionNum = positionArr.length;
 		Integer[] positionArr_i = new Integer[positionArr.length];
 		for (int i = 0; i < positionArr.length; i++)
 			positionArr_i[i] = Integer.parseInt(positionArr[i]);
@@ -349,7 +357,9 @@ public class ExampleControll {
 		}else{
 			//若无初始策略则用随机数生成固定数量的初始策略
 			initClNum = initClNum == null||initClNum == 0?40:initClNum;
-			clList = createInitFFCCL(initClNum);
+			if(positionNum==2)clList = createInitFFCCL_2(initClNum);
+			else if(positionNum==3)clList = createInitFFCCL_3(initClNum);
+			else if(positionNum==4)clList = createInitFFCCL_4(initClNum);
 		}
 		//遍历历史开奖
 		while (maxRestN != 0) {
@@ -367,26 +377,18 @@ public class ExampleControll {
 					failCount++;
 					if(failCount > maxFailCount){
 						//更新最大连挂及重置连挂出奖记录
-						maxFailResult = new ArrayList<String>();
-						maxFailResult.add(result);
 						maxFailCount = failCount;
-					}else if(failCount==maxFailCount&&failCount!=0){
-						//添加同级连挂的开奖结果
-						maxFailResult.add(result);
-					}
-				}
-			}
-			
-			//奖最大连挂的开奖结果加入策略
-			if(clList.size()<clNum){
-				for (int i = 0; i < maxFailResult.size(); i++) {
-					if(!clList.contains(maxFailResult.get(i))){
-						clList.add(maxFailResult.get(i));
-						if(clList.size()==clNum)
+						maxFailResult = result;
+						//达到历史最高则可直接停止当前循环
+						if(historymaxFail == failCount)
 							break;
 					}
 				}
 			}
+			
+			//将最大连挂的开奖结果加入策略
+			if(clList.size()<clNum)
+				clList.add(maxFailResult);
 			//已经没有连挂则退出循环
 			if(maxFailCount == 0)break;
 			if(clList.size()==clNum){
@@ -402,7 +404,9 @@ public class ExampleControll {
 					//如果不符合预期则重新执行(系统生成随机数的才能重新执行)
 					if(initClFlag == 1){
 						//重置系统随机初始策略
-						clList = createInitFFCCL(initClNum);
+						if(positionNum==2)clList = createInitFFCCL_2(initClNum);
+						else if(positionNum==3)clList = createInitFFCCL_3(initClNum);
+						else if(positionNum==4)clList = createInitFFCCL_4(initClNum);
 						failCount = 0;
 						maxFailResult = null;
 						//控制循环次数为maxRestN次，防止无限循环
@@ -411,7 +415,11 @@ public class ExampleControll {
 				}
 			}
 			//循环完一期后将最大重新计算
-			if(maxRestN!=0)maxFailCount = 0;
+			if(maxRestN!=0){
+				historymaxFail = maxFailCount;
+				maxFailCount = 0;
+				maxFailResult = null;
+			}
 		}
 		HashMap<String, Object> params = new HashMap<String, Object>();
 		params.put("maxFailCount", bestMaxFail);
@@ -419,10 +427,11 @@ public class ExampleControll {
 		return JSONObject.toJSONString(params);
 	}
 	
-	public static List<String> createInitFFCCL(Integer initClNum){
+	public static List<String> createInitFFCCL_2(Integer initClNum){
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < initClNum; i++) {
-			String item = createRandom()+""+createRandom();
+			String item = null;
+			item = createRandom()+""+createRandom();
 			while (true) {
 				if(list.contains(item))
 					item = createRandom()+""+createRandom();
@@ -433,6 +442,57 @@ public class ExampleControll {
 			}
 		}
 		return list;
+	}
+	
+	public static List<String> createInitFFCCL_3(Integer initClNum){
+		List<String> list = new ArrayList<String>();
+		for (int i = 0; i < initClNum; i++) {
+			String item = null;
+			item = createRandom()+""+createRandom()+""+createRandom();
+			while (true) {
+				if(list.contains(item))
+					item = createRandom()+""+createRandom()+""+createRandom();
+				else{
+					list.add(item);
+					break;
+				}
+			}
+		}
+		return list;
+	}
+	
+	public static List<String> createInitFFCCL_4(Integer initClNum){
+		List<String> list = new ArrayList<String>();
+		for (int i = 0; i < initClNum; i++) {
+			String item = null;
+			item = createRandom()+""+createRandom()+""+createRandom()+""+createRandom();
+			while (true) {
+				if(list.contains(item))
+					item = createRandom()+""+createRandom()+""+createRandom()+""+createRandom();
+				else{
+					list.add(item);
+					break;
+				}
+			}
+		}
+		return list;
+	}
+	
+	@RequestMapping("/getFFCFile")
+	public String getTXFFCLFile(){
+		 StringBuilder fileContent = new StringBuilder();
+		try {
+			//获取文件内容
+			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("G:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
+            String lineTxt = null;
+            while ((lineTxt = bfr.readLine()) != null) {
+            	fileContent.append(lineTxt.trim().replace(" ", ",")).append(";");
+            }
+            bfr.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return fileContent.toString();
 	}
 	
 	/*public static List<String> initCl(Integer initClFlag, Integer , String initCl){

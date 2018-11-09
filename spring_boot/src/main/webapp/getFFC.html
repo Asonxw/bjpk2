@@ -11,7 +11,6 @@
 <style>
 textarea {
 	width: 100%;
-	height: 200px;
 }
 
 table td {
@@ -46,12 +45,17 @@ table {
 			<p id="initClNumBox">
 				系统初始策略生成组数
 				<input type="text" id="initClNum" placeholder="默认30组随机数" value="30"/>
-				<p>理想连挂数 <input type="text" id="aimMaxFail" placeholder="默认为7" value="7"/></p>
+				<p>
+					理想连挂数 <input type="text" id="aimMaxFail" placeholder="默认为7" value="7"/>
+				</p>
+				
 				<p>重置次数 <input type="text" id="maxRestN" placeholder="不填默认为200次获取" value="200"/> （用于防止无限循环，在未搜寻到期望连挂时，超过该次数则强制获取目前的最佳策略）</p>
 			</p>
 			<p id="initClNumBox">
 				系统策略总组数
 				<input type="text" id="clNum" placeholder="默认为50组" value="50"/>
+				<button onclick="$('#clNum').val(50);">二星</button>
+				<button onclick="$('#clNum').val(480);">三星</button>
 			</p>
 		</div>
 		<p>
@@ -73,15 +77,31 @@ table {
 		<textarea id="historyRound" onchange="sirializeHistory(this);"></textarea>
 		<input type="file" style="display: none;" onchange="readFile(this.files);" id="file"/>
 		<button onclick="$('#file').click();">加载文件</button>
+		<button onclick="toggleLoadTxtFile(this);">自动加载文件</button>
 	</p>
 	<p>
 		<span>策略结果</span>
-		<textarea id="cl"></textarea>
+		<textarea id="cl" rows="3"></textarea>
 	</p>
 	<p>策略最大连挂数:<span id="maxFail"></span></p>
 	<button type="button" onclick="getFFC(this);">生成策略</button>
 </body>
 	<script type="text/javascript">
+		$(function(){
+			resetFile();
+		});
+		function resetFile(){
+			$.ajax({
+				type:"post",
+				url:"http://localhost:8080/test/getFFCFile",
+				success:function(data){
+					if(data){
+						var reg = new RegExp( '	' , "g" )
+						$("#historyRound").text(data.replace(reg,","));
+					}
+				}
+			});
+		}
 		function getFFC(e){
 			var $this = $(e);
 			//获取投注位置
@@ -167,5 +187,21 @@ table {
 	            }
 	        }
 		}
+		var terval;
+		//开启或关闭自动读取文本文件
+		function toggleLoadTxtFile(e){
+			var $this = $(e);
+			var _txt = $this.text();
+			if(_txt == "自动加载文件"){
+				resetFile();
+				$this.text("正在持续加载...点击可停止");
+				//获取文件信息
+				terval = setInterval(resetFile,60000);//一分钟更新一次
+			}else{
+				$this.text("自动加载文件");
+				clearInterval(terval);
+			}
+		}
+		
 	</script>
 </html>
