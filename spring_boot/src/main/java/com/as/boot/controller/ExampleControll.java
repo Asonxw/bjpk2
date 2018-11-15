@@ -12,6 +12,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,12 +24,13 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.dao.CommonDao;
+import com.as.boot.frame.MainFrame;
 import com.as.boot.utils.HttpFuncUtil;
 
 
 @RestController
 @RequestMapping("/test")
-public class ExampleControll {
+public class ExampleControll{
 	
 	private String round = ""; 
 	private String msRound = "";
@@ -507,4 +513,18 @@ public class ExampleControll {
 			clList = createInitFFCCL(initClNum);
 		}
 	}*/
+	
+	
+	
+	public static void main(String[] args) {
+		JFrame mainFrame = new MainFrame();
+		mainFrame.setVisible(true);
+		MainFrame.tableDefaultmodel.insertRow(0, new String[]{"2","2","2","2","2","2","2","2","2"});
+		List<String> historyDate = new ArrayList<String>();
+		historyDate.add("181115-1049------77083");
+		historyDate.add("181115-1048------30448");
+		historyDate.add("181115-1047------17048");
+		MainFrame.historylist.setListData(historyDate.toArray());
+		
+	}
 }
