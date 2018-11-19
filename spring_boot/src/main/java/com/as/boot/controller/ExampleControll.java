@@ -3,28 +3,25 @@ package com.as.boot.controller;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.dao.CommonDao;
-import com.as.boot.frame.MainFrame;
+import com.as.boot.frame.AnyThreeFrame;
+import com.as.boot.frame.PreRsultClFrame;
+import com.as.boot.thread.AnyThreeThread;
+import com.as.boot.thread.KjThread;
+import com.as.boot.thread.PreResultClThread;
 import com.as.boot.utils.HttpFuncUtil;
 
 
@@ -486,13 +483,13 @@ public class ExampleControll{
 	
 	@RequestMapping("/getFFCFile")
 	public String getTXFFCLFile(){
-		 StringBuilder fileContent = new StringBuilder();
+		StringBuilder fileContent = new StringBuilder();
 		try {
 			//获取文件内容
 			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("E:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
             String lineTxt = null;
             while ((lineTxt = bfr.readLine()) != null) {
-            	fileContent.append(lineTxt.trim().replace(" ", ",")).append(";");
+            	fileContent.append(lineTxt.trim().replace("	", ",")).append(";");
             }
             bfr.close();
 		} catch (Exception e) {
@@ -514,17 +511,29 @@ public class ExampleControll{
 		}
 	}*/
 	
-	
+	public static String FFCRound = null;
+	public static String FFCResult = null;
 	
 	public static void main(String[] args) {
-		JFrame mainFrame = new MainFrame();
+		JFrame mainFrame = new PreRsultClFrame();
 		mainFrame.setVisible(true);
-		MainFrame.tableDefaultmodel.insertRow(0, new String[]{"2","2","2","2","2","2","2","2","2"});
-		List<String> historyDate = new ArrayList<String>();
-		historyDate.add("181115-1049------77083");
-		historyDate.add("181115-1048------30448");
-		historyDate.add("181115-1047------17048");
-		MainFrame.historylist.setListData(historyDate.toArray());
 		
+		JFrame anythreeFrame = new AnyThreeFrame();
+		anythreeFrame.setVisible(true);
+		
+		//开启开奖结果获取进程
+		KjThread kjThread = new KjThread();
+		Thread threadKJ = new Thread(kjThread);
+		threadKJ.start();
+		
+		//开启 出啥投啥的方案跑数
+		PreResultClThread preResultThread = new PreResultClThread();
+		Thread threadPreResult = new Thread(preResultThread);
+		threadPreResult.start();
+		
+		//三星任选策略
+		AnyThreeThread anythreeThread = new AnyThreeThread();
+		Thread anythreeResult = new Thread(anythreeThread);
+		anythreeResult.start();
 	}
 }
