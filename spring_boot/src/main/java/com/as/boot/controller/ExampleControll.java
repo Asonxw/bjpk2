@@ -486,7 +486,7 @@ public class ExampleControll{
 		StringBuilder fileContent = new StringBuilder();
 		try {
 			//获取文件内容
-			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("E:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
+			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("G:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
             String lineTxt = null;
             while ((lineTxt = bfr.readLine()) != null) {
             	fileContent.append(lineTxt.trim().replace("	", ",")).append(";");

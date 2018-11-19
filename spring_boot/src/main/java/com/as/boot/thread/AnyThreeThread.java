@@ -163,7 +163,7 @@ public class AnyThreeThread implements Runnable{
 							if(changeClYl!=null&&everyClYl>=changeClYl){
 								initTXFFCL();
 								everyClYl = 0d;
-							}else if(changeClYl!=null&&everyClYl < -100){
+							}else if(changeClYl!=null&&everyClYl < -300){
 								//爆仓换策略
 								initTXFFCL();
 								everyClYl = 0d;
@@ -211,26 +211,36 @@ public class AnyThreeThread implements Runnable{
 		HashMap<String, String> tempClMap = null;
 		String clname = "";
 		String clPosition = "";
-		for (int i = 0, il = AnyThreeFrame.clBoxList.size(); i < il; i++) {
-			if(AnyThreeFrame.clBoxList.get(i).isSelected()){
-				clname += _index-1;
-				clPosition += (_index-1)+",";
+		try {
+			for (int i = 0, il = AnyThreeFrame.clBoxList.size(); i < il; i++) {
+				if(AnyThreeFrame.clBoxList.get(i).isSelected()){
+					clname += _index-1;
+					clPosition += (_index-1)+",";
+				}
+				if(_index%5==0){
+					tempClMap = new HashMap<String, String>();
+					_index = 1;
+					if(clname != ""){
+						tempClMap.put("position", clname);
+						tempClMap.put("cl", getTXFFCL(historyRound, historyNum, clPosition.substring(0,clPosition.length()-1), null, initClFlag, initClNum, clNum, aimMaxFail, maxRestN));
+					}else 
+						tempClMap.put("position", "0");//未选中则标记为空策略
+					clname = "";
+					clPosition = "";
+					temClList.add(tempClMap);
+				}else
+					_index++;
 			}
-			if(_index%5==0){
-				tempClMap = new HashMap<String, String>();
-				_index = 1;
-				if(clname != ""){
-					tempClMap.put("position", clname);
-					tempClMap.put("cl", getTXFFCL(historyRound, historyNum, clPosition.substring(0,clPosition.length()-1), null, initClFlag, initClNum, clNum, aimMaxFail, maxRestN));
-				}else 
-					tempClMap.put("position", "0");//未选中则标记为空策略
-				clname = "";
-				clPosition = "";
-				temClList.add(tempClMap);
-			}else
-				_index++;
+			clList = temClList;
+			//更换策略后倍投全部回到起点
+			btNumList.set(0, 0);
+			btNumList.set(1, 0);
+			btNumList.set(2, 0);
+			btNumList.set(3, 0);
+			btNumList.set(4, 0);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		clList = temClList;
 	}
 	
 	public String getTXFFCL(String historyRound, Integer historyNum, String putPosition, String initCl, Integer initClFlag, Integer initClNum, Integer clNum, Integer aimMaxFail, Integer maxRestN){
@@ -274,23 +284,27 @@ public class AnyThreeThread implements Runnable{
 		while (maxRestN != 0) {
 			//反向循环
 			for (int i = historyArr.length-1; i >= 0; i--) {
-				//获取开奖
-				String item_result = historyArr[i].trim().split(",")[1].trim();
-				String result = "";
-				for (int j = 0, jl = positionArr_i.length; j < jl; j++) 
-					result += item_result.charAt(positionArr_i[j]);
-				if(clList.contains(result)){
-					//中
-					failCount = 0;
-				}else{
-					failCount++;
-					if(failCount > maxFailCount){
-						//更新最大连挂及重置连挂出奖记录
-						maxFailCount = failCount;
-						maxFailResult = result;
-						//达到历史最高则可直接停止当前循环
-						if(historymaxFail == failCount)
-							break;
+				if(ZLinkStringUtils.isNotEmpty(historyArr[i])){
+					if(historyArr[i].trim().split(",").length > 1){
+						//获取开奖
+						String item_result = historyArr[i].trim().split(",")[1].trim();
+						String result = "";
+						for (int j = 0, jl = positionArr_i.length; j < jl; j++) 
+							result += item_result.charAt(positionArr_i[j]);
+						if(clList.contains(result)){
+							//中
+							failCount = 0;
+						}else{
+							failCount++;
+							if(failCount > maxFailCount){
+								//更新最大连挂及重置连挂出奖记录
+								maxFailCount = failCount;
+								maxFailResult = result;
+								//达到历史最高则可直接停止当前循环
+								if(historymaxFail == failCount)
+									break;
+							}
+						}
 					}
 				}
 			}
@@ -392,7 +406,7 @@ public class AnyThreeThread implements Runnable{
 		StringBuilder fileContent = new StringBuilder();
 		try {
 			//获取文件内容
-			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("E:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
+			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("G:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
             String lineTxt = null;
             while ((lineTxt = bfr.readLine()) != null) {
             	fileContent.append(lineTxt.trim().replace("	", ",")).append(";");

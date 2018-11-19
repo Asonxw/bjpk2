@@ -175,7 +175,7 @@ public class AnyThreeFrame extends JFrame{
   		JLabel historyNumLabel = new JLabel("统计总期数:");
   		historyNumPanel.add(historyNumLabel);
   		
-  		historyNumField.setText("1440");
+  		historyNumField.setText("2400");
   		historyNumPanel.add(historyNumField);
   		initParamsBox.add(historyNumPanel);
   		
@@ -265,7 +265,7 @@ public class AnyThreeFrame extends JFrame{
   		JLabel returnLabel = new JLabel("盈利回头:");
   		downParamsBox.add(returnLabel);
   		
-   		returnField.setText("0.01");
+   		//returnField.setText();
    		downParamsBox.add(returnField);
   		//止盈
    		JLabel winStopLabel = new JLabel("止盈:");
@@ -292,7 +292,7 @@ public class AnyThreeFrame extends JFrame{
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
-  		btArrayField.setText("1,4,16,63");
+  		btArrayField.setText("1,4,16,65,270");
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值
