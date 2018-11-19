@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.dao.CommonDao;
 import com.as.boot.frame.AnyThreeFrame;
-import com.as.boot.frame.PreRsultClFrame;
+import com.as.boot.frame.AnyThreeFrame5;
 import com.as.boot.thread.AnyThreeThread;
+import com.as.boot.thread.AnyThreeThread5;
 import com.as.boot.thread.KjThread;
-import com.as.boot.thread.PreResultClThread;
 import com.as.boot.utils.HttpFuncUtil;
 
 
@@ -486,7 +486,7 @@ public class ExampleControll{
 		StringBuilder fileContent = new StringBuilder();
 		try {
 			//获取文件内容
-			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("G:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
+			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("E:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
             String lineTxt = null;
             while ((lineTxt = bfr.readLine()) != null) {
             	fileContent.append(lineTxt.trim().replace("	", ",")).append(";");
@@ -515,11 +515,14 @@ public class ExampleControll{
 	public static String FFCResult = null;
 	
 	public static void main(String[] args) {
-		JFrame mainFrame = new PreRsultClFrame();
-		mainFrame.setVisible(true);
+		/*JFrame mainFrame = new PreRsultClFrame();
+		mainFrame.setVisible(true);*/
 		
 		JFrame anythreeFrame = new AnyThreeFrame();
 		anythreeFrame.setVisible(true);
+		
+		JFrame anythreeFrame5 = new AnyThreeFrame5();
+		anythreeFrame5.setVisible(true);
 		
 		//开启开奖结果获取进程
 		KjThread kjThread = new KjThread();
@@ -527,13 +530,18 @@ public class ExampleControll{
 		threadKJ.start();
 		
 		//开启 出啥投啥的方案跑数
-		PreResultClThread preResultThread = new PreResultClThread();
+		/*PreResultClThread preResultThread = new PreResultClThread();
 		Thread threadPreResult = new Thread(preResultThread);
-		threadPreResult.start();
+		threadPreResult.start();*/
 		
-		//三星任选策略
+		//三星任选策略,赚N块钱换号
 		AnyThreeThread anythreeThread = new AnyThreeThread();
 		Thread anythreeResult = new Thread(anythreeThread);
 		anythreeResult.start();
+		
+		//三星任选策略,中n期换号
+		AnyThreeThread5 anythreeThread5 = new AnyThreeThread5();
+		Thread anythreeResult5 = new Thread(anythreeThread5);
+		anythreeResult5.start();
 	}
 }

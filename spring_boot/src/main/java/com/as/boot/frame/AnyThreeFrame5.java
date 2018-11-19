@@ -23,7 +23,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-public class AnyThreeFrame extends JFrame{
+public class AnyThreeFrame5 extends JFrame{
 
 	public static String FFCRound = null;
 	public static String FFCResult = null;
@@ -35,7 +35,7 @@ public class AnyThreeFrame extends JFrame{
 	
 	//投注情况
 	public static String[][] tableDate = {};
-	public static String[] dataTitle = {"期数","方案","倍数","方案盈亏","连挂","连中","开奖情况","中挂","投注类型"};
+	public static String[] dataTitle = {"期数","方案","倍数","方案盈亏","连挂","已命中期数","开奖情况","中挂","投注类型"};
 	public static DefaultTableModel tableDefaultmodel = new DefaultTableModel(tableDate,dataTitle);
 	public static JTextField initClNumField = new JTextField(8);
 	
@@ -99,12 +99,13 @@ public class AnyThreeFrame extends JFrame{
 	public static JLabel mnYkValueLabel = new JLabel("0.00");
 	/**真实盈亏值**/
 	public static JLabel szYkValueLabel = new JLabel("0.00");
-	public static JLabel maxFailValueLabel = new JLabel("0.000");
 	//开始投注按钮
 	public static JButton button = new JButton("停止执行");
 	
-	public AnyThreeFrame(){
-		this.setTitle("任三策略-盈利N元换号");
+	public static JTable table = null;
+	
+	public AnyThreeFrame5(){
+		this.setTitle("任三策略-连中N期换号");
 		this.setBounds(200, 200, 200, 200);
 		this.setSize(910, 600);
 		this.setLocation(200, 50);
@@ -312,18 +313,12 @@ public class AnyThreeFrame extends JFrame{
 		
 		downParamsBox.add(szYkValueLabel);
 		
-		//最大亏损
-   		JLabel maxFailYkLabel = new JLabel("当前策略亏损:");
-		downParamsBox.add(maxFailYkLabel);
-		
-		downParamsBox.add(maxFailValueLabel);
-		
 		downParamsBox.add(button);
 		
   		panel.add(downParamsBox);
   		
   		
-  		JTable table = new JTable(tableDefaultmodel);
+  		table = new JTable(tableDefaultmodel);
   		
   		JScrollPane dowmMsgBox = new JScrollPane(table);
   		dowmMsgBox.setPreferredSize(new Dimension(880,250));
