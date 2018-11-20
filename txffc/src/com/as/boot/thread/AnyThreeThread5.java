@@ -458,8 +458,11 @@ public class AnyThreeThread5 implements Runnable{
 	public String historyResult(){
 		StringBuilder fileContent = new StringBuilder();
 		try {
+			File file = new File("G:/modeng_gj/OpenCode/TXFFC.txt");
+			if(!file.exists())
+				file = new File("E:/modeng_gj/OpenCode/TXFFC.txt");
 			//获取文件内容
-			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("G:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
+			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
             String lineTxt = null;
             while ((lineTxt = bfr.readLine()) != null) {
             	fileContent.append(lineTxt.trim().replace("	", ",")).append(";");

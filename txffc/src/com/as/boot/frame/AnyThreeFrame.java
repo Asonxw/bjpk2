@@ -41,6 +41,9 @@ public class AnyThreeFrame extends JFrame{
 	public static String FFCRound = null;
 	public static String FFCResult = null;
 	
+	public static JLabel accountNameLabel = new JLabel("");
+	public static JLabel accountAmountLabel = new JLabel("0.00");
+	
 	//开奖情况
 	public static String[][] kjTableDate = {};
 	public static String[] kjTataTitle = {"期数","开奖结果"};
@@ -130,23 +133,46 @@ public class AnyThreeFrame extends JFrame{
 		panel.setSize(910, 600);
 		this.add(panel);
 		
+		//账户信息
+		JPanel accountBox = new JPanel();
+		accountBox.setPreferredSize(new Dimension(140,190));
+		accountBox.setBorder(BorderFactory.createTitledBorder("账户信息"));
+		
+		JPanel accountNameBox = new JPanel();
+		accountNameBox.setPreferredSize(new Dimension(130,35));
+		
+		JLabel AccpuntNameTLabel = new JLabel("账户:");
+		accountNameBox.add(AccpuntNameTLabel);
+		accountNameBox.add(accountNameLabel);
+		accountBox.add(accountNameBox);
+  		
+		JPanel accountAmountBox = new JPanel();
+		accountAmountBox.setPreferredSize(new Dimension(130,35));
+  		JLabel accpuntAmountTLabel = new JLabel("余额:");
+  		accountAmountBox.add(accpuntAmountTLabel);
+  		accountAmountBox.add(accountAmountLabel);
+		accountBox.add(accountAmountBox);
+  		
+  		
+  		panel.add(accountBox);
+		
 		//历史开奖panel
 		
 		JTable kjTable = new JTable(kjTableDefaultmodel);
 		JScrollPane historyIssuBox = new JScrollPane(kjTable);
-		historyIssuBox.setPreferredSize(new Dimension(270,190));
+		historyIssuBox.setPreferredSize(new Dimension(220,190));
 		historyIssuBox.setBorder(BorderFactory.createTitledBorder("历史开奖"));
   		
         panel.add(historyIssuBox);
 		
 		//初始参数panel
 		JPanel initParamsBox = new JPanel();
-		initParamsBox.setPreferredSize(new Dimension(250,190));
+		initParamsBox.setPreferredSize(new Dimension(220,190));
 		initParamsBox.setBorder(BorderFactory.createTitledBorder("初始参数"));
 		
 		//系统初始策略生成组数
 		JPanel initClNumPanel = new JPanel();
-		initClNumPanel.setPreferredSize(new Dimension(240,25));
+		initClNumPanel.setPreferredSize(new Dimension(210,25));
         JLabel initClNumLabel = new JLabel("初始策略数:");
         initClNumPanel.add(initClNumLabel);
   		
@@ -156,7 +182,7 @@ public class AnyThreeFrame extends JFrame{
   		
   		//理想连挂数
   		JPanel aimMaxFailPanel = new JPanel();
-  		aimMaxFailPanel.setPreferredSize(new Dimension(240,25));
+  		aimMaxFailPanel.setPreferredSize(new Dimension(210,25));
         JLabel aimMaxFailLabel = new JLabel("理想连挂数:");
         aimMaxFailPanel.add(aimMaxFailLabel);
   		
@@ -166,7 +192,7 @@ public class AnyThreeFrame extends JFrame{
   		
   		//重置次数
   		JPanel maxRestNPanel = new JPanel();
-  		maxRestNPanel.setPreferredSize(new Dimension(240,25));
+  		maxRestNPanel.setPreferredSize(new Dimension(210,25));
         JLabel maxRestNLabel = new JLabel("重置的次数:");
         maxRestNPanel.add(maxRestNLabel);
         
@@ -176,7 +202,7 @@ public class AnyThreeFrame extends JFrame{
   		
   		//系统策略总组数
   		JPanel clNumPanel = new JPanel();
-  		clNumPanel.setPreferredSize(new Dimension(240,25));
+  		clNumPanel.setPreferredSize(new Dimension(210,25));
         JLabel clNumLabel = new JLabel("策略总组数:");
         clNumPanel.add(clNumLabel);
        
@@ -186,7 +212,7 @@ public class AnyThreeFrame extends JFrame{
   		
   		//统计期数
   		JPanel historyNumPanel = new JPanel();
-  		historyNumPanel.setPreferredSize(new Dimension(240,25));
+  		historyNumPanel.setPreferredSize(new Dimension(210,25));
   		JLabel historyNumLabel = new JLabel("统计总期数:");
   		historyNumPanel.add(historyNumLabel);
   		
@@ -381,16 +407,12 @@ public class AnyThreeFrame extends JFrame{
   		clBoxList.add(s5);
   		clBoxList.add(g5);
   		this.addWindowListener(new WindowAdapter() { // 窗口关闭事件
-		public void windowClosing(WindowEvent e) {
-			System.exit(0);
-		};
 
-		public void windowIconified(WindowEvent e) { // 窗口最小化事件
-			anythreeFrame.setVisible(false);
-			miniTray();
+			public void windowIconified(WindowEvent e) { // 窗口最小化事件
+				anythreeFrame.setVisible(false);
+				miniTray();
 
 			}
-
 		});
 	}
 	

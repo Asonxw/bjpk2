@@ -2,9 +2,7 @@ package com.as.boot.controller;
 
 import com.as.boot.frame.AnyThreeFrame;
 import com.as.boot.frame.AnyThreeFrame5;
-import com.as.boot.thread.AnyThreeThread;
-import com.as.boot.thread.AnyThreeThread5;
-import com.as.boot.thread.KjThread;
+import com.as.boot.frame.LoginFrame;
 
 public class ExampleControll{
 	
@@ -12,8 +10,7 @@ public class ExampleControll{
 	public static String FFCResult = null;
 	
 	public static void main(String[] args) {
-		/*JFrame mainFrame = new PreRsultClFrame();
-		mainFrame.setVisible(true);*/
+		//LoginFrame.loginFrame.setVisible(true);
 		
 		AnyThreeFrame.anythreeFrame.setVisible(true);
 		
@@ -21,9 +18,9 @@ public class ExampleControll{
 		AnyThreeFrame5.anythreeFrame5.setVisible(true);
 		
 		//开启开奖结果获取进程
-		KjThread kjThread = new KjThread();
+		/*KjThread kjThread = new KjThread();
 		Thread threadKJ = new Thread(kjThread);
-		threadKJ.start();
+		threadKJ.start();*/
 		
 		//开启 出啥投啥的方案跑数
 		/*PreResultClThread preResultThread = new PreResultClThread();
@@ -31,13 +28,13 @@ public class ExampleControll{
 		threadPreResult.start();*/
 		
 		//三星任选策略,赚N块钱换号
-		AnyThreeThread anythreeThread = new AnyThreeThread();
+		/*AnyThreeThread anythreeThread = new AnyThreeThread();
 		Thread anythreeResult = new Thread(anythreeThread);
-		anythreeResult.start();
+		anythreeResult.start();*/
 		
 		//三星任选策略,中n期换号
-		AnyThreeThread5 anythreeThread5 = new AnyThreeThread5();
+		/*AnyThreeThread5 anythreeThread5 = new AnyThreeThread5();
 		Thread anythreeResult5 = new Thread(anythreeThread5);
-		anythreeResult5.start();
+		anythreeResult5.start();*/
 	}
 }
