@@ -21,7 +21,7 @@ public class AnyThreeThread implements Runnable{
 	
 	private Double zslr = 0d;
 	//盈利回头值
-	private Double zslr_return = null;
+	private Double zslr_return = 0d;
 	private Double mnlr = 0d;
 	private String[] fa = {"个","十","百","千","万"};
 	//private HashMap<String,String> clMap = null;
@@ -128,7 +128,7 @@ public class AnyThreeThread implements Runnable{
 								everyClYl += tempLr;
 								AnyThreeFrame.szYkValueLabel.setText(df.format(zslr));
 								AnyThreeFrame.maxFailValueLabel.setText(df.format(everyClYl));
-								if(ZLinkStringUtils.isNotEmpty(AnyThreeFrame.returnField.getText())&&zslr_return!=null&&zslr >= zslr_return){
+								if(ZLinkStringUtils.isNotEmpty(AnyThreeFrame.returnField.getText())&&zslr >= zslr_return){
 									zslr_return = zslr + Double.parseDouble(AnyThreeFrame.returnField.getText());
 									//达到盈利回头目标，所有倍投全部回到起点
 									btNumList.set(0, 0);
@@ -163,7 +163,7 @@ public class AnyThreeThread implements Runnable{
 							if(changeClYl!=null&&everyClYl>=changeClYl){
 								initTXFFCL();
 								everyClYl = 0d;
-							}else if(changeClYl!=null&&everyClYl < -300){
+							}else if(changeClYl!=null&&everyClYl < -4000){
 								//爆仓换策略
 								initTXFFCL();
 								everyClYl = 0d;
@@ -406,7 +406,7 @@ public class AnyThreeThread implements Runnable{
 		StringBuilder fileContent = new StringBuilder();
 		try {
 			//获取文件内容
-			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("E:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
+			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("G:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
             String lineTxt = null;
             while ((lineTxt = bfr.readLine()) != null) {
             	fileContent.append(lineTxt.trim().replace("	", ",")).append(";");

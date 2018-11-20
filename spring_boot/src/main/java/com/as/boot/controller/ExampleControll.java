@@ -518,11 +518,10 @@ public class ExampleControll{
 		/*JFrame mainFrame = new PreRsultClFrame();
 		mainFrame.setVisible(true);*/
 		
-		JFrame anythreeFrame = new AnyThreeFrame();
-		anythreeFrame.setVisible(true);
+		AnyThreeFrame.anythreeFrame.setVisible(true);
 		
-		JFrame anythreeFrame5 = new AnyThreeFrame5();
-		anythreeFrame5.setVisible(true);
+		
+		AnyThreeFrame5.anythreeFrame5.setVisible(true);
 		
 		//开启开奖结果获取进程
 		KjThread kjThread = new KjThread();

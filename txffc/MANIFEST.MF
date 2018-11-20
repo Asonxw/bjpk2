@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: ./lib/commons-logging-1.2.jar ./lib/fastjson-1.2.8.jar ./lib/spring-core-4.3.3.RELEASE.jar ./lib/spring-web-4.3.3.RELEASE.jar
+Main-Class: com.as.boot.controller.ExampleControll
+

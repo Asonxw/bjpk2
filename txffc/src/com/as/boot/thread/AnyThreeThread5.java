@@ -1,7 +1,5 @@
 package com.as.boot.thread;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,15 +8,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.Vector;
 
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
-
-import com.alibaba.fastjson.JSONObject;
 import com.as.boot.controller.ExampleControll;
 import com.as.boot.frame.AnyThreeFrame5;
 import com.as.boot.utils.ZLinkStringUtils;
