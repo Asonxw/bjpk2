@@ -41,6 +41,9 @@ public class AnyThreeFrame extends JFrame{
 	public static String FFCRound = null;
 	public static String FFCResult = null;
 	
+	public static JLabel accountNameLabel = new JLabel("");
+	public static JLabel accountAmountLabel = new JLabel("0.00");
+	
 	//开奖情况
 	public static String[][] kjTableDate = {};
 	public static String[] kjTataTitle = {"期数","开奖结果"};
@@ -50,8 +53,13 @@ public class AnyThreeFrame extends JFrame{
 	public static String[][] tableDate = {};
 	public static String[] dataTitle = {"期数","方案","倍数","方案盈亏","连挂","连中","开奖情况","中挂","投注类型"};
 	public static DefaultTableModel tableDefaultmodel = new DefaultTableModel(tableDate,dataTitle);
-	public static JTextField initClNumField = new JTextField(8);
+	//操作日志
+	public static String[][] logTableDate = {};
+	public static String[] logDataTitle = {"log信息"};
+	public static DefaultTableModel logTableDefaultmodel = new DefaultTableModel(logTableDate,logDataTitle);
 	
+	/**初始化生成策略数**/
+	public static JTextField initClNumField = new JTextField(8);
 	/**目标最大连错**/
 	public static JTextField aimMaxFailField = new JTextField(8);
 	/**策略获取重置次数**/
@@ -114,14 +122,16 @@ public class AnyThreeFrame extends JFrame{
 	public static JLabel szYkValueLabel = new JLabel("0.00");
 	public static JLabel maxFailValueLabel = new JLabel("0.000");
 	//开始投注按钮
-	public static JButton button = new JButton("停止执行");
+	public static JButton button = new JButton("开始执行");
 	
 	public static AnyThreeFrame anythreeFrame = new AnyThreeFrame();
 	
+	
+	
 	public AnyThreeFrame(){
-		this.setTitle("任三策略-盈利N元换号");
+		this.setTitle("任三策略-中后换");
 		this.setBounds(200, 200, 200, 200);
-		this.setSize(910, 600);
+		this.setSize(910, 640);
 		this.setLocation(200, 50);
 		this.setBackground(Color.white);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -130,23 +140,46 @@ public class AnyThreeFrame extends JFrame{
 		panel.setSize(910, 600);
 		this.add(panel);
 		
+		//账户信息
+		JPanel accountBox = new JPanel();
+		accountBox.setPreferredSize(new Dimension(140,190));
+		accountBox.setBorder(BorderFactory.createTitledBorder("账户信息"));
+		
+		JPanel accountNameBox = new JPanel();
+		accountNameBox.setPreferredSize(new Dimension(130,35));
+		
+		JLabel AccpuntNameTLabel = new JLabel("账户:");
+		accountNameBox.add(AccpuntNameTLabel);
+		accountNameBox.add(accountNameLabel);
+		accountBox.add(accountNameBox);
+  		
+		JPanel accountAmountBox = new JPanel();
+		accountAmountBox.setPreferredSize(new Dimension(130,35));
+  		JLabel accpuntAmountTLabel = new JLabel("余额:");
+  		accountAmountBox.add(accpuntAmountTLabel);
+  		accountAmountBox.add(accountAmountLabel);
+		accountBox.add(accountAmountBox);
+  		
+  		
+  		panel.add(accountBox);
+		
 		//历史开奖panel
 		
 		JTable kjTable = new JTable(kjTableDefaultmodel);
 		JScrollPane historyIssuBox = new JScrollPane(kjTable);
-		historyIssuBox.setPreferredSize(new Dimension(270,190));
+		historyIssuBox.setPreferredSize(new Dimension(220,190));
 		historyIssuBox.setBorder(BorderFactory.createTitledBorder("历史开奖"));
   		
         panel.add(historyIssuBox);
 		
 		//初始参数panel
 		JPanel initParamsBox = new JPanel();
-		initParamsBox.setPreferredSize(new Dimension(250,190));
+		initParamsBox.setPreferredSize(new Dimension(220,190));
 		initParamsBox.setBorder(BorderFactory.createTitledBorder("初始参数"));
 		
 		//系统初始策略生成组数
 		JPanel initClNumPanel = new JPanel();
-		initClNumPanel.setPreferredSize(new Dimension(240,25));
+		initClNumPanel.setPreferredSize(new Dimension(210,25));
         JLabel initClNumLabel = new JLabel("初始策略数:");
         initClNumPanel.add(initClNumLabel);
   		
@@ -156,7 +189,7 @@ public class AnyThreeFrame extends JFrame{
   		
   		//理想连挂数
   		JPanel aimMaxFailPanel = new JPanel();
-  		aimMaxFailPanel.setPreferredSize(new Dimension(240,25));
+  		aimMaxFailPanel.setPreferredSize(new Dimension(210,25));
         JLabel aimMaxFailLabel = new JLabel("理想连挂数:");
         aimMaxFailPanel.add(aimMaxFailLabel);
   		
@@ -166,7 +199,7 @@ public class AnyThreeFrame extends JFrame{
   		
   		//重置次数
   		JPanel maxRestNPanel = new JPanel();
-  		maxRestNPanel.setPreferredSize(new Dimension(240,25));
+  		maxRestNPanel.setPreferredSize(new Dimension(210,25));
         JLabel maxRestNLabel = new JLabel("重置的次数:");
         maxRestNPanel.add(maxRestNLabel);
         
@@ -176,7 +209,7 @@ public class AnyThreeFrame extends JFrame{
   		
   		//系统策略总组数
   		JPanel clNumPanel = new JPanel();
-  		clNumPanel.setPreferredSize(new Dimension(240,25));
+  		clNumPanel.setPreferredSize(new Dimension(210,25));
         JLabel clNumLabel = new JLabel("策略总组数:");
         clNumPanel.add(clNumLabel);
        
@@ -186,11 +219,11 @@ public class AnyThreeFrame extends JFrame{
   		
   		//统计期数
   		JPanel historyNumPanel = new JPanel();
-  		historyNumPanel.setPreferredSize(new Dimension(240,25));
+  		historyNumPanel.setPreferredSize(new Dimension(210,25));
   		JLabel historyNumLabel = new JLabel("统计总期数:");
   		historyNumPanel.add(historyNumLabel);
   		
-  		historyNumField.setText("2400");
+  		historyNumField.setText("1440");
   		historyNumPanel.add(historyNumField);
   		initParamsBox.add(historyNumPanel);
   		
@@ -304,6 +337,22 @@ public class AnyThreeFrame extends JFrame{
         downTypeGroup.add(downTypeSz);
         downParamsBox.add(downTypeMn);
         downParamsBox.add(downTypeSz);
+        downTypeMn.setSelected(true);
+        //模拟转实战需要清空倍投
+        downTypeSz.addMouseListener(new MouseAdapter() {
+  			@Override
+  		    public void mouseClicked(MouseEvent arg0){
+  				//将文字切换为实战
+  				AnyThreeThread.mnOrSzFlag = 1;
+  		    }
+		});
+        downTypeMn.addMouseListener(new MouseAdapter() {
+  			@Override
+  		    public void mouseClicked(MouseEvent arg0){
+  				//将文字切换为模拟
+  				AnyThreeThread.mnOrSzFlag = 0;
+  		    }
+		});
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
@@ -311,10 +360,10 @@ public class AnyThreeFrame extends JFrame{
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值
-   		JLabel changeYlLabel = new JLabel("达值更换策略:");
+   		/*JLabel changeYlLabel = new JLabel("达值更换策略:");
 		downParamsBox.add(changeYlLabel);
 		changeYlField.setText("5");
-		downParamsBox.add(changeYlField);
+		downParamsBox.add(changeYlField);*/
 		
    		//模拟盈亏
    		JLabel mnYkLabel = new JLabel("模拟盈亏:");
@@ -327,30 +376,35 @@ public class AnyThreeFrame extends JFrame{
 		
 		downParamsBox.add(szYkValueLabel);
 		
-		//最大亏损
-   		JLabel maxFailYkLabel = new JLabel("当前策略盈亏:");
-		downParamsBox.add(maxFailYkLabel);
-		
-		downParamsBox.add(maxFailValueLabel);
-		
 		downParamsBox.add(button);
 		
   		panel.add(downParamsBox);
   		
-  		
+  		//投注情况
   		JTable table = new JTable(tableDefaultmodel);
   		
   		JScrollPane dowmMsgBox = new JScrollPane(table);
-  		dowmMsgBox.setPreferredSize(new Dimension(880,250));
+  		dowmMsgBox.setPreferredSize(new Dimension(880,190));
   		dowmMsgBox.setBorder(BorderFactory.createTitledBorder("投注情况"));
   		
   		panel.add(dowmMsgBox);
+  		
+  		//log日志
+  		JTable logTtable = new JTable(logTableDefaultmodel);
+  		
+  		JScrollPane logMsgBox = new JScrollPane(logTtable);
+  		logMsgBox.setPreferredSize(new Dimension(880,110));
+  		logMsgBox.setBorder(BorderFactory.createTitledBorder("log日志"));
+  		
+  		panel.add(logMsgBox);
+  		
   		button.addMouseListener(new MouseAdapter() {
   			@Override
   		    public void mouseClicked(MouseEvent arg0){
-  				if(button.getText().equals("开始执行"))
+  				if(button.getText().equals("开始执行")){
   					button.setText("停止执行");
-  				else button.setText("开始执行");
+  					AnyThreeThread.startDownFFC();
+  				}else button.setText("开始执行");
   		    }
 		});
   		
@@ -380,17 +434,14 @@ public class AnyThreeFrame extends JFrame{
   		clBoxList.add(b5);
   		clBoxList.add(s5);
   		clBoxList.add(g5);
+  		
   		this.addWindowListener(new WindowAdapter() { // 窗口关闭事件
-		public void windowClosing(WindowEvent e) {
-			System.exit(0);
-		};
 
-		public void windowIconified(WindowEvent e) { // 窗口最小化事件
-			anythreeFrame.setVisible(false);
-			miniTray();
+			public void windowIconified(WindowEvent e) { // 窗口最小化事件
+				anythreeFrame.setVisible(false);
+				miniTray();
 
 			}
-
 		});
 	}
 	

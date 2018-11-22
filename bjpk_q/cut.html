@@ -54,7 +54,7 @@ table {
 	<p>
 	请输入历史开奖
 	<textarea id="history"></textarea>
-	<button onclick="getCurrentResult();">开始执行</button>
+	<button onclick="getCurrentResult_f();">开始执行</button>
 	<button onclick="resetResult();">重置结果</button>
 	共 <span id="count"></span> 期
 	</p>
@@ -220,11 +220,7 @@ table {
 				refreshFail();
 				round = cRound;
 				firstArray[iii] = _first;
-<<<<<<< HEAD
-				hot();
-=======
-				random2();
->>>>>>> 5ea3e8eed5879dc9c6f39e72f9d00d7bcc50f979
+				random_fc();
 				$("#result").prepend(html);
 			}
 			$("#count").text(xxcount);
@@ -579,5 +575,23 @@ table {
 			$("#result").find("tr").remove();
 			refreshFail();
 		}
+		var _form = new FormData();
+		_form.append("lottery","TXFFC");
+		_form.append("issue","20181120-1390");
+		_form.append("order","[{\"method\":\"rx3_zx_ds\",\"code\":\"1,1,1\",\"nums\":\"1\",\"piece\":\"1\",\"price\":\"0.002\",\"odds\":\"1950\",\"point\":\"0\",\"amount\":\"0.002\",\"position\":\"1,3,5\"}]");
+		_form.append("betType",1);
+		_form.append("sourceType",0);
+		//var _order = {"lottery":"TXFFC","issue":"20181120-1390","order":[{"method":"rx3_zx_ds","code":"1,1,1","nums":"1","piece":"1","price":"0.002","odds":"1950","point":"0","amount":"0.002","position":"1,3,5"}],"betType":1,"sourceType":0};
+		$.ajax({
+			type:"post",
+			url:"https://www.modgame.vip/lottery/api/u/v1/lottery/add_order",
+			data:_form,
+			processData:false,
+            contentType:false,
+			success:function(data){
+				console.log(data);
+			}
+		});
+		
 	</script>
 </html>

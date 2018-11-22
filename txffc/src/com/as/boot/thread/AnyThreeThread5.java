@@ -160,6 +160,7 @@ public class AnyThreeThread5 implements Runnable{
 						}
 						//是否投注
 						if(AnyThreeFrame5.button.getText().equals("停止执行")){
+							Integer _index = 0;
 							for (int i = clList.size()-1; i>=0; i--) {
 								//判断是否需要更改策略,命中changeClYl期更换一次策略
 								if(sulCountList.get(i)>=changeClYl){
@@ -168,9 +169,10 @@ public class AnyThreeThread5 implements Runnable{
 								}
 								HashMap<String, String> clItem = clList.get(i);
 								if(!clItem.get("position").equals("0")){
-									
+									if(_index == 0)
+										AnyThreeFrame5.tableDefaultmodel.insertRow(0, new String[]{"--","--","--","--","--","--","--","--","--"});
 									AnyThreeFrame5.tableDefaultmodel.insertRow(0, new String[]{df.format(resultRound_i + 1),clItem.get("position")+clItem.get("cl"),btArr[btNumList.get(i)].toString(),"--","--","--","待开奖","待开奖","--"});
-									
+									_index++;
 								}
 							}
 						}
@@ -458,8 +460,11 @@ public class AnyThreeThread5 implements Runnable{
 	public String historyResult(){
 		StringBuilder fileContent = new StringBuilder();
 		try {
+			File file = new File("G:/modeng_gj/OpenCode/TXFFC.txt");
+			if(!file.exists())
+				file = new File("E:/modeng_gj/OpenCode/TXFFC.txt");
 			//获取文件内容
-			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("G:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
+			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
             String lineTxt = null;
             while ((lineTxt = bfr.readLine()) != null) {
             	fileContent.append(lineTxt.trim().replace("	", ",")).append(";");
