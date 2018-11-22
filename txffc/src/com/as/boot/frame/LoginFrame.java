@@ -27,10 +27,14 @@ import javax.swing.table.DefaultTableModel;
 
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.thread.AccountThread;
+<<<<<<< HEAD
 import com.as.boot.thread.AnyThreeThread;
 import com.as.boot.thread.KjThread;
 import com.as.boot.utils.HttpFuncUtil;
 import com.as.boot.utils.ModHttpUtil;
+=======
+import com.as.boot.utils.HttpFuncUtil;
+>>>>>>> 90ade01be4fb5b89b4832ef9eca08eefbfc4a44c
 import com.as.boot.utils.ZLinkStringUtils;
 
 /**
@@ -86,6 +90,7 @@ public class LoginFrame extends JFrame{
   		    public void mouseClicked(MouseEvent arg0){
   				char[] values = passField.getPassword();
   				String password = new String(values);
+<<<<<<< HEAD
   				//记录密码，用于登录失效后重新登录
   				AccountThread.accountPass = password;
   				if(ModHttpUtil.logind(accountField.getText(), password)){
@@ -105,6 +110,21 @@ public class LoginFrame extends JFrame{
   					Thread anythreeResult = new Thread(anythreeThread);
   					anythreeResult.start();
   					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录成功！"});
+=======
+  				HashMap<String, String> resultMap = HttpFuncUtil.getUrlConnection("https://www.modgame.vip/sso/login?callback=jsonp1&way=pwd&from=portal&cn="+accountField.getText()+"&appId=5&password="+password);
+  				if(resultMap!=null&&ZLinkStringUtils.isNotEmpty(resultMap.get("result"))){
+  					JSONObject obj = JSONObject.parseObject(resultMap.get("result").replace("jsonp1(", "").replace(")", ""));
+  					if(obj.getInteger("code").equals(0)&&obj.getString("msg").equals("登录成功")){
+  						AccountThread.urlSessionId = resultMap.get("sessionId");
+  						//启动线程获取账户信息
+  						AccountThread account = new AccountThread();
+  						Thread accountThread = new Thread(account);
+  						accountThread.start();
+  						loginFrame.setVisible(false);
+  						AnyThreeFrame5.anythreeFrame5.setVisible(true);
+  					}
+  					
+>>>>>>> 90ade01be4fb5b89b4832ef9eca08eefbfc4a44c
   				}
   		    }
 		});
