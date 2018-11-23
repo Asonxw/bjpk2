@@ -15,7 +15,7 @@ import com.as.boot.utils.ZLinkStringUtils;
  */
 public class KjThread implements Runnable{
 	
-	private String[] urlArr = {"http://gf3.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf4.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://www.pkcp20.com/Shared/GetNewPeriod?gameid=81"};
+	private String[] urlArr = {"http://gf1.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf2.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf3.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf4.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf5.pkvip08.com:92/Shared/GetNewPeriod?gameid=81"};
 	
 	private Integer urlIndex = 0; 
 	@Override

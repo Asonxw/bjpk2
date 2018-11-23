@@ -75,7 +75,7 @@ public class AnyThreeThread implements Runnable{
 					if(AnyThreeFrame.FFCRound == null || !AnyThreeFrame.FFCRound.equals(resultRound)){
 						AnyThreeFrame.kjTableDefaultmodel.insertRow(0, new String[]{resultRound,resultKj});
 						//判断是否有投注
-						if(AnyThreeFrame.FFCRound !=null && Double.parseDouble(AnyThreeFrame.FFCRound) == (resultRound_i-1)){
+						if(AnyThreeFrame.FFCRound !=null && (Double.parseDouble(AnyThreeFrame.FFCRound) == (resultRound_i-1) || resultRound.endsWith("0001"))){
 							if(clList!=null&&clList.size()>0){
 								Double tempLr = 0d;
 								Integer clIndex = 0;
@@ -170,8 +170,8 @@ public class AnyThreeThread implements Runnable{
 							
 						}
 						//判断是否已经跨天
-						if(ExampleControll.nextFFCRound.endsWith("0001"))
-							AnyThreeFrame.FFCRound = ExampleControll.nextFFCRound.substring(0, 9) + "0000";
+						/*if(ExampleControll.nextFFCRound.endsWith("0001"))
+							AnyThreeFrame.FFCRound = ExampleControll.nextFFCRound.substring(0, 8) + "0000";*/
 						AnyThreeFrame.FFCRound = resultRound;
 						AnyThreeFrame.FFCResult = resultKj;
 						Thread.sleep(30000);//更新到数据后睡眠30s
