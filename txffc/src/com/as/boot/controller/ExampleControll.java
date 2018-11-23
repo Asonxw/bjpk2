@@ -1,18 +1,6 @@
 package com.as.boot.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import com.as.boot.frame.AnyThreeFrame;
-import com.as.boot.frame.AnyThreeFrame5;
 import com.as.boot.frame.LoginFrame;
-<<<<<<< HEAD
-import com.as.boot.thread.AnyThreeThread;
-import com.as.boot.thread.KjThread;
-import com.as.boot.utils.ModHttpUtil;
-=======
->>>>>>> 90ade01be4fb5b89b4832ef9eca08eefbfc4a44c
 
 public class ExampleControll{
 	
@@ -21,7 +9,6 @@ public class ExampleControll{
 	public static String nextFFCRound = null;
 	
 	public static void main(String[] args) {
-<<<<<<< HEAD
 		LoginFrame.loginFrame.setVisible(true);
 		/*List<HashMap<String, String>> clList = new ArrayList<>();
 		HashMap<String, String> map = new HashMap<>();
@@ -33,12 +20,8 @@ public class ExampleControll{
 		clList.add(map);
 		ModHttpUtil.addTXFFCOrder_RX3("20181121-1278", clList, btNumList, btArr, 0.002);*/
 		//AnyThreeFrame.anythreeFrame.setVisible(true);
-=======
 		//LoginFrame.loginFrame.setVisible(true);
 		
-		AnyThreeFrame.anythreeFrame.setVisible(true);
-		
->>>>>>> 90ade01be4fb5b89b4832ef9eca08eefbfc4a44c
 		
 		//AnyThreeFrame5.anythreeFrame5.setVisible(true);
 		

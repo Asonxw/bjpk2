@@ -2,16 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-<<<<<<< HEAD
 	<classpathentry kind="lib" path="lib/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/fastjson-1.2.8.jar"/>
 	<classpathentry kind="lib" path="lib/spring-core-4.3.3.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/spring-web-4.3.3.RELEASE.jar" sourcepath="D:/apache-maven-3.5.0/repository/org/springframework/spring-web/4.3.3.RELEASE/spring-web-4.3.3.RELEASE-sources.jar"/>
-=======
-	<classpathentry kind="lib" path="/hotel/WebRoot/WEB-INF/lib/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="/cmcctest/WebContent/WEB-INF/lib/fastjson-1.2.8.jar"/>
-	<classpathentry kind="lib" path="/exam/WebRoot/WEB-INF/lib/spring-core-4.1.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="/exam/WebRoot/WEB-INF/lib/spring-web-4.1.5.RELEASE.jar"/>
->>>>>>> 90ade01be4fb5b89b4832ef9eca08eefbfc4a44c
 	<classpathentry kind="output" path="bin"/>
 </classpath>
