@@ -76,7 +76,9 @@ public class AnyThreeThread implements Runnable{
 						AnyThreeFrame.kjTableDefaultmodel.insertRow(0, new String[]{resultRound,resultKj});
 						//判断是否有投注
 						if(AnyThreeFrame.FFCRound !=null && (Double.parseDouble(AnyThreeFrame.FFCRound) == (resultRound_i-1) || resultRound.endsWith("0001"))){
-							if(clList!=null&&clList.size()>0){
+							//获取表格第一行（判断是否有未开奖投注）
+							Object down_first = AnyThreeFrame.tableDefaultmodel.getValueAt(0, 6);
+							if(clList!=null&&clList.size()>0&&down_first!=null&&down_first.equals("待开奖")){
 								Double tempLr = 0d;
 								Integer clIndex = 0;
 								Integer tableIndex = 0;
