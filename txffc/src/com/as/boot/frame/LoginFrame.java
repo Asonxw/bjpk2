@@ -59,6 +59,10 @@ public class LoginFrame extends JFrame{
 		panel.setSize(910, 600);
 		this.add(panel);
 		
+		JPanel panel_top = new JPanel();
+		panel_top.setPreferredSize(new Dimension(900,150));
+		panel.add(panel_top);
+		
 		JPanel accountPanel = new JPanel();
 		accountPanel.setPreferredSize(new Dimension(880,35));
 		JLabel accountLable = new JLabel("帐号:");
@@ -72,7 +76,8 @@ public class LoginFrame extends JFrame{
 		passPanel.setPreferredSize(new Dimension(880,35));
 		JLabel passLable = new JLabel("密码:");
 		passPanel.add(passLable);
-		passField.setText("9c3db9e8694b4dec98f60858ea8b8d67");
+		//passField.setText("9c3db9e8694b4dec98f60858ea8b8d67");
+		passField.setText("nhmasonxt950203");
 		passPanel.add(passField);
 		panel.add(passPanel);
 		
@@ -80,6 +85,9 @@ public class LoginFrame extends JFrame{
 		btnPanel.setPreferredSize(new Dimension(880,35));
 		JButton buttom = new JButton("登录");
 		btnPanel.add(buttom);
+		JButton buttom_m = new JButton("不登陆");
+		btnPanel.add(buttom_m);
+		
 		panel.add(btnPanel);
 		buttom.addMouseListener(new MouseAdapter() {
 			
@@ -87,6 +95,7 @@ public class LoginFrame extends JFrame{
   		    public void mouseClicked(MouseEvent arg0){
   				char[] values = passField.getPassword();
   				String password = new String(values);
+  				password = ZLinkStringUtils.MD5_32(password, null);
   				//记录密码，用于登录失效后重新登录
   				AccountThread.accountPass = password;
   				if(ModHttpUtil.logind(accountField.getText(), password)){
@@ -107,6 +116,25 @@ public class LoginFrame extends JFrame{
   					anythreeResult.start();
   					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录成功！"});
   				}
+  		    }
+		});
+		
+		//不登陆
+		buttom_m.addMouseListener(new MouseAdapter() {
+			
+  			@Override
+  		    public void mouseClicked(MouseEvent arg0){
+  					LoginFrame.loginFrame.setVisible(false);
+  					AnyThreeFrame.anythreeFrame.setVisible(true);
+  					//启动线程
+  					KjThread kjThread = new KjThread();
+  					Thread threadKJ = new Thread(kjThread);
+  					threadKJ.start();
+  					
+  					AnyThreeThread anythreeThread = new AnyThreeThread();
+  					Thread anythreeResult = new Thread(anythreeThread);
+  					anythreeResult.start();
+  					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录成功！"});
   		    }
 		});
 	}

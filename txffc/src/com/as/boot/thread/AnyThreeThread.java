@@ -502,8 +502,7 @@ public class AnyThreeThread implements Runnable{
 	 * @throws
 	 */
 	public static void startDownFFC(){
-		//初始化策略
-		initTXFFCL();
+		
 		Integer _index = 0;
 		for (int i = clList.size()-1; i>=0; i--) {
 			
