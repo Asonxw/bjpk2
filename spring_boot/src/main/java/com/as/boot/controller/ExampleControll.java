@@ -511,12 +511,12 @@ public class ExampleControll{
 		}
 	}*/
 	
-	public static String FFCRound = null;
+	/*public static String FFCRound = null;
 	public static String FFCResult = null;
 	
 	public static void main(String[] args) {
-		/*JFrame mainFrame = new PreRsultClFrame();
-		mainFrame.setVisible(true);*/
+		JFrame mainFrame = new PreRsultClFrame();
+		mainFrame.setVisible(true);
 		
 		AnyThreeFrame.anythreeFrame.setVisible(true);
 		
@@ -529,9 +529,9 @@ public class ExampleControll{
 		threadKJ.start();
 		
 		//开启 出啥投啥的方案跑数
-		/*PreResultClThread preResultThread = new PreResultClThread();
+		PreResultClThread preResultThread = new PreResultClThread();
 		Thread threadPreResult = new Thread(preResultThread);
-		threadPreResult.start();*/
+		threadPreResult.start();
 		
 		//三星任选策略,赚N块钱换号
 		AnyThreeThread anythreeThread = new AnyThreeThread();
@@ -542,5 +542,5 @@ public class ExampleControll{
 		AnyThreeThread5 anythreeThread5 = new AnyThreeThread5();
 		Thread anythreeResult5 = new Thread(anythreeThread5);
 		anythreeResult5.start();
-	}
+	}*/
 }
