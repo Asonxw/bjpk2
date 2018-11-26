@@ -75,8 +75,10 @@ public class AnyThreeThread implements Runnable{
 					if(AnyThreeFrame.FFCRound == null || !AnyThreeFrame.FFCRound.equals(resultRound)){
 						AnyThreeFrame.kjTableDefaultmodel.insertRow(0, new String[]{resultRound,resultKj});
 						//判断是否有投注
-						if(AnyThreeFrame.FFCRound !=null && Double.parseDouble(AnyThreeFrame.FFCRound) == (resultRound_i-1)){
-							if(clList!=null&&clList.size()>0){
+						if(AnyThreeFrame.FFCRound !=null && (Double.parseDouble(AnyThreeFrame.FFCRound) == (resultRound_i-1) || resultRound.endsWith("0001"))){
+							//获取表格第一行（判断是否有未开奖投注）
+							Object down_first = AnyThreeFrame.tableDefaultmodel.getValueAt(0, 6);
+							if(clList!=null&&clList.size()>0&&down_first!=null&&down_first.equals("待开奖")){
 								Double tempLr = 0d;
 								Integer clIndex = 0;
 								Integer tableIndex = 0;
@@ -170,8 +172,8 @@ public class AnyThreeThread implements Runnable{
 							
 						}
 						//判断是否已经跨天
-						if(ExampleControll.nextFFCRound.endsWith("0001"))
-							AnyThreeFrame.FFCRound = ExampleControll.nextFFCRound.substring(0, 9) + "0000";
+						/*if(ExampleControll.nextFFCRound.endsWith("0001"))
+							AnyThreeFrame.FFCRound = ExampleControll.nextFFCRound.substring(0, 8) + "0000";*/
 						AnyThreeFrame.FFCRound = resultRound;
 						AnyThreeFrame.FFCResult = resultKj;
 						Thread.sleep(30000);//更新到数据后睡眠30s
@@ -356,11 +358,10 @@ public class AnyThreeThread implements Runnable{
 			}
 			
 			//将最大连挂的开奖结果加入策略
-			if(clList.size()<clNum)
+			if(clList.size()<clNum&&maxFailResult!=null)
 				clList.add(maxFailResult);
 			//已经没有连挂则退出循环
-			if(maxFailCount == 0)break;
-			if(clList.size()==clNum){
+			if(clList.size()==clNum || maxFailCount == 0){
 				
 				if(bestMaxFail==0||bestMaxFail>maxFailCount){
 					bestMaxFail = maxFailCount;
@@ -502,8 +503,7 @@ public class AnyThreeThread implements Runnable{
 	 * @throws
 	 */
 	public static void startDownFFC(){
-		//初始化策略
-		initTXFFCL();
+		
 		Integer _index = 0;
 		for (int i = clList.size()-1; i>=0; i--) {
 			

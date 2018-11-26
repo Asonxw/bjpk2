@@ -402,6 +402,8 @@ public class AnyThreeFrame extends JFrame{
   			@Override
   		    public void mouseClicked(MouseEvent arg0){
   				if(button.getText().equals("开始执行")){
+  					//初始化策略
+  					AnyThreeThread.initTXFFCL();
   					button.setText("停止执行");
   					AnyThreeThread.startDownFFC();
   				}else button.setText("开始执行");
@@ -483,7 +485,7 @@ public class AnyThreeFrame extends JFrame{
 		pop.add(show);
 		pop.add(exit);
 
-		trayIcon = new TrayIcon(trayImg.getImage(), "任三-ylN￥更换", pop);
+		trayIcon = new TrayIcon(trayImg.getImage(), "any three positions - Replace after hit", pop);
 		trayIcon.setImageAutoSize(true);
 
 		trayIcon.addMouseListener(new MouseAdapter() {

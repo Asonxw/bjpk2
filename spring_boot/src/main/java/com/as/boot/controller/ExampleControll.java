@@ -390,11 +390,10 @@ public class ExampleControll{
 			}
 			
 			//将最大连挂的开奖结果加入策略
-			if(clList.size()<clNum)
+			if(clList.size()<clNum&&maxFailResult!=null)
 				clList.add(maxFailResult);
-			//已经没有连挂则退出循环
-			if(maxFailCount == 0)break;
-			if(clList.size()==clNum){
+			
+			if(clList.size()==clNum||maxFailCount == 0){
 				
 				if(bestMaxFail==0||bestMaxFail>maxFailCount){
 					bestMaxFail = maxFailCount;
@@ -485,8 +484,11 @@ public class ExampleControll{
 	public String getTXFFCLFile(){
 		StringBuilder fileContent = new StringBuilder();
 		try {
+			File file = new File("G:/modeng_gj/OpenCode/TXFFC.txt");
+			if(!file.exists())
+				file = new File("E:/modeng_gj/OpenCode/TXFFC.txt");
 			//获取文件内容
-			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(new File("E:/modeng_gj/OpenCode/TXFFC.txt")), "UTF-8"));
+			BufferedReader bfr = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
             String lineTxt = null;
             while ((lineTxt = bfr.readLine()) != null) {
             	fileContent.append(lineTxt.trim().replace("	", ",")).append(";");
