@@ -84,7 +84,7 @@ table {
 		<span>策略结果</span>
 		<textarea id="cl" rows="3"></textarea>
 	</p>
-	<p>策略最大连挂数:<span id="maxFail"></span></p>
+	<p>策略最大连挂数:<span id="maxFail"></span>&nbsp;&nbsp;&nbsp;策略注数:<span id="listCount"></span></p>
 	<button type="button" onclick="getFFC(this);">生成策略</button>
 </body>
 	<script type="text/javascript">
@@ -138,6 +138,7 @@ table {
 					var cl = data.cl.substring(1,data.cl.length -1);
 					$("#cl").text(cl.replace(reg," "));
 					$("#maxFail").text(data.maxFailCount);
+					$("#listCount").text(data.count);
 					$this.text("生成策略");
 					$this.removeAttr("disabled");
 				}

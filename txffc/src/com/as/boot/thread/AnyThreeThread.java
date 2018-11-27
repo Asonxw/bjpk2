@@ -152,22 +152,25 @@ public class AnyThreeThread implements Runnable{
 									}
 								}
 								Boolean boomFlag = false;
-								for (int i = 0, il = clList.size(); i<il;i++) {
-									//判断是否已经爆仓（连挂数超过倍投阶梯数）
-									if(btNumList.get(i) >= (btArr.length-1)){
-										boomFlag = true;
-										//如果当前为实战爆掉则需要清空盈利及回头及倍投转模拟
-										if(mnOrSzStr.equals("真 实-投注")){
-											AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"真实投注爆仓，转为模拟投注，损失金额："+df.format(zslr_swhich)});
-											//重置回头
-											zslr_return = zslr + Double.parseDouble(AnyThreeFrame.returnField.getText());
-										}else{
-											AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"模拟投注爆仓，转为真实投注"});
-											//重置回头
-											mnlr_return = mnlr + Double.parseDouble(AnyThreeFrame.returnField.getText());
+								//如果设置了盈利转换需要判断是否爆仓
+								if(ZLinkStringUtils.isNotEmpty(AnyThreeFrame.ylSwhichField.getText())){
+									for (int i = 0, il = clList.size(); i<il;i++) {
+										//判断是否已经爆仓（连挂数超过倍投阶梯数）
+										if(btNumList.get(i) >= (btArr.length-1)){
+											boomFlag = true;
+											//如果当前为实战爆掉则需要清空盈利及回头及倍投转模拟
+											if(mnOrSzStr.equals("真 实-投注")){
+												AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"真实投注爆仓，转为模拟投注，损失金额："+df.format(zslr_swhich)});
+												//重置回头
+												zslr_return = zslr + Double.parseDouble(AnyThreeFrame.returnField.getText());
+											}else{
+												AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"模拟投注爆仓，转为真实投注"});
+												//重置回头
+												mnlr_return = mnlr + Double.parseDouble(AnyThreeFrame.returnField.getText());
+											}
+											initBtNumList();
+											changeDownType();
 										}
-										initBtNumList();
-										changeDownType();
 									}
 								}
 								
@@ -505,10 +508,11 @@ public class AnyThreeThread implements Runnable{
 				btNumList.set(i, 0);
 			}else{
 				//判断是否已超出倍投
-				if(btNumList.get(i)>=btArr.length-1)
+				if(btNumList.get(i)>=btArr.length-1){
 					//超出倍投则回归初始
 					btNumList.set(i, 0);
-				else
+					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"策略"+i+"爆仓！！"});
+				}else
 					//挂的网上倍投
 					btNumList.set(i, btNumList.get(i)+1);
 			}

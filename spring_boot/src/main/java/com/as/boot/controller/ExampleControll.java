@@ -426,6 +426,7 @@ public class ExampleControll{
 		HashMap<String, Object> params = new HashMap<String, Object>();
 		params.put("maxFailCount", bestMaxFail);
 		params.put("cl", bestClList.toString());
+		params.put("count", bestClList.size());
 		return JSONObject.toJSONString(params);
 	}
 	
