@@ -48,10 +48,13 @@ public class ModHttpUtil {
 		ModOrder order = null;
 		HashMap<String, String> clItem = null;
 		for (int i = 0; i < clList.size(); i++) {
-			clItem = clList.get(i);
-			Integer nums = clItem.get("cl").split(",").length;
-			order = new ModOrder("rx3_zx_ds", clItem.get("cl"), btArr[btNumList.get(i)].toString(), df.format(price), "1950", "0", df.format(btArr[btNumList.get(i)]*price*nums), clItem.get("position"));
-			orderList.add(order);
+			//倍数不为0的进行投注
+			if(!btArr[btNumList.get(i)].equals(0)){
+				clItem = clList.get(i);
+				Integer nums = clItem.get("cl").split(",").length;
+				order = new ModOrder("rx3_zx_ds", clItem.get("cl"), btArr[btNumList.get(i)].toString(), df.format(price), "1950", "0", df.format(btArr[btNumList.get(i)]*price*nums), clItem.get("position"));
+				orderList.add(order);
+			}
 		}
 		//String params = "lottery="+lottery+"&issue="+issue+"&order="+URLEncoder.encode(ZLinkStringUtils.parseJsonToString(orderList))+"&betType="+betType+"&sourceType="+sourceType;
 		String params = "lottery="+lottery+"&issue="+issue+"&order="+ZLinkStringUtils.parseJsonToString(orderList)+"&betType="+betType+"&sourceType="+sourceType;
@@ -65,10 +68,10 @@ public class ModHttpUtil {
 			if(resultCode.equals(1)||resultmsg.equals("ok")){
 				AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{issue+"期投注成功！"});
 				return true;
-			}/*else if(resultmsg.contains("奖期错误")){
+			}else if(resultmsg.contains("奖期错误")){
 				//奖期错误，已错过投注时间
-				System.out.println("投注失败，失败信息为："+resultmsg);
-			}*/else
+				AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败：改期投注时间已过！"});
+			}else
 				AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败："+resultmsg});
 		}
 		return false;

@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -41,8 +42,8 @@ public class AnyThreeFrame extends JFrame{
 	public static String FFCRound = null;
 	public static String FFCResult = null;
 	
-	public static JLabel accountNameLabel = new JLabel("");
-	public static JLabel accountAmountLabel = new JLabel("0.00");
+	public static JLabel accountNameLabel = new JLabel("xxxx");
+	public static JLabel accountAmountLabel = new JLabel("0.0000");
 	
 	//开奖情况
 	public static String[][] kjTableDate = {};
@@ -69,35 +70,16 @@ public class AnyThreeFrame extends JFrame{
     /**统计期数**/
 	public static JTextField historyNumField = new JTextField(8);
 	/**方案一**/
-	public static JCheckBox w1 = new JCheckBox("万");
-	public static JCheckBox q1 = new JCheckBox("千");
-	public static JCheckBox b1 = new JCheckBox("百");
-	public static JCheckBox s1 = new JCheckBox("十");
-	public static JCheckBox g1 = new JCheckBox("个");
-	/**方案二**/
-    public static JCheckBox w2 = new JCheckBox("万");
-    public static JCheckBox q2 = new JCheckBox("千");
-    public static JCheckBox b2 = new JCheckBox("百");
-    public static JCheckBox s2 = new JCheckBox("十");
-    public static JCheckBox g2 = new JCheckBox("个");
-    /**方案三**/
-    public static JCheckBox w3 = new JCheckBox("万");
-    public static JCheckBox q3 = new JCheckBox("千");
-    public static JCheckBox b3 = new JCheckBox("百");
-    public static JCheckBox s3 = new JCheckBox("十");
-    public static JCheckBox g3 = new JCheckBox("个");
-    /**方案四**/
-    public static JCheckBox w4 = new JCheckBox("万");
-    public static JCheckBox q4 = new JCheckBox("千");
-    public static JCheckBox b4 = new JCheckBox("百");
-    public static JCheckBox s4 = new JCheckBox("十");
-    public static JCheckBox g4 = new JCheckBox("个");
-    /**方案五**/
-    public static JCheckBox w5 = new JCheckBox("万");
-    public static JCheckBox q5 = new JCheckBox("千");
-    public static JCheckBox b5 = new JCheckBox("百");
-    public static JCheckBox s5 = new JCheckBox("十");
-    public static JCheckBox g5 = new JCheckBox("个");
+	public static JCheckBox wqb = new JCheckBox("012");
+	public static JCheckBox wqs = new JCheckBox("013");
+	public static JCheckBox wqg = new JCheckBox("014");
+	public static JCheckBox wbs = new JCheckBox("023");
+	public static JCheckBox wbg = new JCheckBox("024");
+	public static JCheckBox wsg = new JCheckBox("034");
+	public static JCheckBox qbs = new JCheckBox("123");
+	public static JCheckBox qbg = new JCheckBox("124");
+    public static JCheckBox qsg = new JCheckBox("134");
+    public static JCheckBox bsg = new JCheckBox("234");
     
     public static List<JCheckBox> clBoxList = null; 
     /**盈利回头值**/
@@ -116,6 +98,9 @@ public class AnyThreeFrame extends JFrame{
 	/**达值切换策略**/
 	public static JTextField changeYlField = new JTextField(5);
 	
+	/**盈利转换**/
+	public static JTextField ylSwhichField = new JTextField(5);
+	
 	/**模拟盈亏值**/
 	public static JLabel mnYkValueLabel = new JLabel("0.00");
 	/**真实盈亏值**/
@@ -131,7 +116,7 @@ public class AnyThreeFrame extends JFrame{
 	public AnyThreeFrame(){
 		this.setTitle("任三策略-中后换");
 		this.setBounds(200, 200, 200, 200);
-		this.setSize(910, 640);
+		this.setSize(910, 700);
 		this.setLocation(200, 50);
 		this.setBackground(Color.white);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -142,24 +127,32 @@ public class AnyThreeFrame extends JFrame{
 		
 		//账户信息
 		JPanel accountBox = new JPanel();
-		accountBox.setPreferredSize(new Dimension(140,190));
+		accountBox.setPreferredSize(new Dimension(150,190));
 		accountBox.setBorder(BorderFactory.createTitledBorder("账户信息"));
 		
-		JPanel accountNameBox = new JPanel();
-		accountNameBox.setPreferredSize(new Dimension(130,35));
 		
-		JLabel AccpuntNameTLabel = new JLabel("账户:");
-		accountNameBox.add(AccpuntNameTLabel);
-		accountNameBox.add(accountNameLabel);
-		accountBox.add(accountNameBox);
+		JLabel AccpuntNameTLabel = new JLabel("账户名称:");
+		accountBox.add(AccpuntNameTLabel);
+		accountNameLabel.setPreferredSize(new Dimension(55,30));
+		accountBox.add(accountNameLabel);
   		
-		JPanel accountAmountBox = new JPanel();
-		accountAmountBox.setPreferredSize(new Dimension(130,35));
-  		JLabel accpuntAmountTLabel = new JLabel("余额:");
-  		accountAmountBox.add(accpuntAmountTLabel);
-  		accountAmountBox.add(accountAmountLabel);
-		accountBox.add(accountAmountBox);
+  		JLabel accpuntAmountTLabel = new JLabel("账户余额:");
+  		accountBox.add(accpuntAmountTLabel);
+  		accountAmountLabel.setPreferredSize(new Dimension(55,30));
+  		accountBox.add(accountAmountLabel);
   		
+		
+   		//模拟盈亏
+   		JLabel mnYkLabel = new JLabel("模拟盈亏:");
+   		accountBox.add(mnYkLabel);
+   		mnYkValueLabel.setPreferredSize(new Dimension(55,30));
+   		accountBox.add(mnYkValueLabel);
+		//真实盈亏
+   		JLabel szYkLabel = new JLabel("真实盈亏:");
+   		accountBox.add(szYkLabel);
+		
+   		szYkValueLabel.setPreferredSize(new Dimension(55,30));
+   		accountBox.add(szYkValueLabel);
   		
   		panel.add(accountBox);
 		
@@ -230,76 +223,24 @@ public class AnyThreeFrame extends JFrame{
   		panel.add(initParamsBox);
   		
   	
-  		//投注位置  多个
-		
-		JLabel fun1Label = new JLabel("方案1:");
-		
-		
-		
-        
-        JLabel fun2Label = new JLabel("方案2:");
-        
-        
-        JLabel fun3Label = new JLabel("方案3:");
-        
-        
-        JLabel fun4Label = new JLabel("方案4:");
-        
-        
-        JLabel fun5Label = new JLabel("方案5:");
-        
-        
         //投注策略panel
         JPanel positionBox = new JPanel();
-        positionBox.setPreferredSize(new Dimension(270,190));
+        positionBox.setPreferredSize(new Dimension(150,190));
         positionBox.setBorder(BorderFactory.createTitledBorder("投注方案"));
-        positionBox.add(fun1Label);
+        
         //万百个
-        positionBox.add(w1);
-        w1.setSelected(true);
-        positionBox.add(q1);
-        positionBox.add(b1);
-        b1.setSelected(true);
-        positionBox.add(s1);
-        positionBox.add(g1);
-        g1.setSelected(true);
+        positionBox.add(wqb);
+        positionBox.add(wqs);
+        positionBox.add(wqg);
+        positionBox.add(wbs);
+        positionBox.add(wbg);
         
-        positionBox.add(fun2Label);
-        positionBox.add(w2);
-        positionBox.add(q2);
-        q2.setSelected(true);
-        positionBox.add(b2);
-        b2.setSelected(true);
-        positionBox.add(s2);
-        s2.setSelected(true);
-        positionBox.add(g2);
+        positionBox.add(wsg);
+        positionBox.add(qbs);
+        positionBox.add(qbg);
+        positionBox.add(qsg);
+        positionBox.add(bsg);
         
-        positionBox.add(fun3Label);
-        positionBox.add(w3);
-        positionBox.add(q3);
-        positionBox.add(b3);
-        b3.setSelected(true);
-        positionBox.add(s3);
-        s3.setSelected(true);
-        positionBox.add(g3);
-        g3.setSelected(true);
-        
-        positionBox.add(fun4Label);
-        positionBox.add(w4);
-        w4.setSelected(true);
-        positionBox.add(q4);
-        positionBox.add(b4);
-        positionBox.add(s4);
-        s4.setSelected(true);
-        positionBox.add(g4);
-        g4.setSelected(true);
-
-        positionBox.add(fun5Label);
-        positionBox.add(w5);
-        positionBox.add(q5);
-        positionBox.add(b5);
-        positionBox.add(s5);
-        positionBox.add(g5);
         
         panel.add(positionBox);
         
@@ -356,25 +297,20 @@ public class AnyThreeFrame extends JFrame{
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
-  		btArrayField.setText("1,2,4,8,16,32,65,132,268,544,1103,2238");
+  		btArrayField.setText("0,0,0,3,12,45,165");
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值
-   		/*JLabel changeYlLabel = new JLabel("达值更换策略:");
+   		JLabel changeYlLabel = new JLabel("中N期换号:");
 		downParamsBox.add(changeYlLabel);
-		changeYlField.setText("5");
-		downParamsBox.add(changeYlField);*/
+		changeYlField.setText("1");
+		downParamsBox.add(changeYlField);
 		
-   		//模拟盈亏
-   		JLabel mnYkLabel = new JLabel("模拟盈亏:");
-		downParamsBox.add(mnYkLabel);
-		
-		downParamsBox.add(mnYkValueLabel);
-		//真实盈亏
-   		JLabel szYkLabel = new JLabel("真实盈亏:");
-		downParamsBox.add(szYkLabel);
-		
-		downParamsBox.add(szYkValueLabel);
+		//切换策略盈利值
+   		JLabel ylSwhichLabel = new JLabel("盈利转换:");
+		downParamsBox.add(ylSwhichLabel);
+		ylSwhichField.setText("");
+		downParamsBox.add(ylSwhichField);
 		
 		downParamsBox.add(button);
 		
@@ -384,7 +320,7 @@ public class AnyThreeFrame extends JFrame{
   		JTable table = new JTable(tableDefaultmodel);
   		
   		JScrollPane dowmMsgBox = new JScrollPane(table);
-  		dowmMsgBox.setPreferredSize(new Dimension(880,190));
+  		dowmMsgBox.setPreferredSize(new Dimension(880,250));
   		dowmMsgBox.setBorder(BorderFactory.createTitledBorder("投注情况"));
   		
   		panel.add(dowmMsgBox);
@@ -405,37 +341,35 @@ public class AnyThreeFrame extends JFrame{
   					//初始化策略
   					AnyThreeThread.initTXFFCL();
   					button.setText("停止执行");
+  					//初始化倍投阶梯
+  					String[] btStrArr = AnyThreeFrame.btArrayField.getText().split(",");
+  					AnyThreeThread.btArr = new Integer[btStrArr.length];
+  					for (int i = 0; i < btStrArr.length; i++)
+  						AnyThreeThread.btArr[i] = Integer.parseInt(btStrArr[i]);
   					AnyThreeThread.startDownFFC();
-  				}else button.setText("开始执行");
+  				}else{
+  					button.setText("开始执行");
+  					//初始化连挂及倍投
+  					//连挂数
+  					AnyThreeThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					//倍投情况
+  					AnyThreeThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  				}
   		    }
 		});
   		
   		clBoxList = new ArrayList<JCheckBox>();
-  		clBoxList.add(w1);
-  		clBoxList.add(q1);
-  		clBoxList.add(b1);
-  		clBoxList.add(s1);
-  		clBoxList.add(g1);
-  		clBoxList.add(w2);
-  		clBoxList.add(q2);
-  		clBoxList.add(b2);
-  		clBoxList.add(s2);
-  		clBoxList.add(g2);
-  		clBoxList.add(w3);
-  		clBoxList.add(q3);
-  		clBoxList.add(b3);
-  		clBoxList.add(s3);
-  		clBoxList.add(g3);
-  		clBoxList.add(w4);
-  		clBoxList.add(q4);
-  		clBoxList.add(b4);
-  		clBoxList.add(s4);
-  		clBoxList.add(g4);
-  		clBoxList.add(w5);
-  		clBoxList.add(q5);
-  		clBoxList.add(b5);
-  		clBoxList.add(s5);
-  		clBoxList.add(g5);
+  		clBoxList.add(wqb);
+  		clBoxList.add(wqs);
+  		clBoxList.add(wqg);
+  		clBoxList.add(wbs);
+  		clBoxList.add(wbg);
+        
+  		clBoxList.add(wsg);
+  		clBoxList.add(qbs);
+  		clBoxList.add(qbg);
+  		clBoxList.add(qsg);
+  		clBoxList.add(bsg);
   		
   		this.addWindowListener(new WindowAdapter() { // 窗口关闭事件
 

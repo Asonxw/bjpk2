@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -114,7 +115,7 @@ public class LoginFrame extends JFrame{
   					AnyThreeThread anythreeThread = new AnyThreeThread();
   					Thread anythreeResult = new Thread(anythreeThread);
   					anythreeResult.start();
-  					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录成功！"});
+  					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});
   				}
   		    }
 		});
@@ -134,7 +135,7 @@ public class LoginFrame extends JFrame{
   					AnyThreeThread anythreeThread = new AnyThreeThread();
   					Thread anythreeResult = new Thread(anythreeThread);
   					anythreeResult.start();
-  					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录成功！"});
+  					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});
   		    }
 		});
 	}
