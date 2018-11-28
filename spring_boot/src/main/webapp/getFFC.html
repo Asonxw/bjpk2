@@ -124,6 +124,7 @@ table {
 			var clNum = $("#clNum").val();
 			var historyNum = $("#historyNum").val();
 			var historyRound = $("#historyRound").val();
+			historyRound = historyRound.substring(0,historyNum*18-1);
 			var aimMaxFail = $("#aimMaxFail").val();
 			var maxRestN = $("#maxRestN").val();
 			$this.attr("disabled","disabled");

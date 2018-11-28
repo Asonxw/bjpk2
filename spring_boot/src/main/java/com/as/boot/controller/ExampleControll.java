@@ -328,10 +328,31 @@ public class ExampleControll{
 	
 	@RequestMapping("/getFFC")
 	public String getTXFFCL(String historyRound, Integer historyNum, String putPosition, String initCl, Integer initClFlag, Integer initClNum, Integer clNum, Integer aimMaxFail, Integer maxRestN){
+		//解析需要投注的位置
+		String[] positionArr = putPosition.split(",");
+		//获取星数
+		Integer positionNum = positionArr.length;
+		Integer[] positionArr_i = new Integer[positionArr.length];
+		for (int i = 0; i < positionArr.length; i++)
+			positionArr_i[i] = Integer.parseInt(positionArr[i]);
+		//截取后三期作为连挂
+		String last_3ResultStr = historyRound.substring(0,18*30);
+		last_3ResultStr = last_3ResultStr.substring(0, last_3ResultStr.length()-1);
+		List<String> last_3Result = new ArrayList<String>();
+		String[] last_3ResultArr =  last_3ResultStr.split(";");
+		for (String roundR : last_3ResultArr){
+			String temp_result = roundR.split(",")[1];
+			String temp_positionR = "";
+			for (int j = 0, jl = positionArr_i.length; j < jl; j++) 
+				temp_positionR += temp_result.charAt(positionArr_i[j]);
+			last_3Result.add(temp_positionR);
+		}
+		historyRound = historyRound.substring(18*30,historyRound.length());
 		//初始化历史开奖
 		String[] historyArr = historyRound.trim().split(";");
-		if(historyNum != null && historyNum > 0)
+		/*if(historyNum != null && historyNum > 0)
 			historyArr = Arrays.copyOfRange(historyArr, 0, historyNum);
+		System.out.println(historyArr[historyArr.length-1]+""+historyArr[historyArr.length-2]);*/
 		List<String> clList = new ArrayList<String>();
 		//策略组数如果没有设定则默认为50组
 		clNum = clNum==null||clNum==0?50:clNum;
@@ -342,13 +363,7 @@ public class ExampleControll{
 		//记录最佳策略
 		Integer bestMaxFail = 0;
 		List<String> bestClList = null;
-		//解析需要投注的位置
-		String[] positionArr = putPosition.split(",");
-		//获取星数
-		Integer positionNum = positionArr.length;
-		Integer[] positionArr_i = new Integer[positionArr.length];
-		for (int i = 0; i < positionArr.length; i++)
-			positionArr_i[i] = Integer.parseInt(positionArr[i]);
+		
 		aimMaxFail = aimMaxFail==null?7:aimMaxFail;
 		//最多重置策略次数
 		maxRestN = maxRestN==null?200:maxRestN;
@@ -361,9 +376,12 @@ public class ExampleControll{
 			//若无初始策略则用随机数生成固定数量的初始策略
 			initClNum = initClNum == null||initClNum == 0?40:initClNum;
 			if(positionNum==2)clList = createInitFFCCL_2(initClNum);
-			else if(positionNum==3)clList = createInitFFCCL_3(initClNum);
+			else if(positionNum==3)clList = createInitFFCCL_3(initClNum, last_3Result);
 			else if(positionNum==4)clList = createInitFFCCL_4(initClNum);
 		}
+		
+		
+		
 		//遍历历史开奖
 		while (maxRestN != 0) {
 			//反向循环
@@ -378,7 +396,7 @@ public class ExampleControll{
 					failCount = 0;
 				}else{
 					failCount++;
-					if(failCount > maxFailCount){
+					if(failCount > maxFailCount && !last_3Result.contains(result)){
 						//更新最大连挂及重置连挂出奖记录
 						maxFailCount = failCount;
 						maxFailResult = result;
@@ -390,7 +408,7 @@ public class ExampleControll{
 			}
 			
 			//将最大连挂的开奖结果加入策略
-			if(clList.size()<clNum&&maxFailResult!=null)
+			if(clList.size()<clNum&&maxFailResult!=null&&!clList.contains(maxFailResult))
 				clList.add(maxFailResult);
 			
 			if(clList.size()==clNum||maxFailCount == 0){
@@ -399,15 +417,16 @@ public class ExampleControll{
 					bestMaxFail = maxFailCount;
 					bestClList = clList;
 				}
-				//如果连挂小于等于预期，则退出循环返回结果
-				if(maxFailCount <= aimMaxFail){
+				
+				//如果连挂小于等于预期并且最後一期掛掉，则退出循环返回结果
+				if(maxFailCount <= aimMaxFail && !bestClList.contains(result)){
 					break;
 				}else{
 					//如果不符合预期则重新执行(系统生成随机数的才能重新执行)
 					if(initClFlag == 1){
 						//重置系统随机初始策略
 						if(positionNum==2)clList = createInitFFCCL_2(initClNum);
-						else if(positionNum==3)clList = createInitFFCCL_3(initClNum);
+						else if(positionNum==3)clList = createInitFFCCL_3(initClNum, last_3Result);
 						else if(positionNum==4)clList = createInitFFCCL_4(initClNum);
 						failCount = 0;
 						maxFailResult = null;
@@ -447,13 +466,13 @@ public class ExampleControll{
 		return list;
 	}
 	
-	public static List<String> createInitFFCCL_3(Integer initClNum){
+	public static List<String> createInitFFCCL_3(Integer initClNum, List<String> last_result){
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < initClNum; i++) {
 			String item = null;
 			item = createRandom()+""+createRandom()+""+createRandom();
 			while (true) {
-				if(list.contains(item))
+				if(list.contains(item) || last_result.contains(item))
 					item = createRandom()+""+createRandom()+""+createRandom();
 				else{
 					list.add(item);
