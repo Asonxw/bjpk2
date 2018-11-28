@@ -101,6 +101,9 @@ public class AnyThreeFrame extends JFrame{
 	/**盈利转换**/
 	public static JTextField ylSwhichField = new JTextField(5);
 	
+	/**初始连挂数**/
+	public static JTextField initFailCountField = new JTextField(4);
+	
 	/**模拟盈亏值**/
 	public static JLabel mnYkValueLabel = new JLabel("0.00");
 	/**真实盈亏值**/
@@ -176,7 +179,7 @@ public class AnyThreeFrame extends JFrame{
         JLabel initClNumLabel = new JLabel("初始策略数:");
         initClNumPanel.add(initClNumLabel);
   		
-  		initClNumField.setText("200");
+  		initClNumField.setText("100");
   		initClNumPanel.add(initClNumField);
   		initParamsBox.add(initClNumPanel);
   		
@@ -186,7 +189,7 @@ public class AnyThreeFrame extends JFrame{
         JLabel aimMaxFailLabel = new JLabel("理想连挂数:");
         aimMaxFailPanel.add(aimMaxFailLabel);
   		
-  		aimMaxFailField.setText("3");
+  		aimMaxFailField.setText("0");
   		aimMaxFailPanel.add(aimMaxFailField);
   		initParamsBox.add(aimMaxFailPanel);
   		
@@ -206,7 +209,7 @@ public class AnyThreeFrame extends JFrame{
         JLabel clNumLabel = new JLabel("策略总组数:");
         clNumPanel.add(clNumLabel);
        
-  		clNumField.setText("480");
+  		clNumField.setText("700");
   		clNumPanel.add(clNumField);
   		initParamsBox.add(clNumPanel);
   		
@@ -216,7 +219,7 @@ public class AnyThreeFrame extends JFrame{
   		JLabel historyNumLabel = new JLabel("统计总期数:");
   		historyNumPanel.add(historyNumLabel);
   		
-  		historyNumField.setText("1440");
+  		historyNumField.setText("1115");
   		historyNumPanel.add(historyNumField);
   		initParamsBox.add(historyNumPanel);
   		
@@ -312,7 +315,14 @@ public class AnyThreeFrame extends JFrame{
 		ylSwhichField.setText("");
 		downParamsBox.add(ylSwhichField);
 		
+		//初始连挂数
+		JLabel initFailCountLabel = new JLabel("初始连挂数:");
+		downParamsBox.add(initFailCountLabel);
+		initFailCountField.setText("10");
+		downParamsBox.add(initFailCountField);
+		
 		downParamsBox.add(button);
+		
 		
   		panel.add(downParamsBox);
   		
@@ -346,7 +356,7 @@ public class AnyThreeFrame extends JFrame{
   					AnyThreeThread.btArr = new Integer[btStrArr.length];
   					for (int i = 0; i < btStrArr.length; i++)
   						AnyThreeThread.btArr[i] = Integer.parseInt(btStrArr[i]);
-  					AnyThreeThread.startDownFFC();
+  					AnyThreeThread.startDownFFC(Integer.parseInt(AnyThreeFrame.initFailCountField.getText()));
   				}else{
   					button.setText("开始执行");
   					//初始化连挂及倍投

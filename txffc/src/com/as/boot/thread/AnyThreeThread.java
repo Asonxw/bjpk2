@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.as.boot.controller.ExampleControll;
 import com.as.boot.frame.AnyThreeFrame;
 import com.as.boot.frame.AnyThreeFrame5;
@@ -65,6 +66,9 @@ public class AnyThreeThread implements Runnable{
 			btArr[i] = Integer.parseInt(btStrArr[i]);
 		while (true) {
 			try {
+				//初始连挂数
+				Integer initFailCount = Integer.parseInt(AnyThreeFrame.initFailCountField.getText());
+				
 				String resultRound = ExampleControll.FFCRound;
 				String resultKj = ExampleControll.FFCResult;
 				if(ZLinkStringUtils.isNotEmpty(resultKj)){
@@ -155,19 +159,24 @@ public class AnyThreeThread implements Runnable{
 								//如果设置了盈利转换需要判断是否爆仓
 								if(ZLinkStringUtils.isNotEmpty(AnyThreeFrame.ylSwhichField.getText())){
 									for (int i = 0, il = clList.size(); i<il;i++) {
-										//判断是否已经爆仓（连挂数超过倍投阶梯数）
-										if(btNumList.get(i) >= (btArr.length-1)){
+										//判断是否已经爆仓（达到倍投阶梯顶端）
+										if(btNumList.get(i) >= (btArr.length-1)&&mnOrSzStr.equals("真 实-投注")){
 											boomFlag = true;
 											//如果当前为实战爆掉则需要清空盈利及回头及倍投转模拟
 											if(mnOrSzStr.equals("真 实-投注")){
 												AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"真实投注爆仓，转为模拟投注，损失金额："+df.format(zslr_swhich)});
 												//重置回头
 												zslr_return = zslr + Double.parseDouble(AnyThreeFrame.returnField.getText());
-											}else{
-												AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"模拟投注爆仓，转为真实投注"});
-												//重置回头
-												mnlr_return = mnlr + Double.parseDouble(AnyThreeFrame.returnField.getText());
 											}
+											initBtNumList();
+											changeDownType();
+										
+										}else if(failCountList.get(i) >= (btArr.length-1)&&mnOrSzStr.equals("模拟-投注")){
+											boomFlag = true;
+											//模拟投注，只要连挂超过倍投则判定为爆仓
+											AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"模拟投注连挂爆仓，转为真实投注"});
+											//重置回头
+											mnlr_return = mnlr + Double.parseDouble(AnyThreeFrame.returnField.getText());
 											initBtNumList();
 											changeDownType();
 										}
@@ -211,7 +220,7 @@ public class AnyThreeThread implements Runnable{
 								initTXFFCL();
 								everyClYl = 0d;
 							}*/
-							startDownFFC();
+							startDownFFC(initFailCount);
 							
 						}
 						//判断是否已经跨天
@@ -238,6 +247,7 @@ public class AnyThreeThread implements Runnable{
 		String historyRound = historyResult();
 		//统计历史期数
 		Integer historyNum = Integer.parseInt(AnyThreeFrame.historyNumField.getText());
+		historyRound = historyRound.substring(0, historyNum*18-1);
 		//是否系统初始化策略，只能是
 		Integer initClFlag = 1;
 		//初始化策略组数
@@ -253,7 +263,10 @@ public class AnyThreeThread implements Runnable{
 		HashMap<String, String> tempClMap = null;
 		String clname = "";
 		String clPosition = "";
+		//初始连挂数
+		Integer initFailCount = Integer.parseInt(AnyThreeFrame.initFailCountField.getText());
 		try {
+			HashMap<String, String> clParams = null;
 			for (int i = 0, il = AnyThreeFrame.clBoxList.size(); i < il; i++) {
 				tempClMap = new HashMap<String, String>();
 				if(AnyThreeFrame.clBoxList.get(i).isSelected()){
@@ -264,7 +277,9 @@ public class AnyThreeThread implements Runnable{
 					//逗号分隔
 					clPosition = clname.charAt(0)+ "," + clname.charAt(1)+ "," + clname.charAt(2);
 					tempClMap.put("position", clname);
-					tempClMap.put("cl", getTXFFCL(historyRound, historyNum, clPosition, null, initClFlag, initClNum, clNum, aimMaxFail, maxRestN));
+					clParams = getTXFFCL(historyRound, historyNum, clPosition, null, initClFlag, initClNum, clNum, aimMaxFail, maxRestN, initFailCount);
+					tempClMap.put("cl", clParams.get("cl"));
+					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+clname+"策略初始化成功，注数："+clParams.get("count")});
 				}else
 					tempClMap.put("position", "0");//未选中则标记为空策略
 				temClList.set(i, tempClMap);
@@ -276,11 +291,12 @@ public class AnyThreeThread implements Runnable{
 	}
 	
 	
-	public static void rfreshTXFFCL(Integer clIndex){
+	public static void rfreshTXFFCL(Integer clIndex, Integer initFailCount){
 		//获取历史开奖情况
 		String historyRound = historyResult();
 		//统计历史期数
 		Integer historyNum = Integer.parseInt(AnyThreeFrame.historyNumField.getText());
+		historyRound = historyRound.substring(0, historyNum*18-1);
 		//是否系统初始化策略，只能是
 		Integer initClFlag = 1;
 		//初始化策略组数
@@ -296,6 +312,7 @@ public class AnyThreeThread implements Runnable{
 		String clname = "";
 		String clPosition = "";
 		try {
+			HashMap<String, String> clParams = null;
 			for (int i = 0, il = AnyThreeFrame.clBoxList.size(); i < il; i++) {
 				if(AnyThreeFrame.clBoxList.get(i).isSelected()){
 					/*clname += _index-1;
@@ -307,7 +324,8 @@ public class AnyThreeThread implements Runnable{
 						clPosition = clname.charAt(0)+ "," + clname.charAt(1)+ "," + clname.charAt(2);
 						tempClMap = new HashMap<String, String>();
 						tempClMap.put("position", clname);
-						tempClMap.put("cl", getTXFFCL(historyRound, historyNum, clPosition, null, initClFlag, initClNum, clNum, aimMaxFail, maxRestN));
+						clParams = getTXFFCL(historyRound, historyNum, clPosition, null, initClFlag, initClNum, clNum, aimMaxFail, maxRestN, initFailCount);
+						tempClMap.put("cl", clParams.get("cl"));
 						clList.set(clIndex, tempClMap);
 						break;
 					}
@@ -318,11 +336,30 @@ public class AnyThreeThread implements Runnable{
 		}
 	}
 	
-	public static String getTXFFCL(String historyRound, Integer historyNum, String putPosition, String initCl, Integer initClFlag, Integer initClNum, Integer clNum, Integer aimMaxFail, Integer maxRestN){
+	public static HashMap<String, String> getTXFFCL(String historyRound, Integer historyNum, String putPosition, String initCl, Integer initClFlag, Integer initClNum, Integer clNum, Integer aimMaxFail, Integer maxRestN, Integer initFailCount){
+		//解析需要投注的位置
+		String[] positionArr = putPosition.split(",");
+		//获取星数
+		Integer positionNum = positionArr.length;
+		Integer[] positionArr_i = new Integer[positionArr.length];
+		for (int i = 0; i < positionArr.length; i++)
+			positionArr_i[i] = Integer.parseInt(positionArr[i]);
+		//截取后N 期作为连挂
+		String last_ResultStr = historyRound.substring(0,18*initFailCount);
+		last_ResultStr = last_ResultStr.substring(0, last_ResultStr.length()-1);
+		List<String> last_Result = new ArrayList<String>();
+		String[] last_ResultArr =  last_ResultStr.split(";");
+		for (String roundR : last_ResultArr){
+			String temp_result = roundR.split(",")[1];
+			String temp_positionR = "";
+			for (int j = 0, jl = positionArr_i.length; j < jl; j++) 
+				temp_positionR += temp_result.charAt(positionArr_i[j]);
+			last_Result.add(temp_positionR);
+		}
+		historyRound = historyRound.substring(18*initFailCount,historyRound.length());
+		
 		//初始化历史开奖
 		String[] historyArr = historyRound.trim().split(";");
-		if(historyNum != null && historyNum > 0)
-			historyArr = Arrays.copyOfRange(historyArr, 0, historyNum);
 		List<String> clList = new ArrayList<String>();
 		//策略组数如果没有设定则默认为50组
 		clNum = clNum==null||clNum==0?50:clNum;
@@ -333,16 +370,10 @@ public class AnyThreeThread implements Runnable{
 		//记录最佳策略
 		Integer bestMaxFail = 0;
 		List<String> bestClList = null;
-		//解析需要投注的位置
-		String[] positionArr = putPosition.split(",");
-		//获取星数
-		Integer positionNum = positionArr.length;
-		Integer[] positionArr_i = new Integer[positionArr.length];
-		for (int i = 0; i < positionArr.length; i++)
-			positionArr_i[i] = Integer.parseInt(positionArr[i]);
 		aimMaxFail = aimMaxFail==null?7:aimMaxFail;
 		//最多重置策略次数
 		maxRestN = maxRestN==null?200:maxRestN;
+		
 		//获取初始策略
 		if(initClFlag == 0 && initCl!=null){
 			String[] initClArr = initCl.split(",");
@@ -352,43 +383,39 @@ public class AnyThreeThread implements Runnable{
 			//若无初始策略则用随机数生成固定数量的初始策略
 			initClNum = initClNum == null||initClNum == 0?40:initClNum;
 			if(positionNum==2)clList = createInitFFCCL_2(initClNum);
-			else if(positionNum==3)clList = createInitFFCCL_3(initClNum);
+			else if(positionNum==3)clList = createInitFFCCL_3(initClNum, last_Result);
 			else if(positionNum==4)clList = createInitFFCCL_4(initClNum);
 		}
 		//遍历历史开奖
 		while (maxRestN != 0) {
 			//反向循环
 			for (int i = historyArr.length-1; i >= 0; i--) {
-				if(ZLinkStringUtils.isNotEmpty(historyArr[i])){
-					if(historyArr[i].trim().split(",").length > 1){
-						//获取开奖
-						String item_result = historyArr[i].trim().split(",")[1].trim();
-						String result = "";
-						for (int j = 0, jl = positionArr_i.length; j < jl; j++) 
-							result += item_result.charAt(positionArr_i[j]);
-						if(clList.contains(result)){
-							//中
-							failCount = 0;
-						}else{
-							failCount++;
-							if(failCount > maxFailCount){
-								//更新最大连挂及重置连挂出奖记录
-								maxFailCount = failCount;
-								maxFailResult = result;
-								//达到历史最高则可直接停止当前循环
-								if(historymaxFail == failCount)
-									break;
-							}
-						}
+				//获取开奖
+				String item_result = historyArr[i].trim().split(",")[1].trim();
+				String result = "";
+				for (int j = 0, jl = positionArr_i.length; j < jl; j++) 
+					result += item_result.charAt(positionArr_i[j]);
+				if(clList.contains(result)){
+					//中
+					failCount = 0;
+				}else{
+					failCount++;
+					if(failCount > maxFailCount && !last_Result.contains(result)){
+						//更新最大连挂及重置连挂出奖记录
+						maxFailCount = failCount;
+						maxFailResult = result;
+						//达到历史最高则可直接停止当前循环
+						if(historymaxFail == failCount)
+							break;
 					}
 				}
 			}
 			
 			//将最大连挂的开奖结果加入策略
-			if(clList.size()<clNum&&maxFailResult!=null)
+			if(clList.size()<clNum&&maxFailResult!=null&&!clList.contains(maxFailResult))
 				clList.add(maxFailResult);
-			//已经没有连挂则退出循环
-			if(clList.size()==clNum || maxFailCount == 0){
+			
+			if(clList.size()==clNum||maxFailCount == 0){
 				
 				if(bestMaxFail==0||bestMaxFail>maxFailCount){
 					bestMaxFail = maxFailCount;
@@ -402,7 +429,7 @@ public class AnyThreeThread implements Runnable{
 					if(initClFlag == 1){
 						//重置系统随机初始策略
 						if(positionNum==2)clList = createInitFFCCL_2(initClNum);
-						else if(positionNum==3)clList = createInitFFCCL_3(initClNum);
+						else if(positionNum==3)clList = createInitFFCCL_3(initClNum, last_Result);
 						else if(positionNum==4)clList = createInitFFCCL_4(initClNum);
 						failCount = 0;
 						maxFailResult = null;
@@ -418,7 +445,10 @@ public class AnyThreeThread implements Runnable{
 				maxFailResult = null;
 			}
 		}
-		return bestClList.toString();
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("cl", bestClList.toString());
+		params.put("count", bestClList.size()+"");
+		return params;
 	}
 	
 	public static List<String> createInitFFCCL_2(Integer initClNum){
@@ -438,13 +468,13 @@ public class AnyThreeThread implements Runnable{
 		return list;
 	}
 	
-	public static List<String> createInitFFCCL_3(Integer initClNum){
+	public static List<String> createInitFFCCL_3(Integer initClNum, List<String> last_result){
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < initClNum; i++) {
 			String item = null;
 			item = createRandom()+""+createRandom()+""+createRandom();
 			while (true) {
-				if(list.contains(item))
+				if(list.contains(item) || last_result.contains(item))
 					item = createRandom()+""+createRandom()+""+createRandom();
 				else{
 					list.add(item);
@@ -526,7 +556,7 @@ public class AnyThreeThread implements Runnable{
 	 * @return: void      
 	 * @throws
 	 */
-	public static void startDownFFC(){
+	public static void startDownFFC(Integer initFailCount){
 		Integer changeNum = Integer.parseInt(AnyThreeFrame.changeYlField.getText());
 		Integer _index = 0;
 		Boolean downSulFlag = false;
@@ -544,7 +574,7 @@ public class AnyThreeThread implements Runnable{
 		for (int i = clList.size()-1; i>=0; i--) {
 			//中N期更换
 			if(sulCountList.get(i).equals(changeNum)){
-				rfreshTXFFCL(i);
+				rfreshTXFFCL(i, initFailCount);
 				sulCountList.set(i,0);
 			}
 			HashMap<String, String> clItem = clList.get(i);
