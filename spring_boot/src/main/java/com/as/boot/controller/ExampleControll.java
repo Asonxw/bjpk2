@@ -336,7 +336,7 @@ public class ExampleControll{
 		for (int i = 0; i < positionArr.length; i++)
 			positionArr_i[i] = Integer.parseInt(positionArr[i]);
 		//截取后三期作为连挂
-		String last_3ResultStr = historyRound.substring(0,18*10);
+		String last_3ResultStr = historyRound.substring(0,18*100);
 		last_3ResultStr = last_3ResultStr.substring(0, last_3ResultStr.length()-1);
 		List<String> last_3Result = new ArrayList<String>();
 		String[] last_3ResultArr =  last_3ResultStr.split(";");
@@ -347,7 +347,7 @@ public class ExampleControll{
 				temp_positionR += temp_result.charAt(positionArr_i[j]);
 			last_3Result.add(temp_positionR);
 		}
-		historyRound = historyRound.substring(18*10,historyRound.length());
+		historyRound = historyRound.substring(18*100,historyRound.length());
 		//初始化历史开奖
 		String[] historyArr = historyRound.trim().split(";");
 		/*if(historyNum != null && historyNum > 0)

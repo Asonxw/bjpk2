@@ -122,7 +122,7 @@ public class AnyThreeThread implements Runnable{
 										}else{
 											zjFlagList.set(i, false);
 											failCountList.set(i, failCountList.get(i) + 1);
-											
+											sulCountList.set(i, 0);
 											if(failCountList.get(i)>maxFailCountList.get(i))
 												maxFailCountList.set(i, failCountList.get(i));
 											//记录连挂数
@@ -171,7 +171,7 @@ public class AnyThreeThread implements Runnable{
 											initBtNumList();
 											changeDownType();
 										
-										}else if(failCountList.get(i) >= (btArr.length-1)&&mnOrSzStr.equals("模拟-投注")){
+										}else if(failCountList.get(i) >= btArr.length&&mnOrSzStr.equals("模拟-投注")){
 											boomFlag = true;
 											//模拟投注，只要连挂超过倍投则判定为爆仓
 											AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"模拟投注连挂爆仓，转为真实投注"});
@@ -345,18 +345,20 @@ public class AnyThreeThread implements Runnable{
 		for (int i = 0; i < positionArr.length; i++)
 			positionArr_i[i] = Integer.parseInt(positionArr[i]);
 		//截取后N 期作为连挂
-		String last_ResultStr = historyRound.substring(0,18*initFailCount);
-		last_ResultStr = last_ResultStr.substring(0, last_ResultStr.length()-1);
 		List<String> last_Result = new ArrayList<String>();
-		String[] last_ResultArr =  last_ResultStr.split(";");
-		for (String roundR : last_ResultArr){
-			String temp_result = roundR.split(",")[1];
-			String temp_positionR = "";
-			for (int j = 0, jl = positionArr_i.length; j < jl; j++) 
-				temp_positionR += temp_result.charAt(positionArr_i[j]);
-			last_Result.add(temp_positionR);
+		if(!initFailCount.equals(0)){
+			String last_ResultStr = historyRound.substring(0,18*initFailCount);
+			last_ResultStr = last_ResultStr.substring(0, last_ResultStr.length()-1);
+			String[] last_ResultArr =  last_ResultStr.split(";");
+			for (String roundR : last_ResultArr){
+				String temp_result = roundR.split(",")[1];
+				String temp_positionR = "";
+				for (int j = 0, jl = positionArr_i.length; j < jl; j++) 
+					temp_positionR += temp_result.charAt(positionArr_i[j]);
+				last_Result.add(temp_positionR);
+			}
+			historyRound = historyRound.substring(18*initFailCount,historyRound.length());
 		}
-		historyRound = historyRound.substring(18*initFailCount,historyRound.length());
 		
 		//初始化历史开奖
 		String[] historyArr = historyRound.trim().split(";");
