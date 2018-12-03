@@ -101,8 +101,14 @@ public class AnyThreeFrame extends JFrame{
 	/**盈利转换**/
 	public static JTextField ylSwhichField = new JTextField(5);
 	
+	/**模拟连挂转换**/
+	public static JTextField mnFailSwhichField = new JTextField(5);
+	
 	/**初始连挂数**/
 	public static JTextField initFailCountField = new JTextField(4);
+	
+	/**是否开启真实投注**/
+	public static JCheckBox trueDownFlagField = new JCheckBox("开");
 	
 	/**模拟盈亏值**/
 	public static JLabel mnYkValueLabel = new JLabel("0.00");
@@ -315,11 +321,23 @@ public class AnyThreeFrame extends JFrame{
 		ylSwhichField.setText("");
 		downParamsBox.add(ylSwhichField);
 		
+		//模拟连挂转换
+   		JLabel mnFailSwhichLabel = new JLabel("模拟连挂转换:");
+		downParamsBox.add(mnFailSwhichLabel);
+		mnFailSwhichField.setText("3");
+		downParamsBox.add(mnFailSwhichField);
+		
 		//初始连挂数
 		JLabel initFailCountLabel = new JLabel("初始连挂数:");
 		downParamsBox.add(initFailCountLabel);
 		initFailCountField.setText("10");
 		downParamsBox.add(initFailCountField);
+		
+		//初始连挂数
+		JLabel trueDownFlagLabel = new JLabel("开启真实投注:");
+		downParamsBox.add(trueDownFlagLabel);
+		//initFailCountFsield.setText("10");
+		downParamsBox.add(trueDownFlagField);
 		
 		downParamsBox.add(button);
 		

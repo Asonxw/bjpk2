@@ -68,6 +68,9 @@ public class AnyThreeThread implements Runnable{
 			try {
 				//初始连挂数
 				Integer initFailCount = Integer.parseInt(AnyThreeFrame.initFailCountField.getText());
+				//获取模拟连挂转换数
+				Integer mnFailSwhich = Integer.parseInt(AnyThreeFrame.mnFailSwhichField.getText());
+				
 				
 				String resultRound = ExampleControll.FFCRound;
 				String resultKj = ExampleControll.FFCResult;
@@ -107,7 +110,6 @@ public class AnyThreeThread implements Runnable{
 										for (int j = 0; j < key.length(); j++) {
 											result += kjArray[Integer.parseInt(key.charAt(j)+"")];
 										}
-										System.out.println(resultRound+"期开奖结果为："+resultKj+",定位开奖为："+result);
 										//判断是否中奖
 										if(clItem.get("cl").contains(result)){
 											zjFlagList.set(i, true);
@@ -172,7 +174,7 @@ public class AnyThreeThread implements Runnable{
 											initBtNumList();
 											changeDownType();
 										
-										}else if(failCountList.get(i) >= btArr.length&&mnOrSzStr.equals("模拟-投注")){
+										}else if(failCountList.get(i) >= mnFailSwhich&&mnOrSzStr.equals("模拟-投注")){
 											boomFlag = true;
 											//模拟投注，只要连挂超过倍投则判定为爆仓
 											AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"模拟投注连挂爆仓，转为真实投注"});
@@ -563,7 +565,6 @@ public class AnyThreeThread implements Runnable{
 		
 		Boolean downSulFlag = false;
 		Integer changeNum = Integer.parseInt(AnyThreeFrame.changeYlField.getText());
-		//下注成功后再表格追加
 		for (int i = clList.size()-1; i>=0; i--) {
 			//中N期更换
 			if(sulCountList.get(i).equals(changeNum)){
@@ -571,17 +572,18 @@ public class AnyThreeThread implements Runnable{
 				sulCountList.set(i,0);
 			}
 		}
-		//判断是否需要投注
-		if(AnyThreeFrame.downTypeSz.isSelected()){
+		//判断是否需要投注，实战且开启真实投注
+		if(AnyThreeFrame.downTypeSz.isSelected()&&AnyThreeFrame.trueDownFlagField.isSelected()){
 			//格式化奖期
 			String issue = ExampleControll.nextFFCRound;
 			issue = issue.substring(0,8)+"-"+issue.substring(8,12);
 			downSulFlag = ModHttpUtil.addTXFFCOrder_RX3(issue, clList, btNumList, btArr, baseMoney);
-		}
-		if(!AnyThreeFrame.downTypeSz.isSelected()||downSulFlag){
+		}else
+			downSulFlag = true;
+		//下注成功后再表格追加
+		if(downSulFlag)
 			//投注成功或者模拟模式时添加表格投注记录
 			insertDownToTable();
-		}
 		
 	}
 	
