@@ -18,7 +18,7 @@ public class ModHttpUtil {
 
 	public static String addOrderUrl = "https://www.modgame.vip/lottery/api/u/v1/lottery/add_order";
 	
-	public static String urlSessionId = null;//"SIG=OoaPUBd/ll692/ZWTNx/HjSzZsiUu38jnr0nDMG5a705qSB3Vhj2NLGHhE35UoOG";
+	public static String urlSessionId = null;//"SIG=OoaPUBd/ll692/ZWTNx/Hurqi3BcXDpKqbFo+RhqIf9mNwtp3nmOumC7hFHwoSq9";
 	
 	public static String mdKjUrl = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712";
 	
@@ -42,38 +42,46 @@ public class ModHttpUtil {
 	 */
 	public static Boolean addTXFFCOrder_RX3(String issue, List<HashMap<String, String>> clList, List<Integer> btNumList, Integer[] btArr, Double price){
 		String lottery = "TXFFC";
-		Integer betType = 1;
+		
 		Integer sourceType = 0;
 		List<ModOrder> orderList = new ArrayList<>();
 		ModOrder order = null;
+		Integer clCount = 0;
 		HashMap<String, String> clItem = null;
 		for (int i = 0; i < clList.size(); i++) {
 			//倍数不为0的进行投注
 			if(!btArr[btNumList.get(i)].equals(0)){
 				clItem = clList.get(i);
-				Integer nums = clItem.get("cl").split(",").length;
-				order = new ModOrder("rx3_zx_ds", clItem.get("cl"), btArr[btNumList.get(i)].toString(), df.format(price), "1950", "0", df.format(btArr[btNumList.get(i)]*price*nums), clItem.get("position"));
-				orderList.add(order);
+				if(!clItem.get("position").equals("0")){
+					Integer nums = clItem.get("cl").split(",").length;
+					order = new ModOrder("rx3_zx_ds", clItem.get("cl"), btArr[btNumList.get(i)].toString(), df.format(price), "1950", "0", df.format(btArr[btNumList.get(i)]*price*nums), clItem.get("position"));
+					orderList.add(order);
+					clCount++;
+				}
 			}
 		}
-		//String params = "lottery="+lottery+"&issue="+issue+"&order="+URLEncoder.encode(ZLinkStringUtils.parseJsonToString(orderList))+"&betType="+betType+"&sourceType="+sourceType;
-		String params = "lottery="+lottery+"&issue="+issue+"&order="+ZLinkStringUtils.parseJsonToString(orderList)+"&betType="+betType+"&sourceType="+sourceType;
-		//发送post请求
-		String result = HttpFuncUtil.postBySession(urlSessionId, addOrderUrl, params);
-		System.out.println(result);
-		if(ZLinkStringUtils.isNotEmpty(result)){
-			JSONObject resultJson = JSONObject.parseObject(result);
-			Integer resultCode = resultJson.getInteger("code");
-			String resultmsg = resultJson.getString("msg");
-			if(resultCode.equals(1)||resultmsg.equals("ok")){
-				AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{issue+"期投注成功！"});
-				return true;
-			}else if(resultmsg.contains("奖期错误")){
-				//奖期错误，已错过投注时间
-				AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败：改期投注时间已过！"});
-			}else
-				AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败："+resultmsg});
-		}
+		Integer betType = clCount>1?2:1;
+		if(orderList.size()>0){
+			//String params = "lottery="+lottery+"&issue="+issue+"&order="+URLEncoder.encode(ZLinkStringUtils.parseJsonToString(orderList))+"&betType="+betType+"&sourceType="+sourceType;
+			String params = "lottery="+lottery+"&issue="+issue+"&order="+ZLinkStringUtils.parseJsonToString(orderList)+"&betType="+betType+"&sourceType="+sourceType;
+			System.out.println(params);
+			//发送post请求
+			String result = HttpFuncUtil.postBySession(urlSessionId, addOrderUrl, params);
+			System.out.println(result);
+			if(ZLinkStringUtils.isNotEmpty(result)){
+				JSONObject resultJson = JSONObject.parseObject(result);
+				Integer resultCode = resultJson.getInteger("code");
+				String resultmsg = resultJson.getString("msg");
+				if(resultCode.equals(1)||resultmsg.equals("ok")){
+					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{issue+"期投注成功！"});
+					return true;
+				}else if(resultmsg.contains("奖期错误")){
+					//奖期错误，已错过投注时间
+					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败：改期投注时间已过！"});
+				}else
+					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败："+resultmsg});
+			}
+		}else return true;
 		return false;
 	}
 	

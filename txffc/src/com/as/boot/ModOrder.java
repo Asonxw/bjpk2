@@ -118,6 +118,6 @@ public class ModOrder {
 			}
 			aimCode = aimCode.substring(0,aimCode.length()-1)+"|";
 		}
-		return aimCode.substring(0,aimCode.length()-1);
+		return aimCode.substring(0,aimCode.length()-1).replace("| ,", "|");
 	}
 }

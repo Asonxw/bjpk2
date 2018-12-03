@@ -107,6 +107,7 @@ public class AnyThreeThread implements Runnable{
 										for (int j = 0; j < key.length(); j++) {
 											result += kjArray[Integer.parseInt(key.charAt(j)+"")];
 										}
+										System.out.println(resultRound+"期开奖结果为："+resultKj+",定位开奖为："+result);
 										//判断是否中奖
 										if(clItem.get("cl").contains(result)){
 											zjFlagList.set(i, true);
@@ -543,7 +544,7 @@ public class AnyThreeThread implements Runnable{
 				if(btNumList.get(i)>=btArr.length-1){
 					//超出倍投则回归初始
 					btNumList.set(i, 0);
-					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"策略"+i+"爆仓！！"});
+					//AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"策略"+i+"爆仓！！"});
 				}else
 					//挂的网上倍投
 					btNumList.set(i, btNumList.get(i)+1);
@@ -559,19 +560,9 @@ public class AnyThreeThread implements Runnable{
 	 * @throws
 	 */
 	public static void startDownFFC(Integer initFailCount){
-		Integer changeNum = Integer.parseInt(AnyThreeFrame.changeYlField.getText());
-		Integer _index = 0;
+		
 		Boolean downSulFlag = false;
-		//判断是否需要投注
-		/*if(AnyThreeFrame.downTypeSz.isSelected()){
-			//格式化奖期
-			String issue = ExampleControll.nextFFCRound;
-			issue = issue.substring(0,9)+"-"+issue.substring(9,12);
-			downSulFlag = ModHttpUtil.addTXFFCOrder_RX3(issue, clList, btNumList, btArr, baseMoney);
-		}
-		if(downSulFlag){
-			
-		}*/
+		Integer changeNum = Integer.parseInt(AnyThreeFrame.changeYlField.getText());
 		//下注成功后再表格追加
 		for (int i = clList.size()-1; i>=0; i--) {
 			//中N期更换
@@ -579,11 +570,36 @@ public class AnyThreeThread implements Runnable{
 				rfreshTXFFCL(i, initFailCount);
 				sulCountList.set(i,0);
 			}
+		}
+		//判断是否需要投注
+		if(AnyThreeFrame.downTypeSz.isSelected()){
+			//格式化奖期
+			String issue = ExampleControll.nextFFCRound;
+			issue = issue.substring(0,8)+"-"+issue.substring(8,12);
+			downSulFlag = ModHttpUtil.addTXFFCOrder_RX3(issue, clList, btNumList, btArr, baseMoney);
+		}
+		if(!AnyThreeFrame.downTypeSz.isSelected()||downSulFlag){
+			//投注成功或者模拟模式时添加表格投注记录
+			insertDownToTable();
+		}
+		
+	}
+	
+	/**
+	 * 添加表格下注
+	 * @author Ason
+	 * @Title: insertDownToTable 
+	 * @param changeNum
+	 * @param initFailCount void
+	 * @throws
+	 */
+	public static void insertDownToTable(){
+		Integer _index = 0;
+		for (int i = clList.size()-1; i>=0; i--) {
 			HashMap<String, String> clItem = clList.get(i);
 			if(_index == 0)
 				AnyThreeFrame.tableDefaultmodel.insertRow(0, new String[]{"--","--","--","--","--","--","--","--","--"});
 			if(!clItem.get("position").equals("0")){
-				
 				AnyThreeFrame.tableDefaultmodel.insertRow(0, new String[]{ExampleControll.nextFFCRound,clItem.get("position")+clItem.get("cl"),btArr[btNumList.get(i)].toString(),"--","--","--","待开奖","待开奖",moOrSzArr[mnOrSzFlag]});
 			}
 			_index++;

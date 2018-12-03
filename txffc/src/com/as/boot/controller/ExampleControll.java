@@ -1,6 +1,11 @@
 package com.as.boot.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import com.as.boot.frame.LoginFrame;
+import com.as.boot.utils.ModHttpUtil;
 
 public class ExampleControll{
 	
@@ -16,9 +21,14 @@ public class ExampleControll{
 		map.put("cl", "[123]");
 		List<Integer> btNumList = new ArrayList<>();
 		btNumList.add(0);
+		btNumList.add(0);
 		Integer[] btArr = {1,2,4};
+		HashMap<String, String> map2 = new HashMap<>();
+		map2.put("position", "024");
+		map2.put("cl", "[234]");
 		clList.add(map);
-		ModHttpUtil.addTXFFCOrder_RX3("20181121-1278", clList, btNumList, btArr, 0.002);*/
+		clList.add(map2);
+		ModHttpUtil.addTXFFCOrder_RX3("20181202-0019", clList, btNumList, btArr, 0.002);*/
 		//AnyThreeFrame.anythreeFrame.setVisible(true);
 		//LoginFrame.loginFrame.setVisible(true);
 		
