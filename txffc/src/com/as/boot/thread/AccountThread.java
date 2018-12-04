@@ -36,6 +36,10 @@ public class AccountThread implements Runnable{
 							AnyThreeFrame.accountNameLabel.setText(accountName);
 						}
 						
+					}else{
+						AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录已失效，尝试重新登录..."});
+						//重新登录
+						ModHttpUtil.logind(accountName, accountPass);
 					}
 				}else{
 					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录已失效，尝试重新登录..."});
