@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.as.boot.frame.HotClFrame;
 import com.as.boot.frame.LoginFrame;
 import com.as.boot.utils.ModHttpUtil;
 
@@ -14,7 +15,8 @@ public class ExampleControll{
 	public static String nextFFCRound = null;
 	
 	public static void main(String[] args) {
-		LoginFrame.loginFrame.setVisible(true);
+		//LoginFrame.loginFrame.setVisible(true);
+		HotClFrame.hotClFrame.setVisible(true);
 		/*List<HashMap<String, String>> clList = new ArrayList<>();
 		HashMap<String, String> map = new HashMap<>();
 		map.put("position", "123");

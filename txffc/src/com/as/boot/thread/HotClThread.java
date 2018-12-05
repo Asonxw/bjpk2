@@ -10,15 +10,15 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.controller.ExampleControll;
-import com.as.boot.frame.AnyThreeFrame;
-import com.as.boot.frame.AnyThreeFrame5;
+import com.as.boot.frame.HotClFrame;
 import com.as.boot.utils.ModHttpUtil;
 import com.as.boot.utils.ZLinkStringUtils;
 
-public class AnyThreeThread implements Runnable{
+public class HotClThread implements Runnable{
 	
 	private Double zslr = 0d;
 	//真实盈利回头值
@@ -55,28 +55,28 @@ public class AnyThreeThread implements Runnable{
 	@Override
 	public void run() {
 		//初始化盈利回头
-		if(ZLinkStringUtils.isNotEmpty(AnyThreeFrame.returnField.getText())){
-			zslr_return = zslr + Double.parseDouble(AnyThreeFrame.returnField.getText());
-			mnlr_return = mnlr + Double.parseDouble(AnyThreeFrame.returnField.getText());
+		if(ZLinkStringUtils.isNotEmpty(HotClFrame.returnField.getText())){
+			zslr_return = zslr + Double.parseDouble(HotClFrame.returnField.getText());
+			mnlr_return = mnlr + Double.parseDouble(HotClFrame.returnField.getText());
 		}
 		//初始化倍投阶梯
-		String[] btStrArr = AnyThreeFrame.btArrayField.getText().split(",");
+		String[] btStrArr = HotClFrame.btArrayField.getText().split(",");
 		btArr = new Integer[btStrArr.length];
 		for (int i = 0; i < btStrArr.length; i++)
 			btArr[i] = Integer.parseInt(btStrArr[i]);
 		while (true) {
 			try {
 				//初始连挂数
-				Integer initFailCount = Integer.parseInt(AnyThreeFrame.initFailCountField.getText());
+				Integer initFailCount = Integer.parseInt(HotClFrame.initFailCountField.getText());
 				//获取模拟连挂转换数
-				Integer mnFailSwhich = Integer.parseInt(AnyThreeFrame.mnFailSwhichField.getText());
+				Integer mnFailSwhich = Integer.parseInt(HotClFrame.mnFailSwhichField.getText());
 				
 				
 				String resultRound = ExampleControll.FFCRound;
 				String resultKj = ExampleControll.FFCResult;
 				if(ZLinkStringUtils.isNotEmpty(resultKj)){
 					//更新倍投阶梯
-					btStrArr = AnyThreeFrame.btArrayField.getText().split(",");
+					btStrArr = HotClFrame.btArrayField.getText().split(",");
 					btArr = new Integer[btStrArr.length];
 					for (int i = 0; i < btStrArr.length; i++)
 						btArr[i] = Integer.parseInt(btStrArr[i]);
@@ -84,17 +84,17 @@ public class AnyThreeThread implements Runnable{
 					//将开奖结果取出为数组
 					String[] kjArray = resultKj.split(",");
 					Double resultRound_i = Double.parseDouble(resultRound);
-					if(AnyThreeFrame.FFCRound == null || !AnyThreeFrame.FFCRound.equals(resultRound)){
-						AnyThreeFrame.kjTableDefaultmodel.insertRow(0, new String[]{resultRound,resultKj});
+					if(HotClFrame.FFCRound == null || !HotClFrame.FFCRound.equals(resultRound)){
+						HotClFrame.kjTableDefaultmodel.insertRow(0, new String[]{resultRound,resultKj});
 						//判断是否有投注
-						if(AnyThreeFrame.FFCRound !=null && (Double.parseDouble(AnyThreeFrame.FFCRound) == (resultRound_i-1) || resultRound.endsWith("0001"))){
+						if(HotClFrame.FFCRound !=null && (Double.parseDouble(HotClFrame.FFCRound) == (resultRound_i-1) || resultRound.endsWith("0001"))){
 							//获取表格第一行（判断是否有未开奖投注）
-							Object down_first = AnyThreeFrame.tableDefaultmodel.getRowCount()>0?AnyThreeFrame.tableDefaultmodel.getValueAt(0, 6):null;
+							Object down_first = HotClFrame.tableDefaultmodel.getRowCount()>0?HotClFrame.tableDefaultmodel.getValueAt(0, 6):null;
 							if(clList!=null&&clList.size()>0&&down_first!=null&&down_first.equals("待开奖")){
 								Double tempLr = 0d;
 								Integer tableIndex = 0;
 								//判断已投注方案类型
-								String mnOrSzStr = AnyThreeFrame.tableDefaultmodel.getValueAt(0, 8).toString();
+								String mnOrSzStr = HotClFrame.tableDefaultmodel.getValueAt(0, 8).toString();
 								//利润
 								for (int i = 0, il = clList.size(); i<il;i++) {
 									HashMap<String, String> clItem = clList.get(i);
@@ -114,12 +114,12 @@ public class AnyThreeThread implements Runnable{
 										if(clItem.get("cl").contains(result)){
 											zjFlagList.set(i, true);
 											failCountList.set(i, 0);
-											AnyThreeFrame.tableDefaultmodel.setValueAt("中", tableIndex, 7);
+											HotClFrame.tableDefaultmodel.setValueAt("中", tableIndex, 7);
 											//计算盈利值
 											Double itemLr = btArr[btNumList.get(i)] * baseMoney * pl;
 											tempLr += itemLr;
-											AnyThreeFrame.tableDefaultmodel.setValueAt("0/"+maxFailCountList.get(i), tableIndex, 4);
-											AnyThreeFrame.tableDefaultmodel.setValueAt(df.format(itemLr), tableIndex, 3);
+											HotClFrame.tableDefaultmodel.setValueAt("0/"+maxFailCountList.get(i), tableIndex, 4);
+											HotClFrame.tableDefaultmodel.setValueAt(df.format(itemLr), tableIndex, 3);
 											sulCountList.set(i, sulCountList.get(i) + 1);
 											btNumList.set(i, 0);
 										}else{
@@ -129,47 +129,47 @@ public class AnyThreeThread implements Runnable{
 											if(failCountList.get(i)>maxFailCountList.get(i))
 												maxFailCountList.set(i, failCountList.get(i));
 											//记录连挂数
-											AnyThreeFrame.tableDefaultmodel.setValueAt(failCountList.get(i)+"/"+maxFailCountList.get(i), tableIndex, 4);
-											AnyThreeFrame.tableDefaultmodel.setValueAt("挂", tableIndex, 7);
+											HotClFrame.tableDefaultmodel.setValueAt(failCountList.get(i)+"/"+maxFailCountList.get(i), tableIndex, 4);
+											HotClFrame.tableDefaultmodel.setValueAt("挂", tableIndex, 7);
 											Double tempFailP = -clArr.length * baseMoney *  btArr[btNumList.get(i)];
-											AnyThreeFrame.tableDefaultmodel.setValueAt(df.format(tempFailP), tableIndex, 3);
+											HotClFrame.tableDefaultmodel.setValueAt(df.format(tempFailP), tableIndex, 3);
 										}
-										AnyThreeFrame.tableDefaultmodel.setValueAt(resultKj, tableIndex, 6);
+										HotClFrame.tableDefaultmodel.setValueAt(resultKj, tableIndex, 6);
 										tableIndex++;
 									}
 								}
-								AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+resultRound+"期结算完成，单期盈亏："+df.format(tempLr)});
+								HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+resultRound+"期结算完成，单期盈亏："+df.format(tempLr)});
 								if(mnOrSzStr.equals("模拟-投注")){
 									mnlr += tempLr;
-									AnyThreeFrame.mnYkValueLabel.setText(df.format(mnlr));
+									HotClFrame.mnYkValueLabel.setText(df.format(mnlr));
 								}else{
 									zslr += tempLr;
-									AnyThreeFrame.szYkValueLabel.setText(df.format(zslr));
+									HotClFrame.szYkValueLabel.setText(df.format(zslr));
 								}
 								//判断盈利转换
-								if(ZLinkStringUtils.isNotEmpty(AnyThreeFrame.ylSwhichField.getText())&&mnOrSzStr.equals("真 实-投注")){
-									Integer ylSwhich = Integer.parseInt(AnyThreeFrame.ylSwhichField.getText());
+								if(ZLinkStringUtils.isNotEmpty(HotClFrame.ylSwhichField.getText())&&mnOrSzStr.equals("真 实-投注")){
+									Integer ylSwhich = Integer.parseInt(HotClFrame.ylSwhichField.getText());
 									zslr_swhich += tempLr;
-									AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"真实投注盈利转换积累值："+df.format(zslr_swhich)});
+									HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"真实投注盈利转换积累值："+df.format(zslr_swhich)});
 									//真实盈利达到盈利转换值
 									if(zslr_swhich >= ylSwhich){
-										AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"真实投注已达目标，切换为模拟投注，真实投注盈亏："+df.format(zslr_swhich)});
+										HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"真实投注已达目标，切换为模拟投注，真实投注盈亏："+df.format(zslr_swhich)});
 										//切换投注类型
 										changeDownType();
 									}
 								}
 								Boolean boomFlag = false;
 								//如果设置了盈利转换需要判断是否爆仓
-								if(ZLinkStringUtils.isNotEmpty(AnyThreeFrame.ylSwhichField.getText())){
+								if(ZLinkStringUtils.isNotEmpty(HotClFrame.ylSwhichField.getText())){
 									for (int i = 0, il = clList.size(); i<il;i++) {
 										//判断是否已经爆仓（达到倍投阶梯顶端）
 										if(btNumList.get(i) >= (btArr.length-1)&&mnOrSzStr.equals("真 实-投注")){
 											boomFlag = true;
 											//如果当前为实战爆掉则需要清空盈利及回头及倍投转模拟
 											if(mnOrSzStr.equals("真 实-投注")){
-												AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"真实投注爆仓，转为模拟投注，损失金额："+df.format(zslr_swhich)});
+												HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"真实投注爆仓，转为模拟投注，损失金额："+df.format(zslr_swhich)});
 												//重置回头
-												zslr_return = zslr + Double.parseDouble(AnyThreeFrame.returnField.getText());
+												zslr_return = zslr + Double.parseDouble(HotClFrame.returnField.getText());
 											}
 											initBtNumList();
 											changeDownType();
@@ -177,9 +177,9 @@ public class AnyThreeThread implements Runnable{
 										}else if(failCountList.get(i) >= mnFailSwhich&&mnOrSzStr.equals("模拟-投注")){
 											boomFlag = true;
 											//模拟投注，只要连挂超过倍投则判定为爆仓
-											AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"模拟投注连挂爆仓，转为真实投注"});
+											HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"模拟投注连挂爆仓，转为真实投注"});
 											//重置回头
-											mnlr_return = mnlr + Double.parseDouble(AnyThreeFrame.returnField.getText());
+											mnlr_return = mnlr + Double.parseDouble(HotClFrame.returnField.getText());
 											initBtNumList();
 											changeDownType();
 										}
@@ -187,22 +187,22 @@ public class AnyThreeThread implements Runnable{
 								}
 								
 								//盈利回头判断（爆仓不需要执行）
-								if(!boomFlag&&ZLinkStringUtils.isNotEmpty(AnyThreeFrame.returnField.getText())){
+								if(!boomFlag&&ZLinkStringUtils.isNotEmpty(HotClFrame.returnField.getText())){
 									if(mnOrSzStr.equals("模拟-投注")&&mnlr >= mnlr_return){
 										//模拟盈利回头重置
-										mnlr_return = mnlr + Double.parseDouble(AnyThreeFrame.returnField.getText());
-										AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"盈利回头成功，模拟投注-下期盈利回头为："+df.format(mnlr_return)});
+										mnlr_return = mnlr + Double.parseDouble(HotClFrame.returnField.getText());
+										HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"盈利回头成功，模拟投注-下期盈利回头为："+df.format(mnlr_return)});
 										initBtNumList();
 									}else if(mnOrSzStr.equals("真 实-投注")&&zslr >= zslr_return){
-										zslr_return = zslr + Double.parseDouble(AnyThreeFrame.returnField.getText());
-										AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"盈利回头成功，真实投注-下期盈利回头为："+df.format(zslr_return)});
+										zslr_return = zslr + Double.parseDouble(HotClFrame.returnField.getText());
+										HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"盈利回头成功，真实投注-下期盈利回头为："+df.format(zslr_return)});
 										initBtNumList();
 									}else
 										addBtnNumList();
 								}else if(!boomFlag)
 									addBtnNumList();
 								//如果是刚从模拟转到实战，则初始化倍投
-								if(ZLinkStringUtils.isNotEmpty(AnyThreeFrame.returnField.getText())){
+								if(ZLinkStringUtils.isNotEmpty(HotClFrame.returnField.getText())){
 									if(mnOrSzStr.equals("模拟-投注"))
 										//检查到已经切换为真实投注，初始化倍投
 										if(mnOrSzFlag.equals(1))
@@ -213,7 +213,7 @@ public class AnyThreeThread implements Runnable{
 							//断期
 						}
 						//是否投注
-						if(AnyThreeFrame.button.getText().equals("停止执行")){
+						if(HotClFrame.button.getText().equals("停止执行")){
 							//判断是否需要更改策略
 							/*if(changeClYl!=null&&everyClYl>=changeClYl){
 								initTXFFCL();
@@ -228,12 +228,12 @@ public class AnyThreeThread implements Runnable{
 						}
 						//判断是否已经跨天
 						/*if(ExampleControll.nextFFCRound.endsWith("0001"))
-							AnyThreeFrame.FFCRound = ExampleControll.nextFFCRound.substring(0, 8) + "0000";*/
-						AnyThreeFrame.FFCRound = resultRound;
-						AnyThreeFrame.FFCResult = resultKj;
+							HotClFrame.FFCRound = ExampleControll.nextFFCRound.substring(0, 8) + "0000";*/
+						HotClFrame.FFCRound = resultRound;
+						HotClFrame.FFCResult = resultKj;
 						Thread.sleep(30000);//更新到数据后睡眠30s
 						
-					}else if(AnyThreeFrame.FFCRound.equals(resultRound)){
+					}else if(HotClFrame.FFCRound.equals(resultRound)){
 						Thread.sleep(1000);//未更新到数据睡眠3s
 					}
 				}else
@@ -249,40 +249,40 @@ public class AnyThreeThread implements Runnable{
 		//获取历史开奖情况
 		String historyRound = historyResult();
 		//统计历史期数
-		Integer historyNum = Integer.parseInt(AnyThreeFrame.historyNumField.getText());
+		Integer historyNum = Integer.parseInt(HotClFrame.historyNumField.getText());
 		historyRound = historyRound.substring(0, historyNum*18-1);
 		//是否系统初始化策略，只能是
 		Integer initClFlag = 1;
 		//初始化策略组数
-		Integer initClNum = Integer.parseInt(AnyThreeFrame.initClNumField.getText());
+		Integer initClNum = Integer.parseInt(HotClFrame.initClNumField.getText());
 		//策略数
-		Integer clNum = Integer.parseInt(AnyThreeFrame.clNumField.getText());
+		Integer clNum = Integer.parseInt(HotClFrame.clNumField.getText());
 		//期望最大连挂数
-		Integer aimMaxFail = Integer.parseInt(AnyThreeFrame.aimMaxFailField.getText());
+		Integer aimMaxFail = Integer.parseInt(HotClFrame.aimMaxFailField.getText());
 		//重置次数
-		Integer maxRestN = Integer.parseInt(AnyThreeFrame.maxRestNField.getText());
+		Integer maxRestN = Integer.parseInt(HotClFrame.maxRestNField.getText());
 		List<HashMap<String, String>> temClList = new ArrayList<HashMap<String,String>>();
 		temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);
 		HashMap<String, String> tempClMap = null;
 		String clname = "";
 		String clPosition = "";
 		//初始连挂数
-		Integer initFailCount = Integer.parseInt(AnyThreeFrame.initFailCountField.getText());
+		Integer initFailCount = Integer.parseInt(HotClFrame.initFailCountField.getText());
 		try {
 			HashMap<String, String> clParams = null;
-			for (int i = 0, il = AnyThreeFrame.clBoxList.size(); i < il; i++) {
+			for (int i = 0, il = HotClFrame.clBoxList.size(); i < il; i++) {
 				tempClMap = new HashMap<String, String>();
-				if(AnyThreeFrame.clBoxList.get(i).isSelected()){
+				if(HotClFrame.clBoxList.get(i).isSelected()){
 					/*clname += _index-1;
 					clPosition += (_index-1)+",";*/
 					//获取投注位置
-					clname = AnyThreeFrame.clBoxList.get(i).getText();
+					clname = HotClFrame.clBoxList.get(i).getText();
 					//逗号分隔
 					clPosition = clname.charAt(0)+ "," + clname.charAt(1)+ "," + clname.charAt(2);
 					tempClMap.put("position", clname);
 					clParams = getTXFFCL(historyRound, historyNum, clPosition, null, initClFlag, initClNum, clNum, aimMaxFail, maxRestN, initFailCount);
 					tempClMap.put("cl", clParams.get("cl"));
-					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+clname+"策略初始化成功，注数："+clParams.get("count")});
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+clname+"策略初始化成功，注数："+clParams.get("count")});
 				}else
 					tempClMap.put("position", "0");//未选中则标记为空策略
 				temClList.set(i, tempClMap);
@@ -298,39 +298,28 @@ public class AnyThreeThread implements Runnable{
 		//获取历史开奖情况
 		String historyRound = historyResult();
 		//统计历史期数
-		Integer historyNum = Integer.parseInt(AnyThreeFrame.historyNumField.getText());
+		Integer historyNum = Integer.parseInt(HotClFrame.historyNumField.getText());
 		Integer l = historyNum*18-1;
 		if(historyRound.length() > l)
 			historyRound = historyRound.substring(0, l);
 		else System.out.println(historyRound.length());
-		//是否系统初始化策略，只能是
-		Integer initClFlag = 1;
-		//初始化策略组数
-		Integer initClNum = Integer.parseInt(AnyThreeFrame.initClNumField.getText());
 		//策略数
-		Integer clNum = Integer.parseInt(AnyThreeFrame.clNumField.getText());
-		//期望最大连挂数
-		Integer aimMaxFail = Integer.parseInt(AnyThreeFrame.aimMaxFailField.getText());
-		//重置次数
-		Integer maxRestN = Integer.parseInt(AnyThreeFrame.maxRestNField.getText());
+		Integer clNum = Integer.parseInt(HotClFrame.clNumField.getText());
 		
 		HashMap<String, String> tempClMap = null;
-		String clname = "";
 		String clPosition = "";
 		try {
 			HashMap<String, String> clParams = null;
-			for (int i = 0, il = AnyThreeFrame.clBoxList.size(); i < il; i++) {
-				if(AnyThreeFrame.clBoxList.get(i).isSelected()){
+			for (int i = 0, il = HotClFrame.clBoxList.size(); i < il; i++) {
+				if(HotClFrame.clBoxList.get(i).isSelected()){
 					/*clname += _index-1;
 					clPosition += (_index-1)+",";*/
 					if(clIndex.equals(i)){
 						//获取投注位置
-						clname = AnyThreeFrame.clBoxList.get(i).getText();
-						//逗号分隔
-						clPosition = clname.charAt(0)+ "," + clname.charAt(1)+ "," + clname.charAt(2);
+						String clname = HotClFrame.clBoxList.get(i).getText();
 						tempClMap = new HashMap<String, String>();
 						tempClMap.put("position", clname);
-						clParams = getTXFFCL(historyRound, historyNum, clPosition, null, initClFlag, initClNum, clNum, aimMaxFail, maxRestN, initFailCount);
+						clParams = getTXFFCL(historyRound, clname, clNum);
 						tempClMap.put("cl", clParams.get("cl"));
 						clList.set(clIndex, tempClMap);
 						break;
@@ -342,120 +331,76 @@ public class AnyThreeThread implements Runnable{
 		}
 	}
 	
-	public static HashMap<String, String> getTXFFCL(String historyRound, Integer historyNum, String putPosition, String initCl, Integer initClFlag, Integer initClNum, Integer clNum, Integer aimMaxFail, Integer maxRestN, Integer initFailCount){
+	public static HashMap<String, String> getTXFFCL(String historyRound, String putPosition, Integer clNum){
 		//解析需要投注的位置
-		String[] positionArr = putPosition.split(",");
-		//获取星数
-		Integer positionNum = positionArr.length;
-		Integer[] positionArr_i = new Integer[positionArr.length];
-		for (int i = 0; i < positionArr.length; i++)
-			positionArr_i[i] = Integer.parseInt(positionArr[i]);
-		//截取后N 期作为连挂
-		List<String> last_Result = new ArrayList<String>();
-		if(!initFailCount.equals(0)){
-			String last_ResultStr = historyRound.substring(0,18*initFailCount);
-			last_ResultStr = last_ResultStr.substring(0, last_ResultStr.length()-1);
-			String[] last_ResultArr =  last_ResultStr.split(";");
-			for (String roundR : last_ResultArr){
-				String temp_result = roundR.split(",")[1];
-				String temp_positionR = "";
-				for (int j = 0, jl = positionArr_i.length; j < jl; j++) 
-					temp_positionR += temp_result.charAt(positionArr_i[j]);
-				last_Result.add(temp_positionR);
-			}
-			historyRound = historyRound.substring(18*initFailCount,historyRound.length());
-		}
-		
+		Integer putPosition_i = Integer.parseInt(putPosition);
+		HashMap<String, String> params = new HashMap<>();
+		//取出开奖位置上的开奖号
 		//初始化历史开奖
 		String[] historyArr = historyRound.trim().split(";");
-		List<String> clList = new ArrayList<String>();
-		//策略组数如果没有设定则默认为50组
-		clNum = clNum==null||clNum==0?50:clNum;
-		Integer failCount = 0;
-		Integer maxFailCount = 0;
-		Integer historymaxFail = 0;
-		String maxFailResult = null;
-		//记录最佳策略
-		Integer bestMaxFail = 0;
-		List<String> bestClList = null;
-		aimMaxFail = aimMaxFail==null?7:aimMaxFail;
-		//最多重置策略次数
-		maxRestN = maxRestN==null?200:maxRestN;
-		
-		//获取初始策略
-		if(initClFlag == 0 && initCl!=null){
-			String[] initClArr = initCl.split(",");
-			for (String string : initClArr) 
-				clList.add(string);
-		}else{
-			//若无初始策略则用随机数生成固定数量的初始策略
-			initClNum = initClNum == null||initClNum == 0?40:initClNum;
-			if(positionNum==2)clList = createInitFFCCL_2(initClNum);
-			else if(positionNum==3)clList = createInitFFCCL_3(initClNum, last_Result);
-			else if(positionNum==4)clList = createInitFFCCL_4(initClNum);
+		List<Integer> listResult = new ArrayList<>();
+		//循环
+		for (int i = 0; i < historyArr.length; i++) {
+			//获取开奖
+			String item_result = historyArr[i].trim().split(",")[1].trim();
+			listResult.add(Integer.parseInt(item_result.charAt(putPosition_i)+""));
 		}
-		//遍历历史开奖
-		while (maxRestN != 0) {
-			//反向循环
-			for (int i = historyArr.length-1; i >= 0; i--) {
-				//获取开奖
-				String item_result = historyArr[i].trim().split(",")[1].trim();
-				String result = "";
-				for (int j = 0, jl = positionArr_i.length; j < jl; j++) 
-					result += item_result.charAt(positionArr_i[j]);
-				if(clList.contains(result)){
-					//中
-					failCount = 0;
-				}else{
-					failCount++;
-					if(failCount > maxFailCount && !last_Result.contains(result)){
-						//更新最大连挂及重置连挂出奖记录
-						maxFailCount = failCount;
-						maxFailResult = result;
-						//达到历史最高则可直接停止当前循环
-						if(historymaxFail == failCount)
-							break;
+		System.out.println(listResult);
+		Integer[] itemcount = new Integer[]{0,0,0,0,0,0,0,0,0,0};
+		//统计出现次数最多的
+		for (Integer i : listResult) {
+			itemcount[i] = itemcount[i]+1; 
+		}
+		List<HashMap<String, Integer>> tempClList = new ArrayList<>();
+		//用于防止重复
+		List<Integer> temClList_i = new ArrayList<>();
+		HashMap<String, Integer> tempItem  = null;
+		for (int i = 10; i >= 0; i--) {
+			for (int j = 0; j < itemcount.length; j++) {
+				if(itemcount[j] == i)
+					if(!temClList_i.contains(j)){
+						tempItem = new HashMap<>();
+						tempItem.put("count", itemcount[j]);
+						tempItem.put("position", j);
+						tempClList.add(tempItem);
+						//添加进list防止重复
+						temClList_i.add(j);
 					}
-				}
 			}
-			
-			//将最大连挂的开奖结果加入策略
-			if(clList.size()<clNum&&maxFailResult!=null&&!clList.contains(maxFailResult))
-				clList.add(maxFailResult);
-			
-			if(clList.size()==clNum||maxFailCount == 0){
-				
-				if(bestMaxFail==0||bestMaxFail>maxFailCount){
-					bestMaxFail = maxFailCount;
-					bestClList = clList;
-				}
-				//如果连挂小于等于预期，则退出循环返回结果
-				if(maxFailCount <= aimMaxFail){
-					break;
-				}else{
-					//如果不符合预期则重新执行(系统生成随机数的才能重新执行)
-					if(initClFlag == 1){
-						//重置系统随机初始策略
-						if(positionNum==2)clList = createInitFFCCL_2(initClNum);
-						else if(positionNum==3)clList = createInitFFCCL_3(initClNum, last_Result);
-						else if(positionNum==4)clList = createInitFFCCL_4(initClNum);
-						failCount = 0;
-						maxFailResult = null;
-						//控制循环次数为maxRestN次，防止无限循环
-						maxRestN --;
-					}else break;
-				}
-			}
-			//循环完一期后将最大重新计算
-			if(maxRestN!=0){
-				historymaxFail = maxFailCount;
-				maxFailCount = 0;
-				maxFailResult = null;
-			}
+			if(temClList_i.size()>=clNum)break;//已达到标准
 		}
-		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("cl", bestClList.toString());
-		params.put("count", bestClList.size()+"");
+		System.out.println(ZLinkStringUtils.parseJsonToString(tempClList));
+		//初步结果获取的策略大于目标策略数，则需要进入筛选
+		if(tempClList.size()>clNum){
+			List<Integer> needSx = new ArrayList<>();
+			Integer sxCount = tempClList.get(tempClList.size()-1).get("count");
+			//将最后几个相同出现次数的取出并判断谁先出现
+			for (int i = tempClList.size()-1; i >= 0; i--) {
+				tempItem = tempClList.get(i);
+				if(tempItem.get("count").equals(sxCount))
+					needSx.add(tempItem.get("position"));
+				else break;
+			}
+			Integer needSxCount = clNum - (tempClList.size() - needSx.size());
+			List<Integer> sxSulList = new ArrayList<>();
+			for (int i = 0; i < listResult.size(); i++) {
+				for (int j = 0; j < needSx.size(); j++) {
+					if(listResult.get(i).equals(needSx.get(j))&&!sxSulList.contains(needSx.get(j)))
+						sxSulList.add(needSx.get(j));
+					if(sxSulList.size() == needSxCount)break;
+				}
+			}
+			
+			//重新组装数据
+			temClList_i = new ArrayList<>();
+			for (int i = 0; i < tempClList.size() - needSx.size(); i++) 
+				temClList_i.add(tempClList.get(i).get("position"));
+			
+			temClList_i.addAll(sxSulList);
+		}
+	
+		params.put(putPosition, temClList_i.toString());
+		System.out.println(temClList_i.toString());
 		return params;
 	}
 	
@@ -549,7 +494,7 @@ public class AnyThreeThread implements Runnable{
 				if(btNumList.get(i)>=btArr.length-1){
 					//超出倍投则回归初始
 					btNumList.set(i, 0);
-					//AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"策略"+i+"爆仓！！"});
+					//HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"策略"+i+"爆仓！！"});
 				}else
 					//挂的网上倍投
 					btNumList.set(i, btNumList.get(i)+1);
@@ -567,7 +512,7 @@ public class AnyThreeThread implements Runnable{
 	public static void startDownFFC(Integer initFailCount){
 		
 		Boolean downSulFlag = false;
-		Integer changeNum = Integer.parseInt(AnyThreeFrame.changeYlField.getText());
+		Integer changeNum = Integer.parseInt(HotClFrame.changeYlField.getText());
 		for (int i = clList.size()-1; i>=0; i--) {
 			//中N期更换
 			if(sulCountList.get(i).equals(changeNum)){
@@ -576,7 +521,7 @@ public class AnyThreeThread implements Runnable{
 			}
 		}
 		//判断是否需要投注，实战且开启真实投注
-		if(AnyThreeFrame.downTypeSz.isSelected()&&AnyThreeFrame.trueDownFlagField.isSelected()){
+		if(HotClFrame.downTypeSz.isSelected()&&HotClFrame.trueDownFlagField.isSelected()){
 			//格式化奖期
 			String issue = ExampleControll.nextFFCRound;
 			issue = issue.substring(0,8)+"-"+issue.substring(8,12);
@@ -603,9 +548,9 @@ public class AnyThreeThread implements Runnable{
 		for (int i = clList.size()-1; i>=0; i--) {
 			HashMap<String, String> clItem = clList.get(i);
 			if(_index == 0)
-				AnyThreeFrame.tableDefaultmodel.insertRow(0, new String[]{"--","--","--","--","--","--","--","--","--"});
+				HotClFrame.tableDefaultmodel.insertRow(0, new String[]{"--","--","--","--","--","--","--","--","--"});
 			if(!clItem.get("position").equals("0")){
-				AnyThreeFrame.tableDefaultmodel.insertRow(0, new String[]{ExampleControll.nextFFCRound,clItem.get("position")+clItem.get("cl"),btArr[btNumList.get(i)].toString(),"--","--","--","待开奖","待开奖",moOrSzArr[mnOrSzFlag]});
+				HotClFrame.tableDefaultmodel.insertRow(0, new String[]{ExampleControll.nextFFCRound,clItem.get("position")+clItem.get("cl"),btArr[btNumList.get(i)].toString(),"--","--","--","待开奖","待开奖",moOrSzArr[mnOrSzFlag]});
 			}
 			_index++;
 		}
@@ -613,15 +558,20 @@ public class AnyThreeThread implements Runnable{
 	
 	//切换盈利
 	public static void changeDownType() {
-		if(AnyThreeFrame.downTypeMn.isSelected()){
+		if(HotClFrame.downTypeMn.isSelected()){
 			//当前为模拟则改为实战
-			AnyThreeThread.mnOrSzFlag = 1;
-			AnyThreeFrame.downTypeSz.setSelected(true);
-		}else if(AnyThreeFrame.downTypeSz.isSelected()){
+			HotClThread.mnOrSzFlag = 1;
+			HotClFrame.downTypeSz.setSelected(true);
+		}else if(HotClFrame.downTypeSz.isSelected()){
 			//当前为实战则改为模拟
-			AnyThreeThread.mnOrSzFlag = 0;
-			AnyThreeFrame.downTypeMn.setSelected(true);
+			HotClThread.mnOrSzFlag = 0;
+			HotClFrame.downTypeMn.setSelected(true);
 		}
 		zslr_swhich = 0d;
+	}
+	
+	public static void main(String[] args) {
+		String round = "181205-1165,74817;181205-1164,47360;181205-1163,32505;181205-1162,58027;181205-1161,68425;181205-1160,67273;181205-1159,63439;181205-1158,73070;181205-1157,13344;181205-1156,59144;181205-1155,46073;181205-1154,15926;181205-1153,89153;181205-1152,80962;181205-1151,62175;181205-1150,60898;181205-1149,50248;181205-1148,99407;181205-1147,79902;181205-1146,92505;181205-1145,69532;181205-1144,57109;181205-1143,49539;181205-1142,43373;181205-1141,97744;181205-1140,01038;181205-1139,91595;181205-1138,97515;181205-1137,93670;181205-1136,02408";
+		getTXFFCL(round, "0", 7);
 	}
 }
