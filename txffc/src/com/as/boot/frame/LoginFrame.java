@@ -29,6 +29,7 @@ import javax.swing.table.DefaultTableModel;
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.thread.AccountThread;
 import com.as.boot.thread.AnyThreeThread;
+import com.as.boot.thread.HotClThread;
 import com.as.boot.thread.KjThread;
 import com.as.boot.utils.HttpFuncUtil;
 import com.as.boot.utils.ModHttpUtil;
@@ -69,7 +70,8 @@ public class LoginFrame extends JFrame{
 		JLabel accountLable = new JLabel("帐号:");
 		accountPanel.add(accountLable);
 		accountPanel.add(accountField);
-		accountField.setText("ason_x");
+		//accountField.setText("ason_x");
+		accountField.setText("zzn1280388052");
 		panel.add(accountPanel);
 		
 		
@@ -77,8 +79,8 @@ public class LoginFrame extends JFrame{
 		passPanel.setPreferredSize(new Dimension(880,35));
 		JLabel passLable = new JLabel("密码:");
 		passPanel.add(passLable);
-		//passField.setText("9c3db9e8694b4dec98f60858ea8b8d67");
-		passField.setText("nhmasonxt950203");
+		//passField.setText("nhmasonxt950203");
+		passField.setText("qi951102");
 		passPanel.add(passField);
 		panel.add(passPanel);
 		
@@ -106,13 +108,17 @@ public class LoginFrame extends JFrame{
   					accountThread.start();
   					
   					LoginFrame.loginFrame.setVisible(false);
-  					AnyThreeFrame.anythreeFrame.setVisible(true);
+  					//AnyThreeFrame.anythreeFrame.setVisible(true);
+  					HotClFrame.hotClFrame.setVisible(true);
   					//启动线程
   					KjThread kjThread = new KjThread();
   					Thread threadKJ = new Thread(kjThread);
   					threadKJ.start();
   					
-  					AnyThreeThread anythreeThread = new AnyThreeThread();
+  					/*AnyThreeThread anythreeThread = new AnyThreeThread();
+  					Thread anythreeResult = new Thread(anythreeThread);
+  					anythreeResult.start();*/
+  					HotClThread anythreeThread = new HotClThread();
   					Thread anythreeResult = new Thread(anythreeThread);
   					anythreeResult.start();
   					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});

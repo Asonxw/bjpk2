@@ -35,7 +35,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import com.as.boot.thread.AnyThreeThread;
+import com.as.boot.thread.HotClThread;
 
 public class HotClFrame extends JFrame{
 
@@ -59,16 +59,12 @@ public class HotClFrame extends JFrame{
 	public static String[] logDataTitle = {"log信息"};
 	public static DefaultTableModel logTableDefaultmodel = new DefaultTableModel(logTableDate,logDataTitle);
 	
-	/**初始化生成策略数**/
-	public static JTextField initClNumField = new JTextField(8);
-	/**目标最大连错**/
-	public static JTextField aimMaxFailField = new JTextField(8);
-	/**策略获取重置次数**/
-	public static JTextField maxRestNField = new JTextField(8);
 	/**目标策略注数**/
     public static JTextField clNumField = new JTextField(8);
     /**统计期数**/
 	public static JTextField historyNumField = new JTextField(8);
+	/**开始去重码**/
+	public static JCheckBox delPreResultCheckbox = new JCheckBox("是");
 	/**方案一**/
 	public static JCheckBox w = new JCheckBox("0");
 	public static JCheckBox q = new JCheckBox("1");
@@ -76,6 +72,9 @@ public class HotClFrame extends JFrame{
 	public static JCheckBox g = new JCheckBox("3");
 	public static JCheckBox s = new JCheckBox("4");
     
+	public static JLabel roundCount = new JLabel("0期");
+	public static JLabel sulPercent = new JLabel("00%");
+	
     public static List<JCheckBox> clBoxList = null; 
     /**盈利回头值**/
 	public static JTextField returnField = new JTextField(8);
@@ -98,9 +97,6 @@ public class HotClFrame extends JFrame{
 	
 	/**模拟连挂转换**/
 	public static JTextField mnFailSwhichField = new JTextField(5);
-	
-	/**初始连挂数**/
-	public static JTextField initFailCountField = new JTextField(4);
 	
 	/**是否开启真实投注**/
 	public static JCheckBox trueDownFlagField = new JCheckBox("开");
@@ -186,12 +182,19 @@ public class HotClFrame extends JFrame{
   		//统计期数
   		JPanel historyNumPanel = new JPanel();
   		historyNumPanel.setPreferredSize(new Dimension(210,25));
-  		JLabel historyNumLabel = new JLabel("统计总期数:");
+  		JLabel historyNumLabel = new JLabel("统计期数:");
   		historyNumPanel.add(historyNumLabel);
   		
   		historyNumField.setText("20");
   		historyNumPanel.add(historyNumField);
   		initParamsBox.add(historyNumPanel);
+  		
+  		JPanel delPreResultPanel = new JPanel();
+  		delPreResultPanel.setPreferredSize(new Dimension(210,25));
+  		JLabel delPreResultLabel = new JLabel("开启去重码:");
+  		delPreResultPanel.add(delPreResultLabel);
+  		delPreResultPanel.add(delPreResultCheckbox);
+  		initParamsBox.add(delPreResultPanel);
   		
   		panel.add(initParamsBox);
   		
@@ -208,6 +211,20 @@ public class HotClFrame extends JFrame{
         positionBox.add(g);
         positionBox.add(s);
         
+        //已运行期数
+        JPanel roundCountBox = new JPanel();
+        roundCountBox.setPreferredSize(new Dimension(130,35));
+        JLabel roundCountLabel = new JLabel("已运行:");
+        roundCountBox.add(roundCountLabel);
+        roundCountBox.add(roundCount);
+        positionBox.add(roundCountBox);
+        //命中率
+        JPanel sulPercentBox = new JPanel();
+        sulPercentBox.setPreferredSize(new Dimension(130,35));
+        JLabel sulPercentLabel = new JLabel("命中率:");
+        sulPercentBox.add(sulPercentLabel);
+        sulPercentBox.add(sulPercent);
+        positionBox.add(sulPercentBox);
         
         panel.add(positionBox);
         
@@ -251,20 +268,20 @@ public class HotClFrame extends JFrame{
   			@Override
   		    public void mouseClicked(MouseEvent arg0){
   				//将文字切换为实战
-  				AnyThreeThread.mnOrSzFlag = 1;
+  				HotClThread.mnOrSzFlag = 1;
   		    }
 		});
         downTypeMn.addMouseListener(new MouseAdapter() {
   			@Override
   		    public void mouseClicked(MouseEvent arg0){
   				//将文字切换为模拟
-  				AnyThreeThread.mnOrSzFlag = 0;
+  				HotClThread.mnOrSzFlag = 0;
   		    }
 		});
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
-  		btArrayField.setText("0,0,0,3,12,45,165");
+  		btArrayField.setText("1,5,22,83,301,1090,3899");
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值
@@ -285,13 +302,6 @@ public class HotClFrame extends JFrame{
 		mnFailSwhichField.setText("3");
 		downParamsBox.add(mnFailSwhichField);
 		
-		//初始连挂数
-		JLabel initFailCountLabel = new JLabel("初始连挂数:");
-		downParamsBox.add(initFailCountLabel);
-		initFailCountField.setText("10");
-		downParamsBox.add(initFailCountField);
-		
-		//初始连挂数
 		JLabel trueDownFlagLabel = new JLabel("开启真实投注:");
 		downParamsBox.add(trueDownFlagLabel);
 		//initFailCountFsield.setText("10");
@@ -325,21 +335,21 @@ public class HotClFrame extends JFrame{
   		    public void mouseClicked(MouseEvent arg0){
   				if(button.getText().equals("开始执行")){
   					//初始化策略
-  					AnyThreeThread.initTXFFCL();
+  					HotClThread.initTXFFCL();
   					button.setText("停止执行");
   					//初始化倍投阶梯
   					String[] btStrArr = HotClFrame.btArrayField.getText().split(",");
-  					AnyThreeThread.btArr = new Integer[btStrArr.length];
+  					HotClThread.btArr = new Integer[btStrArr.length];
   					for (int i = 0; i < btStrArr.length; i++)
-  						AnyThreeThread.btArr[i] = Integer.parseInt(btStrArr[i]);
-  					AnyThreeThread.startDownFFC(Integer.parseInt(HotClFrame.initFailCountField.getText()));
+  						HotClThread.btArr[i] = Integer.parseInt(btStrArr[i]);
+  					HotClThread.startDownFFC();
   				}else{
   					button.setText("开始执行");
   					//初始化连挂及倍投
   					//连挂数
-  					AnyThreeThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					HotClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   					//倍投情况
-  					AnyThreeThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					HotClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   				}
   		    }
 		});
