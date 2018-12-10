@@ -9,21 +9,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.as.boot.controller.ExampleControll;
 import com.as.boot.frame.HotClFrame;
 import com.as.boot.utils.ModHttpUtil;
 import com.as.boot.utils.ZLinkStringUtils;
-/**
-* @ClassName: DelPreThreeThread
-* @Description:删除最近出的三个号码作为下期投注策略 
-* @author Ason
-* @date 2018年12月7日 上午9:28:26
- */
-public class PreResultClThread implements Runnable{
+
+public class HotDelPreTwoClThread implements Runnable{
 	
 	private Double zslr = 0d;
 	//真实盈利回头值
@@ -40,8 +33,6 @@ public class PreResultClThread implements Runnable{
 	public static Double baseMoney = 0.02;
 	//连挂数
 	public static List<Integer> failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
-	//记录近期开奖情况，共记录10期
-	public static List<String> preResultList = new ArrayList<>();
 	//连中数
 	public static List<Integer> sulCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
 	//最大连挂
@@ -54,6 +45,9 @@ public class PreResultClThread implements Runnable{
 	public static Integer[] btArr = null;
 	
 	public static DecimalFormat df = new DecimalFormat("#.000");
+	
+	//历史开奖
+	public static List<String> preResultList = new ArrayList<>();
 	
 	private Double pl = 9.5;
 	//用于判断是模拟还是实战投注
@@ -98,9 +92,11 @@ public class PreResultClThread implements Runnable{
 						HotClFrame.kjTableDefaultmodel.insertRow(0, new String[]{resultRound,resultKj});
 						//判断是否有投注
 						if(HotClFrame.FFCRound !=null && (Double.parseDouble(HotClFrame.FFCRound) == (resultRound_i-1) || resultRound.endsWith("0001"))){
-							preResultList.add(resultKj.replace(",", ""));
+							if(!preResultList.get(preResultList.size()-1).equals(resultKj.replace(",", "")))
+								preResultList.add(resultKj.replace(",", ""));
 							if(preResultList.size()>10)
 								preResultList.remove(0);
+							
 							//获取表格第一行（判断是否有未开奖投注）
 							Object down_first = HotClFrame.tableDefaultmodel.getRowCount()>0?HotClFrame.tableDefaultmodel.getValueAt(0, 6):null;
 							if(clList!=null&&clList.size()>0&&down_first!=null&&down_first.equals("待开奖")){
@@ -135,7 +131,7 @@ public class PreResultClThread implements Runnable{
 											HotClFrame.tableDefaultmodel.setValueAt("0/"+maxFailCountList.get(i), tableIndex, 4);
 											HotClFrame.tableDefaultmodel.setValueAt(df.format(itemLr), tableIndex, 3);
 											sulCountList.set(i, sulCountList.get(i) + 1);
-											//btNumList.set(i, 0);
+											btNumList.set(i, 0);
 											sulAllCount++;
 										}else{
 											zjFlagList.set(i, false);
@@ -264,24 +260,13 @@ public class PreResultClThread implements Runnable{
 		}
 	}
 
-	public static void initPreResultList(){
-		//获取历史10期开奖情况
-		String historyRound = historyResult();
-		historyRound = historyRound.substring(0, 10*18-1);
-		String[] historyArr = historyRound.trim().split(";");
-		//循环
-		for (int i = historyArr.length-1; i>= 0 ; i--) 
-			//获取开奖
-			preResultList.add(historyArr[i].trim().split(",")[1].trim());
-	}
-	
 	//初始化策略
 	public static void initTXFFCL(){
 		//获取历史开奖情况
-		//String historyRound = historyResult();
+		String historyRound = historyResult();
 		//统计历史期数
-		//Integer historyNum = Integer.parseInt(HotClFrame.historyNumField.getText());
-		//historyRound = historyRound.substring(0, historyNum*18-1);
+		Integer historyNum = Integer.parseInt(HotClFrame.historyNumField.getText());
+		historyRound = historyRound.substring(0, historyNum*18-1);
 		//策略数
 		Integer clNum = Integer.parseInt(HotClFrame.clNumField.getText());
 		List<HashMap<String, String>> temClList = new ArrayList<HashMap<String,String>>();
@@ -300,7 +285,7 @@ public class PreResultClThread implements Runnable{
 					//获取投注位置
 					clname = HotClFrame.clBoxList.get(i).getText();
 					tempClMap.put("position", clname);
-					clParams = getTXFFCL(clname);
+					clParams = getTXFFCL(historyRound, clname, clNum);
 					tempClMap.put("cl", clParams.get("cl"));
 					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+clname+"策略初始化成功，注数："+clParams.get("count")});
 				}else
@@ -316,13 +301,12 @@ public class PreResultClThread implements Runnable{
 	
 	public static void rfreshTXFFCL(Integer clIndex){
 		//获取历史开奖情况
-		//String historyRound = historyResult();
+		String historyRound = historyResult();
 		//统计历史期数
-		//Integer historyNum = Integer.parseInt(HotClFrame.historyNumField.getText());
-		//Integer l = historyNum*18-1;
-		/*if(historyRound.length() > l)
+		Integer historyNum = Integer.parseInt(HotClFrame.historyNumField.getText());
+		Integer l = historyNum*18-1;
+		if(historyRound.length() > l)
 			historyRound = historyRound.substring(0, l);
-		else System.out.println(historyRound.length());*/
 		//策略数
 		Integer clNum = Integer.parseInt(HotClFrame.clNumField.getText());
 		//是否去重码
@@ -339,7 +323,7 @@ public class PreResultClThread implements Runnable{
 						String clname = HotClFrame.clBoxList.get(i).getText();
 						tempClMap = new HashMap<String, String>();
 						tempClMap.put("position", clname);
-						clParams = getTXFFCL(clname);
+						clParams = getTXFFCL(historyRound, clname, clNum);
 						tempClMap.put("cl", clParams.get("cl"));
 						clList.set(clIndex, tempClMap);
 						break;
@@ -351,40 +335,96 @@ public class PreResultClThread implements Runnable{
 		}
 	}
 	
-	public static HashMap<String, String> getTXFFCL(String putPosition){
+	public static HashMap<String, String> getTXFFCL(String historyRound, String putPosition, Integer clNum){
 		//解析需要投注的位置
-		/*Integer putPosition_i = Integer.parseInt(putPosition);
-		List<Integer> delList = new ArrayList<>();
-		//倒叙循环获取最近开奖的三个号码进行剔除
-		for (int i = preResultList.size()-1; i >= 0; i--) {
-			Integer item = Integer.parseInt(preResultList.get(i).charAt(putPosition_i)+"");
-			if(!delList.contains(item)&&delList.size()<3)
-				delList.add(item);
-			else if(delList.size()>=3)break;
+		Integer putPosition_i = Integer.parseInt(putPosition);
+		HashMap<String, String> params = new HashMap<>();
+		//取出开奖位置上的开奖号
+		//初始化历史开奖
+		String[] historyArr = historyRound.trim().split(";");
+		List<Integer> listResult = new ArrayList<>();
+		//循环
+		for (int i = 0; i < historyArr.length; i++) {
+			//获取开奖
+			String item_result = historyArr[i].trim().split(",")[1].trim();
+			listResult.add(Integer.parseInt(item_result.charAt(putPosition_i)+""));
 		}
+		//获取最新两个开奖的开奖结果
+		List<Integer> newReuslt = new ArrayList<>();
+		for (int i = preResultList.size()-1; i >= 0 ; i--) {
+			Integer itemResult = Integer.parseInt(preResultList.get(i).charAt(putPosition_i)+"");
+			if(newReuslt.size()<2&&!newReuslt.contains(itemResult))
+				newReuslt.add(itemResult);
+			else if(newReuslt.size()>=2)break;
+		}
+		/*if(ZLinkStringUtils.isNotEmpty(ExampleControll.FFCResult))
+			newReuslt = Integer.parseInt(ExampleControll.FFCResult.replace(",", "").charAt(putPosition_i)+"");//listResult.get(0);
+		else newReuslt = listResult.get(0);*/
+		Integer[] itemcount = new Integer[]{0,0,0,0,0,0,0,0,0,0};
+		//统计出现次数最多的
+		for (Integer i : listResult)
+			itemcount[i] = itemcount[i]+1; 
 		
-		HashMap<String, String> params = new HashMap<>();
-		List<Integer> tempClList = new ArrayList<>();
-		//生成策略
-		for (int i = 0; i < 10; i++) {
-			if(!delList.contains(i))
-				tempClList.add(i);
-		}*/
-		String clStr = "";
-		//过滤掉重复值，生成策略
-		Set<String> s = new HashSet<String>();
-		//获取上期策略
-		String[] kjArray = ExampleControll.FFCResult.split(",");
-		for (int i = 0; i < kjArray.length; i++) {
-			s.add(kjArray[i]+"");
+		List<HashMap<String, Integer>> tempClList = new ArrayList<>();
+		//用于防止重复
+		List<Integer> temClList_i = new ArrayList<>();
+		HashMap<String, Integer> tempItem  = null;
+		for (int i = 10; i >= 0; i--) {
+			for (int j = 0; j < itemcount.length; j++) {
+				if(itemcount[j] == i)
+					if(!temClList_i.contains(j)){
+						if(!newReuslt.contains(j)){
+							tempItem = new HashMap<>();
+							tempItem.put("count", itemcount[j]);
+							tempItem.put("position", j);
+							tempClList.add(tempItem);
+							//添加进list防止重复
+							temClList_i.add(j);
+						}
+						
+					}
+			}
+			if(temClList_i.size()>=clNum)break;//已达到标准
 		}
-		for (String string : s) {
-			if(string!=null&&string!=""&&string!=",")
-				clStr += string+",";
+		//初步结果获取的策略大于目标策略数，则需要进入筛选
+		if(tempClList.size()>clNum){
+			List<Integer> needSx = new ArrayList<>();
+			Integer sxCount = tempClList.get(tempClList.size()-1).get("count");
+			//将最后几个相同出现次数的取出并判断谁先出现
+			for (int i = tempClList.size()-1; i >= 0; i--) {
+				tempItem = tempClList.get(i);
+				if(tempItem.get("count").equals(sxCount))
+					needSx.add(tempItem.get("position"));
+				else break;
+			}
+			Integer needSxCount = clNum - (tempClList.size() - needSx.size());
+			List<Integer> sxSulList = new ArrayList<>();
+			for (int i = 0; i < listResult.size(); i++) {
+				for (int j = 0; j < needSx.size(); j++) {
+					if(listResult.get(i).equals(needSx.get(j))&&!sxSulList.contains(needSx.get(j)))
+						sxSulList.add(needSx.get(j));
+					if(needSxCount.equals(sxSulList.size()))break;
+				}
+				if(needSxCount.equals(sxSulList.size()))break;
+			}
+			
+			//重新组装数据
+			temClList_i = new ArrayList<>();
+			for (int i = 0; i < tempClList.size() - needSx.size(); i++) 
+				temClList_i.add(tempClList.get(i).get("position"));
+			
+			temClList_i.addAll(sxSulList);
+			//当有多个0次出现的号码时可能会导致策略出号不足，默认添加基哥出现次数为0的
+			if(temClList_i.size()<clNum){
+				for (int i = 0; i < needSx.size(); i++) {
+					if(temClList_i.size()<clNum){
+						temClList_i.add(needSx.get(i));
+					}else break;
+				}
+			}
 		}
-		HashMap<String, String> params = new HashMap<>();
-		params.put("cl", ZLinkStringUtils.removeLastStr(clStr));
-		params.put("count", clStr.length()+"");
+		params.put("cl", temClList_i.toString());
+		params.put("count", clNum.toString());
 		return params;
 	}
 	
@@ -439,6 +479,18 @@ public class PreResultClThread implements Runnable{
 		return list;
 	}
 	
+	
+	public static void initPreResultList(){
+		//获取历史10期开奖情况
+		String historyRound = historyResult();
+		historyRound = historyRound.substring(0, 10*18-1);
+		String[] historyArr = historyRound.trim().split(";");
+		//循环
+		for (int i = historyArr.length-1; i>= 0 ; i--) 
+			//获取开奖
+			preResultList.add(historyArr[i].trim().split(",")[1].trim());
+	}
+	
 	public static Integer createRandom(){
 		return (int)(Math.random()*10);
 	}
@@ -468,22 +520,27 @@ public class PreResultClThread implements Runnable{
 	}
 	//叠加倍投
 	public void addBtnNumList(){
-		//未达到盈利回头目标，所有增加倍数
+		//未达到盈利回头目标，所有挂的增加倍数
 		for (int i = 0; i < zjFlagList.size(); i++) {
-			//判断是否已超出倍投
-			if(btNumList.get(i)>=btArr.length-1){
-				//超出倍投则回归初始
+			if(zjFlagList.get(i)){
+				//中的初始化倍投
 				btNumList.set(i, 0);
-				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"策略"+i+"爆仓！！"});
-				//当未设置盈利转换时也需要校验爆仓及初始化盈利回头
-				if(ZLinkStringUtils.isEmpty(HotClFrame.ylSwhichField.getText())){
-					//初始化盈利回头
-					mnlr_return = mnlr + Double.parseDouble(HotClFrame.returnField.getText());
-					zslr_return = zslr + Double.parseDouble(HotClFrame.returnField.getText());
-				}
-			}else
-				//挂的网上倍投
-				btNumList.set(i, btNumList.get(i)+1);
+			}else{
+				//判断是否已超出倍投
+				if(btNumList.get(i)>=btArr.length-1){
+					//超出倍投则回归初始
+					btNumList.set(i, 0);
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"策略"+i+"爆仓！！"});
+					//当未设置盈利转换时也需要校验爆仓及初始化盈利回头
+					if(ZLinkStringUtils.isEmpty(HotClFrame.ylSwhichField.getText())){
+						//初始化盈利回头
+						mnlr_return = mnlr + Double.parseDouble(HotClFrame.returnField.getText());
+						zslr_return = zslr + Double.parseDouble(HotClFrame.returnField.getText());
+					}
+				}else
+					//挂的网上倍投
+					btNumList.set(i, btNumList.get(i)+1);
+			}
 		}
 	}
 	
@@ -498,9 +555,9 @@ public class PreResultClThread implements Runnable{
 		
 		Boolean downSulFlag = false;
 		Integer changeNum = Integer.parseInt(HotClFrame.changeYlField.getText());
-		for (int i = clList.size()-1; i >= 0; i--) {
+		for (int i = clList.size()-1; i>=0; i--) {
 			//中N期更换
-			if(sulCountList.get(i).equals(changeNum)||sulCountList.get(i).equals(0)){
+			if(sulCountList.get(i).equals(changeNum)){
 				rfreshTXFFCL(i);
 				sulCountList.set(i,0);
 			}
@@ -535,7 +592,7 @@ public class PreResultClThread implements Runnable{
 			if(_index == 0)
 				HotClFrame.tableDefaultmodel.insertRow(0, new String[]{"--","--","--","--","--","--","--","--","--"});
 			if(!clItem.get("position").equals("00"))
-				HotClFrame.tableDefaultmodel.insertRow(0, new String[]{ExampleControll.nextFFCRound,clItem.get("position")+"-"+clItem.get("cl"),btArr[btNumList.get(i)].toString(),"--","--","--","待开奖","待开奖",moOrSzArr[mnOrSzFlag]});
+				HotClFrame.tableDefaultmodel.insertRow(0, new String[]{ExampleControll.nextFFCRound,clItem.get("position")+clItem.get("cl"),btArr[btNumList.get(i)].toString(),"--","--","--","待开奖","待开奖",moOrSzArr[mnOrSzFlag]});
 			_index++;
 		}
 	}
@@ -544,11 +601,11 @@ public class PreResultClThread implements Runnable{
 	public static void changeDownType() {
 		if(HotClFrame.downTypeMn.isSelected()){
 			//当前为模拟则改为实战
-			PreResultClThread.mnOrSzFlag = 1;
+			HotDelPreTwoClThread.mnOrSzFlag = 1;
 			HotClFrame.downTypeSz.setSelected(true);
 		}else if(HotClFrame.downTypeSz.isSelected()){
 			//当前为实战则改为模拟
-			PreResultClThread.mnOrSzFlag = 0;
+			HotDelPreTwoClThread.mnOrSzFlag = 0;
 			HotClFrame.downTypeMn.setSelected(true);
 		}
 		zslr_swhich = 0d;

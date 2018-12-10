@@ -34,9 +34,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-
-import com.as.boot.thread.DelPreThreeThread;
-import com.as.boot.thread.HotClThread;
 import com.as.boot.thread.HotDelPreTwoClThread;
 import com.as.boot.thread.PreResultClThread;
 
@@ -207,6 +204,12 @@ public class HotClFrame extends JFrame{
         positionBox.setPreferredSize(new Dimension(150,190));
         positionBox.setBorder(BorderFactory.createTitledBorder("投注方案"));
         
+        w.setSelected(true);
+        q.setSelected(true);
+        b.setSelected(true);
+        s.setSelected(true);
+        g.setSelected(true);
+        
         //万百个
         positionBox.add(w);
         positionBox.add(q);
@@ -288,7 +291,7 @@ public class HotClFrame extends JFrame{
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
-  		btArrayField.setText("1,5,22,83,301,1090,3899");
+  		btArrayField.setText("0,0,2,8,30,108,385,1370");
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值

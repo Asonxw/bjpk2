@@ -29,8 +29,11 @@ import javax.swing.table.DefaultTableModel;
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.thread.AccountThread;
 import com.as.boot.thread.AnyThreeThread;
+import com.as.boot.thread.DelPreThreeThread;
 import com.as.boot.thread.HotClThread;
+import com.as.boot.thread.HotDelPreTwoClThread;
 import com.as.boot.thread.KjThread;
+import com.as.boot.thread.PreResultClThread;
 import com.as.boot.utils.HttpFuncUtil;
 import com.as.boot.utils.ModHttpUtil;
 import com.as.boot.utils.HttpFuncUtil;
@@ -70,8 +73,8 @@ public class LoginFrame extends JFrame{
 		JLabel accountLable = new JLabel("帐号:");
 		accountPanel.add(accountLable);
 		accountPanel.add(accountField);
-		//accountField.setText("ason_x");
-		accountField.setText("zzn1280388052");
+		accountField.setText("ason_x1");
+		//accountField.setText("zzn1280388052");
 		panel.add(accountPanel);
 		
 		
@@ -79,8 +82,8 @@ public class LoginFrame extends JFrame{
 		passPanel.setPreferredSize(new Dimension(880,35));
 		JLabel passLable = new JLabel("密码:");
 		passPanel.add(passLable);
-		//passField.setText("nhmasonxt950203");
-		passField.setText("qi951102");
+		passField.setText("nhmasonxt950203");
+		//passField.setText("qi951102");
 		passPanel.add(passField);
 		panel.add(passPanel);
 		
@@ -108,17 +111,17 @@ public class LoginFrame extends JFrame{
   					accountThread.start();
   					
   					LoginFrame.loginFrame.setVisible(false);
-  					//AnyThreeFrame.anythreeFrame.setVisible(true);
+  					//AnyThreeFrame.anythreeFrame.setVisible(true);  //任三
   					HotClFrame.hotClFrame.setVisible(true);
   					//启动线程
   					KjThread kjThread = new KjThread();
   					Thread threadKJ = new Thread(kjThread);
   					threadKJ.start();
   					
-  					/*AnyThreeThread anythreeThread = new AnyThreeThread();
-  					Thread anythreeResult = new Thread(anythreeThread);
-  					anythreeResult.start();*/
-  					HotClThread anythreeThread = new HotClThread();
+  					/*AnyThreeThread anythreeThread = new AnyThreeThread();//任三
+  					*/
+  					//DelPreThreeThread anythreeThread = new DelPreThreeThread();
+  					HotDelPreTwoClThread anythreeThread = new HotDelPreTwoClThread();
   					Thread anythreeResult = new Thread(anythreeThread);
   					anythreeResult.start();
   					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});
@@ -132,13 +135,17 @@ public class LoginFrame extends JFrame{
   			@Override
   		    public void mouseClicked(MouseEvent arg0){
   					LoginFrame.loginFrame.setVisible(false);
-  					AnyThreeFrame.anythreeFrame.setVisible(true);
+  					//AnyThreeFrame.anythreeFrame.setVisible(true);
+  					HotClFrame.hotClFrame.setVisible(true);
   					//启动线程
   					KjThread kjThread = new KjThread();
   					Thread threadKJ = new Thread(kjThread);
   					threadKJ.start();
   					
-  					AnyThreeThread anythreeThread = new AnyThreeThread();
+  					/*AnyThreeThread anythreeThread = new AnyThreeThread();
+  					*/
+  					//DelPreThreeThread anythreeThread = new DelPreThreeThread();
+  					HotDelPreTwoClThread anythreeThread = new HotDelPreTwoClThread();
   					Thread anythreeResult = new Thread(anythreeThread);
   					anythreeResult.start();
   					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});
