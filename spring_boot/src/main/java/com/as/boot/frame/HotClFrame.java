@@ -35,6 +35,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import com.as.boot.thread.HotDelPreTwoClThread;
+import com.as.boot.thread.HotDelPreTwo_l_ClThread;
 import com.as.boot.thread.PreResultClThread;
 
 public class HotClFrame extends JFrame{
@@ -204,11 +205,12 @@ public class HotClFrame extends JFrame{
         positionBox.setPreferredSize(new Dimension(150,190));
         positionBox.setBorder(BorderFactory.createTitledBorder("投注方案"));
         
-        w.setSelected(true);
         q.setSelected(true);
+        /*w.setSelected(true);
         b.setSelected(true);
-        s.setSelected(true);
         g.setSelected(true);
+        s.setSelected(true);*/
+        
         
         //万百个
         positionBox.add(w);
@@ -244,7 +246,7 @@ public class HotClFrame extends JFrame{
   		JLabel returnLabel = new JLabel("盈利回头:");
   		downParamsBox.add(returnLabel);
   		
-   		returnField.setText("0.01");
+   		returnField.setText("");
    		downParamsBox.add(returnField);
   		//止盈
    		JLabel winStopLabel = new JLabel("止盈:");
@@ -276,7 +278,7 @@ public class HotClFrame extends JFrame{
   				//将文字切换为实战
   				//HotClThread.mnOrSzFlag = 1;
   				//DelPreThreeThread.mnOrSzFlag = 1;
-  				HotDelPreTwoClThread.mnOrSzFlag = 1;
+  				HotDelPreTwo_l_ClThread.mnOrSzFlag = 1;
   		    }
 		});
         downTypeMn.addMouseListener(new MouseAdapter() {
@@ -285,13 +287,13 @@ public class HotClFrame extends JFrame{
   				//将文字切换为模拟
   				//HotClThread.mnOrSzFlag = 0;
   				//DelPreThreeThread.mnOrSzFlag = 0;
-  				HotDelPreTwoClThread.mnOrSzFlag = 0;
+  				HotDelPreTwo_l_ClThread.mnOrSzFlag = 0;
   		    }
 		});
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
-  		btArrayField.setText("0,0,2,8,30,108,385,1370");
+  		btArrayField.setText("2,7,25,89,315,1117,3960");
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值
@@ -303,13 +305,13 @@ public class HotClFrame extends JFrame{
 		//切换策略盈利值
    		JLabel ylSwhichLabel = new JLabel("盈利转换:");
 		downParamsBox.add(ylSwhichLabel);
-		ylSwhichField.setText("");
+		ylSwhichField.setText("1");
 		downParamsBox.add(ylSwhichField);
 		
 		//模拟连挂转换
    		JLabel mnFailSwhichLabel = new JLabel("模拟连挂转换:");
 		downParamsBox.add(mnFailSwhichLabel);
-		mnFailSwhichField.setText("3");
+		mnFailSwhichField.setText("4");
 		downParamsBox.add(mnFailSwhichField);
 		
 		JLabel trueDownFlagLabel = new JLabel("开启真实投注:");
@@ -346,17 +348,17 @@ public class HotClFrame extends JFrame{
   				if(button.getText().equals("开始执行")){
   					//初始化策略
   					//HotClThread.initTXFFCL();
-  					HotDelPreTwoClThread.initTXFFCL();
+  					HotDelPreTwo_l_ClThread.initTXFFCL();
   					button.setText("停止执行");
   					//初始化倍投阶梯
   					String[] btStrArr = HotClFrame.btArrayField.getText().split(",");
   					//HotClThread.btArr = new Integer[btStrArr.length];
-  					HotDelPreTwoClThread.btArr = new Integer[btStrArr.length];
+  					HotDelPreTwo_l_ClThread.btArr = new Integer[btStrArr.length];
   					for (int i = 0; i < btStrArr.length; i++)
   						//HotClThread.btArr[i] = Integer.parseInt(btStrArr[i]);
-  						HotDelPreTwoClThread.btArr[i] = Integer.parseInt(btStrArr[i]);
-  					//HoHotDelPreTwoClThreadwnFFC();
-  					HotDelPreTwoClThread.startDownFFC();
+  						HotDelPreTwo_l_ClThread.btArr[i] = Integer.parseInt(btStrArr[i]);
+  					//HoHotDelPreTwo_l_ClThreadwnFFC();
+  					HotDelPreTwo_l_ClThread.startDownFFC();
   				}else{
   					button.setText("开始执行");
   					//初始化连挂及倍投
@@ -364,9 +366,9 @@ public class HotClFrame extends JFrame{
   					/*HotClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   					//倍投情况
   					HotClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);*/
-  					HotDelPreTwoClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					HotDelPreTwo_l_ClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   					//倍投情况
-  					HotDelPreTwoClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					HotDelPreTwo_l_ClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   				}
   		    }
 		});

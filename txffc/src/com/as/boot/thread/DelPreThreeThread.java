@@ -35,7 +35,7 @@ public class DelPreThreeThread implements Runnable{
 	
 	//private HashMap<String,String> clMap = null;
 	public static List<HashMap<String, String>> clList = null;
-	public static Double baseMoney = 0.02;
+	public static Double baseMoney = 0.002;
 	//连挂数
 	public static List<Integer> failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
 	//记录近期开奖情况，共记录10期

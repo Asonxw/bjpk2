@@ -23,6 +23,8 @@ import com.as.boot.frame.HotClFrame;
 import com.as.boot.thread.AnyThreeThread;
 import com.as.boot.thread.AnyThreeThread5;
 import com.as.boot.thread.HotDelPreTwoClThread;
+import com.as.boot.thread.HotDelPreTwo_DC_ClThread;
+import com.as.boot.thread.HotDelPreTwo_l_ClThread;
 import com.as.boot.thread.KjThread;
 import com.as.boot.utils.HttpFuncUtil;
 
@@ -567,7 +569,9 @@ public class ExampleControll{
 		Thread anythreeResult5 = new Thread(anythreeThread5);
 		anythreeResult5.start();*/
 		HotClFrame.hotClFrame.setVisible(true);
-		HotDelPreTwoClThread anythreeThread5 = new HotDelPreTwoClThread();
+		//HotDelPreTwoClThread anythreeThread5 = new HotDelPreTwoClThread();
+		//HotDelPreTwo_l_ClThread anythreeThread5 = new HotDelPreTwo_l_ClThread();
+		HotDelPreTwo_DC_ClThread anythreeThread5 = new HotDelPreTwo_DC_ClThread();
 		Thread anythreeResult5 = new Thread(anythreeThread5);
 		anythreeResult5.start();
 		

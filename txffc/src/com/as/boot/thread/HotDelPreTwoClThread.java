@@ -32,15 +32,15 @@ public class HotDelPreTwoClThread implements Runnable{
 	public static List<HashMap<String, String>> clList = null;
 	public static Double baseMoney = 0.02;
 	//连挂数
-	public static List<Integer> failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+	public static List<Integer> failCountList = Arrays.asList(0,0,0,0,0);
 	//连中数
-	public static List<Integer> sulCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+	public static List<Integer> sulCountList = Arrays.asList(0,0,0,0,0);
 	//最大连挂
-	private List<Integer> maxFailCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+	private List<Integer> maxFailCountList = Arrays.asList(0,0,0,0,0);
 	//倍投情况
-	public static List<Integer> btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+	public static List<Integer> btNumList = Arrays.asList(0,0,0,0,0);
 	//中奖情况
-	private List<Boolean> zjFlagList = Arrays.asList(false,false,false,false,false,false,false,false,false,false);
+	private List<Boolean> zjFlagList = Arrays.asList(false,false,false,false,false);
 	//倍投阶梯
 	public static Integer[] btArr = null;
 	
@@ -94,7 +94,7 @@ public class HotDelPreTwoClThread implements Runnable{
 						if(HotClFrame.FFCRound !=null && (Double.parseDouble(HotClFrame.FFCRound) == (resultRound_i-1) || resultRound.endsWith("0001"))){
 							if(!preResultList.get(preResultList.size()-1).equals(resultKj.replace(",", "")))
 								preResultList.add(resultKj.replace(",", ""));
-							if(preResultList.size()>10)
+							if(preResultList.size()>30)
 								preResultList.remove(0);
 							
 							//获取表格第一行（判断是否有未开奖投注）
@@ -174,6 +174,7 @@ public class HotDelPreTwoClThread implements Runnable{
 								//如果设置了盈利转换需要判断是否爆仓
 								if(ZLinkStringUtils.isNotEmpty(HotClFrame.ylSwhichField.getText())){
 									for (int i = 0, il = clList.size(); i<il;i++) {
+										if(clList.get(i).get("position").equals("00"))continue;
 										//判断是否已经爆仓（达到倍投阶梯顶端）
 										if(btNumList.get(i) >= (btArr.length-1)&&mnOrSzStr.equals("真 实-投注")){
 											boomFlag = true;
@@ -516,7 +517,7 @@ public class HotDelPreTwoClThread implements Runnable{
 	
 	public static void initBtNumList(){
 		//达到盈利回头目标，所有倍投全部回到起点
-		btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+		btNumList = Arrays.asList(0,0,0,0,0);
 	}
 	//叠加倍投
 	public void addBtnNumList(){

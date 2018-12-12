@@ -30,17 +30,17 @@ public class HotDelPreTwoClThread implements Runnable{
 	
 	//private HashMap<String,String> clMap = null;
 	public static List<HashMap<String, String>> clList = null;
-	public static Double baseMoney = 0.02;
+	public static Double baseMoney = 0.2;
 	//连挂数
-	public static List<Integer> failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+	public static List<Integer> failCountList = Arrays.asList(0,0,0,0,0);
 	//连中数
-	public static List<Integer> sulCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+	public static List<Integer> sulCountList = Arrays.asList(0,0,0,0,0);
 	//最大连挂
-	private List<Integer> maxFailCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+	private List<Integer> maxFailCountList = Arrays.asList(0,0,0,0,0);
 	//倍投情况
-	public static List<Integer> btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+	public static List<Integer> btNumList = Arrays.asList(0,0,0,0,0);
 	//中奖情况
-	private List<Boolean> zjFlagList = Arrays.asList(false,false,false,false,false,false,false,false,false,false);
+	private List<Boolean> zjFlagList = Arrays.asList(false,false,false,false,false);
 	//倍投阶梯
 	public static Integer[] btArr = null;
 	
@@ -49,7 +49,7 @@ public class HotDelPreTwoClThread implements Runnable{
 	//历史开奖
 	public static List<String> preResultList = new ArrayList<String>();
 	
-	private Double pl = 9.5;
+	private Double pl = 19.5;
 	//用于判断是模拟还是实战投注
 	public static Integer mnOrSzFlag = 0;//默认模拟
 	private static String[] moOrSzArr = {"模拟-投注","真 实-投注"};
@@ -59,16 +59,17 @@ public class HotDelPreTwoClThread implements Runnable{
 	private static Integer roundAllCount = 0;
 	private static Double ylht = 0.01;
 	//获取模拟连挂转换数
-	private static Integer mnFailSwhich = 3;
+	private static Integer mnFailSwhich = 4;
 	private static String FFCRound = null;
 	private static String nextFFCRound = null;
+	private static boolean sFlag = false;
 	@Override
 	public void run() {
 		//初始化盈利回头
 		zslr_return = zslr + ylht;
 		mnlr_return = mnlr + ylht;
 		//初始化倍投阶梯
-		String[] btStrArr = "2,8,30,108,385,1370".split(",");
+		String[] btStrArr = "4,14,50,177".split(",");
 		btArr = new Integer[btStrArr.length];
 		for (int i = 0; i < btStrArr.length; i++)
 			btArr[i] = Integer.parseInt(btStrArr[i]);
@@ -86,7 +87,7 @@ public class HotDelPreTwoClThread implements Runnable{
 				for (int i = 0; i < tempKj[1].length(); i++) {
 					tempResult += tempKj[1].charAt(i)+",";
 				}
-				if(roundAllCount==1)break;
+				if(roundAllCount==114664)break;
 				String resultRound = tempKj[0].replace("-", "");
 				String resultKj = ZLinkStringUtils.removeLastStr(tempResult);
 				if(resultRound.endsWith("1440")){
@@ -113,7 +114,7 @@ public class HotDelPreTwoClThread implements Runnable{
 						if(FFCRound !=null && (Double.parseDouble(FFCRound) == (resultRound_i-1) || resultRound.endsWith("0001"))){
 							if(!preResultList.get(preResultList.size()-1).equals(resultKj.replace(",", "")))
 								preResultList.add(resultKj.replace(",", ""));
-							if(preResultList.size()>10)
+							if(preResultList.size()>30)
 								preResultList.remove(0);
 							
 							//获取表格第一行（判断是否有未开奖投注）
@@ -124,6 +125,7 @@ public class HotDelPreTwoClThread implements Runnable{
 								Integer tableIndex = 0;
 								//判断已投注方案类型
 								String mnOrSzStr = HotClFrame.tableDefaultmodel.getValueAt(0, 8).toString();
+								Boolean boomFlag = false;
 								//利润
 								for (int i = 0, il = clList.size(); i<il;i++) {
 									HashMap<String, String> clItem = clList.get(i);
@@ -132,8 +134,9 @@ public class HotDelPreTwoClThread implements Runnable{
 										//获取策略注数
 										String[] clArr = clItem.get("cl").split(",");
 										String key = clItem.get("position");
+										Double downNum = -clArr.length * baseMoney *  btArr[btNumList.get(i)];
 										//累计投入值
-										tempLr += -clArr.length * baseMoney *  btArr[btNumList.get(i)];
+										tempLr += downNum;
 										String result = "";
 										//获取下注位置并截取开奖结果
 										for (int j = 0; j < key.length(); j++) {
@@ -142,10 +145,21 @@ public class HotDelPreTwoClThread implements Runnable{
 										//判断是否中奖
 										if(clItem.get("cl").contains(result)){
 											zjFlagList.set(i, true);
+											//如果连错数大于3挂且本期中了则开始真实投注
+											if(failCountList.get(i) >= 4&&mnOrSzStr.equals("模拟-投注")){
+												boomFlag = true;
+												//模拟投注，只要连挂超过倍投则判定为爆仓
+												HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"模拟投注连挂爆仓，转为真实投注"});
+												//重置回头
+												//mnlr_return = mnlr + Double.parseDouble(HotClFrame.returnField.getText());
+												mnlr_return = mnlr;
+												initBtNumList();
+												changeDownType();
+											}
 											failCountList.set(i, 0);
 											HotClFrame.tableDefaultmodel.setValueAt("中", tableIndex, 7);
 											//计算盈利值
-											Double itemLr = btArr[btNumList.get(i)] * baseMoney * pl;
+											Double itemLr = (btArr[btNumList.get(i)] * baseMoney * pl)/2;
 											tempLr += itemLr;
 											HotClFrame.tableDefaultmodel.setValueAt("0/"+maxFailCountList.get(i), tableIndex, 4);
 											HotClFrame.tableDefaultmodel.setValueAt(df.format(itemLr), tableIndex, 3);
@@ -161,8 +175,7 @@ public class HotDelPreTwoClThread implements Runnable{
 											//记录连挂数
 											HotClFrame.tableDefaultmodel.setValueAt(failCountList.get(i)+"/"+maxFailCountList.get(i), tableIndex, 4);
 											HotClFrame.tableDefaultmodel.setValueAt("挂", tableIndex, 7);
-											Double tempFailP = -clArr.length * baseMoney *  btArr[btNumList.get(i)];
-											HotClFrame.tableDefaultmodel.setValueAt(df.format(tempFailP), tableIndex, 3);
+											HotClFrame.tableDefaultmodel.setValueAt(df.format(downNum), tableIndex, 3);
 											failAllCount++;
 										}
 										HotClFrame.tableDefaultmodel.setValueAt(resultKj, tableIndex, 6);
@@ -179,7 +192,7 @@ public class HotDelPreTwoClThread implements Runnable{
 								}
 								//判断盈利转换
 								if(ZLinkStringUtils.isNotEmpty(HotClFrame.ylSwhichField.getText())&&mnOrSzStr.equals("真 实-投注")){
-									Integer ylSwhich = Integer.parseInt(HotClFrame.ylSwhichField.getText());
+									Double ylSwhich = Double.parseDouble(HotClFrame.ylSwhichField.getText());
 									zslr_swhich += tempLr;
 									HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"真实投注盈利转换积累值："+df.format(zslr_swhich)});
 									//真实盈利达到盈利转换值
@@ -189,10 +202,11 @@ public class HotDelPreTwoClThread implements Runnable{
 										changeDownType();
 									}
 								}
-								Boolean boomFlag = false;
+								
 								//如果设置了盈利转换需要判断是否爆仓
 								if(ZLinkStringUtils.isNotEmpty(HotClFrame.ylSwhichField.getText())){
 									for (int i = 0, il = clList.size(); i<il;i++) {
+										if(clList.get(i).get("position").equals("00"))continue;
 										//判断是否已经爆仓（达到倍投阶梯顶端）
 										if(btNumList.get(i) >= (btArr.length-1)&&mnOrSzStr.equals("真 实-投注")){
 											boomFlag = true;
@@ -200,20 +214,22 @@ public class HotDelPreTwoClThread implements Runnable{
 											if(mnOrSzStr.equals("真 实-投注")){
 												HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"真实投注爆仓，转为模拟投注，损失金额："+df.format(zslr_swhich)});
 												//重置回头
-												zslr_return = zslr + Double.parseDouble(HotClFrame.returnField.getText());
+												//zslr_return = zslr + Double.parseDouble(HotClFrame.returnField.getText());
+												zslr_return = zslr;
 											}
 											initBtNumList();
 											changeDownType();
 										
-										}else if(failCountList.get(i) >= mnFailSwhich&&mnOrSzStr.equals("模拟-投注")){
+										}/*else if(failCountList.get(i) >= mnFailSwhich&&mnOrSzStr.equals("模拟-投注")){
 											boomFlag = true;
 											//模拟投注，只要连挂超过倍投则判定为爆仓
 											HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"模拟投注连挂爆仓，转为真实投注"});
 											//重置回头
-											mnlr_return = mnlr + Double.parseDouble(HotClFrame.returnField.getText());
+											//mnlr_return = mnlr + Double.parseDouble(HotClFrame.returnField.getText());
+											mnlr_return = mnlr;
 											initBtNumList();
 											changeDownType();
-										}
+										}*/
 									}
 								}
 								
