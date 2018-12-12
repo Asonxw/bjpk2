@@ -35,7 +35,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import com.as.boot.thread.DelPreThreeThread;
 import com.as.boot.thread.HotClThread;
+import com.as.boot.thread.HotDelPreTwoClThread;
+import com.as.boot.thread.PreResultClThread;
+import com.as.boot.thread.hotpre2.HotDelPreTwo_D_ClThread;
 
 public class HotClFrame extends JFrame{
 
@@ -268,20 +272,24 @@ public class HotClFrame extends JFrame{
   			@Override
   		    public void mouseClicked(MouseEvent arg0){
   				//将文字切换为实战
-  				HotClThread.mnOrSzFlag = 1;
+  				//HotClThread.mnOrSzFlag = 1;
+  				HotDelPreTwo_D_ClThread.mnOrSzFlag = 1;
+  				//HotDelPreTwoClThread.mnOrSzFlag = 1;
   		    }
 		});
         downTypeMn.addMouseListener(new MouseAdapter() {
   			@Override
   		    public void mouseClicked(MouseEvent arg0){
   				//将文字切换为模拟
-  				HotClThread.mnOrSzFlag = 0;
+  				//HotClThread.mnOrSzFlag = 0;
+  				HotDelPreTwo_D_ClThread.mnOrSzFlag = 0;
+  				//HotDelPreTwoClThread.mnOrSzFlag = 0;
   		    }
 		});
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
-  		btArrayField.setText("1,5,22,83,301,1090,3899");
+  		btArrayField.setText("4,14,50,177,628,2226");
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值
@@ -335,21 +343,28 @@ public class HotClFrame extends JFrame{
   		    public void mouseClicked(MouseEvent arg0){
   				if(button.getText().equals("开始执行")){
   					//初始化策略
-  					HotClThread.initTXFFCL();
+  					//HotClThread.initTXFFCL();
+  					HotDelPreTwo_D_ClThread.initTXFFCL();
   					button.setText("停止执行");
   					//初始化倍投阶梯
   					String[] btStrArr = HotClFrame.btArrayField.getText().split(",");
-  					HotClThread.btArr = new Integer[btStrArr.length];
+  					//HotClThread.btArr = new Integer[btStrArr.length];
+  					HotDelPreTwo_D_ClThread.btArr = new Integer[btStrArr.length];
   					for (int i = 0; i < btStrArr.length; i++)
-  						HotClThread.btArr[i] = Integer.parseInt(btStrArr[i]);
-  					HotClThread.startDownFFC();
+  						//HotClThread.btArr[i] = Integer.parseInt(btStrArr[i]);
+  						HotDelPreTwo_D_ClThread.btArr[i] = Integer.parseInt(btStrArr[i]);
+  					//HoHotDelPreTwoClThreadwnFFC();
+  					HotDelPreTwo_D_ClThread.startDownFFC();
   				}else{
   					button.setText("开始执行");
   					//初始化连挂及倍投
   					//连挂数
-  					HotClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					/*HotClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   					//倍投情况
-  					HotClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					HotClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);*/
+  					HotDelPreTwo_D_ClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					//倍投情况
+  					HotDelPreTwo_D_ClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   				}
   		    }
 		});

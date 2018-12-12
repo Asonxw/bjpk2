@@ -29,7 +29,7 @@ public class KjThread implements Runnable{
 			String result = null;
 			try {
 				//获取最近几期开奖结果
-				//result = HttpFuncUtil.getString(ModHttpUtil.mdKjUrl);
+				//result = HttpFuncUtil.getString(urlArr[urlIndex]);
 				result = HttpFuncUtil.getBySession(ModHttpUtil.urlSessionId, ModHttpUtil.mdKjUrl);
 				if(ZLinkStringUtils.isNotEmpty(result)){
 					JSONObject resultObj = JSONObject.parseObject(result);
@@ -48,11 +48,11 @@ public class KjThread implements Runnable{
 						Double num = Double.parseDouble(resultRound) + 1;
 						nextRound = ddf.format(num);
 					}
-					
+				
 					/*String resultRound = resultObj.getString("fpreviousperiod");
 					String resultKj = resultObj.getString("fpreviousresult");
-					String nextRound = resultObj.getString("fnumberofperiod");*/
-					
+					String nextRound = resultObj.getString("fnumberofperiod");
+					*/
 					if(ExampleControll.FFCRound == null || !ExampleControll.FFCRound.equals(resultRound)){
 						ExampleControll.FFCRound = resultRound;
 						ExampleControll.FFCResult = resultKj;

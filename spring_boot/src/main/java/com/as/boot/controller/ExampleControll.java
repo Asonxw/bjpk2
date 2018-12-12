@@ -19,8 +19,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.as.boot.dao.CommonDao;
 import com.as.boot.frame.AnyThreeFrame;
 import com.as.boot.frame.AnyThreeFrame5;
+import com.as.boot.frame.HotClFrame;
 import com.as.boot.thread.AnyThreeThread;
 import com.as.boot.thread.AnyThreeThread5;
+import com.as.boot.thread.HotDelPreTwoClThread;
+import com.as.boot.thread.HotDelPreTwo_DC_ClThread;
+import com.as.boot.thread.HotDelPreTwo_l_ClThread;
 import com.as.boot.thread.KjThread;
 import com.as.boot.utils.HttpFuncUtil;
 
@@ -533,11 +537,11 @@ public class ExampleControll{
 		}
 	}*/
 	
-	/*public static String FFCRound = null;
+	public static String FFCRound = null;
 	public static String FFCResult = null;
 	
 	public static void main(String[] args) {
-		JFrame mainFrame = new PreRsultClFrame();
+		/*JFrame mainFrame = new PreRsultClFrame();
 		mainFrame.setVisible(true);
 		
 		AnyThreeFrame.anythreeFrame.setVisible(true);
@@ -563,6 +567,13 @@ public class ExampleControll{
 		//三星任选策略,中n期换号
 		AnyThreeThread5 anythreeThread5 = new AnyThreeThread5();
 		Thread anythreeResult5 = new Thread(anythreeThread5);
+		anythreeResult5.start();*/
+		HotClFrame.hotClFrame.setVisible(true);
+		//HotDelPreTwoClThread anythreeThread5 = new HotDelPreTwoClThread();
+		//HotDelPreTwo_l_ClThread anythreeThread5 = new HotDelPreTwo_l_ClThread();
+		HotDelPreTwo_DC_ClThread anythreeThread5 = new HotDelPreTwo_DC_ClThread();
+		Thread anythreeResult5 = new Thread(anythreeThread5);
 		anythreeResult5.start();
-	}*/
+		
+	}
 }
