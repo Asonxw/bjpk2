@@ -28,7 +28,7 @@ public class AccountThread implements Runnable{
 					String result = HttpFuncUtil.getBySession(ModHttpUtil.urlSessionId, "https://www.modgame.vip/sso/u/getUserBalance?appId=5");
 					if(ZLinkStringUtils.isNotEmpty(result)){
 						JSONObject resultObj = JSONObject.parseObject(result);
-						if(resultObj.getInteger("code").equals(0)){
+						if(resultObj.getInteger("code")!=null&&resultObj.getInteger("code").equals(0)){
 							JSONObject resultJson = resultObj.getJSONObject("result");
 							accountName = resultJson.getString("name");
 							accountAmount = resultJson.getJSONObject("userMoney").getString("avail");

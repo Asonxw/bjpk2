@@ -54,7 +54,7 @@ public class HttpFuncUtil {
 			con.setRequestMethod("GET");
 
 			String cookieValue = con.getHeaderField("Set-Cookie");
-			String sessionId = cookieValue.substring(0, cookieValue.indexOf(";"));
+			String sessionId = ZLinkStringUtils.isNotEmpty(cookieValue)?cookieValue.substring(0, cookieValue.indexOf(";")):null;
 			params = new HashMap<>();
 			params.put("sessionId", sessionId);
 			//请求结果
