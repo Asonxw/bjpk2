@@ -39,6 +39,7 @@ import com.as.boot.thread.DelPreThreeThread;
 import com.as.boot.thread.HotClThread;
 import com.as.boot.thread.HotDelPreTwoClThread;
 import com.as.boot.thread.PreResultClThread;
+import com.as.boot.thread.hotpre2.HotDelPreTwo_DC_ClThread;
 import com.as.boot.thread.hotpre2.HotDelPreTwo_D_ClThread;
 
 public class HotClFrame extends JFrame{
@@ -273,7 +274,7 @@ public class HotClFrame extends JFrame{
   		    public void mouseClicked(MouseEvent arg0){
   				//将文字切换为实战
   				//HotClThread.mnOrSzFlag = 1;
-  				HotDelPreTwo_D_ClThread.mnOrSzFlag = 1;
+  				HotDelPreTwo_DC_ClThread.mnOrSzFlag = 1;
   				//HotDelPreTwoClThread.mnOrSzFlag = 1;
   		    }
 		});
@@ -282,14 +283,14 @@ public class HotClFrame extends JFrame{
   		    public void mouseClicked(MouseEvent arg0){
   				//将文字切换为模拟
   				//HotClThread.mnOrSzFlag = 0;
-  				HotDelPreTwo_D_ClThread.mnOrSzFlag = 0;
+  				HotDelPreTwo_DC_ClThread.mnOrSzFlag = 0;
   				//HotDelPreTwoClThread.mnOrSzFlag = 0;
   		    }
 		});
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
-  		btArrayField.setText("4,14,50,177,628,2226");
+  		btArrayField.setText("19,67,238,843,2989,10598");
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值
@@ -344,17 +345,17 @@ public class HotClFrame extends JFrame{
   				if(button.getText().equals("开始执行")){
   					//初始化策略
   					//HotClThread.initTXFFCL();
-  					HotDelPreTwo_D_ClThread.initTXFFCL();
+  					HotDelPreTwo_DC_ClThread.initTXFFCL();
   					button.setText("停止执行");
   					//初始化倍投阶梯
   					String[] btStrArr = HotClFrame.btArrayField.getText().split(",");
   					//HotClThread.btArr = new Integer[btStrArr.length];
-  					HotDelPreTwo_D_ClThread.btArr = new Integer[btStrArr.length];
+  					HotDelPreTwo_DC_ClThread.btArr = new Integer[btStrArr.length];
   					for (int i = 0; i < btStrArr.length; i++)
   						//HotClThread.btArr[i] = Integer.parseInt(btStrArr[i]);
-  						HotDelPreTwo_D_ClThread.btArr[i] = Integer.parseInt(btStrArr[i]);
+  						HotDelPreTwo_DC_ClThread.btArr[i] = Integer.parseInt(btStrArr[i]);
   					//HoHotDelPreTwoClThreadwnFFC();
-  					HotDelPreTwo_D_ClThread.startDownFFC();
+  					HotDelPreTwo_DC_ClThread.startDownFFC();
   				}else{
   					button.setText("开始执行");
   					//初始化连挂及倍投
@@ -362,9 +363,10 @@ public class HotClFrame extends JFrame{
   					/*HotClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   					//倍投情况
   					HotClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);*/
-  					HotDelPreTwo_D_ClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					HotDelPreTwo_DC_ClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   					//倍投情况
-  					HotDelPreTwo_D_ClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					//HotDelPreTwo_D_ClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					HotDelPreTwo_DC_ClThread.btNum = 0;
   				}
   		    }
 		});

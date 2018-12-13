@@ -9,6 +9,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.ModOrder;
+import com.as.boot.ModOrder_DWD;
 import com.as.boot.frame.AnyThreeFrame;
 import com.as.boot.frame.AnyThreeFrame5;
 import com.as.boot.frame.LoginFrame;
@@ -96,5 +97,67 @@ public class ModHttpUtil {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @Title: addTXFFCOrder_DWD1  
+	 * @Description:1码定位胆7注下注 
+	 * @author: Ason
+	 * @param issue 奖期
+	 * @param clMap 策略（包含position和cl）
+	 * @param btNum 倍投索引
+	 * @param btArr 倍投阶梯
+	 * @param baseMoney 基本金额
+	 * @return      
+	 * @return: Boolean
+	 * @throws
+	 */
+	public static Boolean addTXFFCOrder_DWD1(String issue, HashMap<String, String> clMap, Integer btNum,
+			Integer[] btArr, Double price) {
+		String lottery = "TXFFC";
+		
+		Integer sourceType = 0;
+		List<ModOrder_DWD> orderList = new ArrayList<>();
+		ModOrder_DWD order = null;
+		Integer clCount = 1;
+		if(clMap!=null){
+			Integer nums = clMap.get("cl").split(",").length;
+			order = new ModOrder_DWD("dwd_dwd_dwd", serializeCode(clMap), btArr[btNum].toString(), df.format(price), "19.5", "0", df.format(btArr[btNum]*price*nums));
+			orderList.add(order);
+		}
+		Integer betType = clCount>1?2:1;
+		if(orderList.size()>0){
+			String params = "lottery="+lottery+"&issue="+issue+"&order="+ZLinkStringUtils.parseJsonToString(orderList)+"&betType="+betType+"&sourceType="+sourceType;
+			System.out.println(params);
+			//发送post请求
+			String result = HttpFuncUtil.postBySession(urlSessionId, addOrderUrl, params);
+			System.out.println(result);
+			if(ZLinkStringUtils.isNotEmpty(result)){
+				JSONObject resultJson = JSONObject.parseObject(result);
+				Integer resultCode = resultJson.getInteger("code");
+				String resultmsg = resultJson.getString("msg");
+				if(resultCode.equals(1)||resultmsg.equals("ok")){
+					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{issue+"期投注成功！"});
+					return true;
+				}else if(resultmsg.contains("奖期错误")){
+					//奖期错误，已错过投注时间
+					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败：改期投注时间已过！"});
+				}else
+					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败："+resultmsg});
+			}
+		}else return true;
+		return false;
+	}
+	
+	public static String serializeCode(HashMap<String, String> clMap){
+		Integer position_i = Integer.parseInt(clMap.get("position"));
+		String code = "";
+		for (int i = 0; i < 5; i++) {
+			if(position_i.equals(i)){
+				code += clMap.get("cl").replace("[", "").replace("]", "")+"|";
+			}else
+				code += "|";
+		}
+		return ZLinkStringUtils.removeLastStr(code);
 	}
 }

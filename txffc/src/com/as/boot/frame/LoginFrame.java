@@ -34,6 +34,7 @@ import com.as.boot.thread.HotClThread;
 import com.as.boot.thread.HotDelPreTwoClThread;
 import com.as.boot.thread.KjThread;
 import com.as.boot.thread.PreResultClThread;
+import com.as.boot.thread.hotpre2.HotDelPreTwo_DC_ClThread;
 import com.as.boot.thread.hotpre2.HotDelPreTwo_D_ClThread;
 import com.as.boot.utils.HttpFuncUtil;
 import com.as.boot.utils.ModHttpUtil;
@@ -123,7 +124,8 @@ public class LoginFrame extends JFrame{
   					*/
   					//DelPreThreeThread anythreeThread = new DelPreThreeThread();
   					//DelPretClThread anythreeThread = new HotDelPreTwoClThread();
-  					HotDelPreTwo_D_ClThread anythreeThread = new HotDelPreTwo_D_ClThread();
+  					//HotDelPreTwo_D_ClThread anythreeThread = new HotDelPreTwo_D_ClThread();
+  					HotDelPreTwo_DC_ClThread anythreeThread = new HotDelPreTwo_DC_ClThread();
   					Thread anythreeResult = new Thread(anythreeThread);
   					anythreeResult.start();
   					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});
@@ -146,8 +148,9 @@ public class LoginFrame extends JFrame{
   					
   					/*AnyThreeThread anythreeThread = new AnyThreeThread();
   					*/
-  					HotDelPreTwo_D_ClThread anythreeThread = new HotDelPreTwo_D_ClThread();
+  					//HotDelPreTwo_D_ClThread anythreeThread = new HotDelPreTwo_D_ClThread();
   					//HotDelPreTwoClThread anythreeThread = new HotDelPreTwoClThread();
+  					HotDelPreTwo_DC_ClThread anythreeThread = new HotDelPreTwo_DC_ClThread();
   					Thread anythreeResult = new Thread(anythreeThread);
   					anythreeResult.start();
   					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});

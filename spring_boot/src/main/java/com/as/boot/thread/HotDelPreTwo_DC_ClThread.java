@@ -48,7 +48,7 @@ public class HotDelPreTwo_DC_ClThread implements Runnable{
 	//倍投情况
 	public static Integer btNum = 0;
 	//中奖情况
-	private List<Boolean> zjFlagList = Arrays.asList(false,false,false,false,false);
+	public static List<Boolean> zjFlagList = Arrays.asList(false,false,false,false,false);
 	//倍投阶梯
 	public static Integer[] btArr = null;
 	
@@ -650,7 +650,12 @@ public class HotDelPreTwo_DC_ClThread implements Runnable{
 		Integer changeNum = Integer.parseInt(HotClFrame.changeYlField.getText());
 		for (int i = clList.size()-1; i>=0; i--) {
 			//中N期更换
-			if(sulCountList.get(i).equals(changeNum)){
+			/*if(sulCountList.get(i).equals(changeNum)){
+				rfreshTXFFCL(i);
+				sulCountList.set(i,0);
+			}*/
+			//挂后换
+			if(!zjFlagList.get(i)){
 				rfreshTXFFCL(i);
 				sulCountList.set(i,0);
 			}
