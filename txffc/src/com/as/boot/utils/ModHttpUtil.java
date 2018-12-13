@@ -90,7 +90,7 @@ public class ModHttpUtil {
 		HashMap<String, String> resultMap = HttpFuncUtil.getUrlConnection(ModHttpUtil.mdLoginUrl+accountName+"&appId=5&password="+password);
 		if(resultMap!=null&&ZLinkStringUtils.isNotEmpty(resultMap.get("result"))){
 			JSONObject obj = JSONObject.parseObject(resultMap.get("result").replace("jsonp1(", "").replace(")", ""));
-			if(obj.getInteger("code").equals(0)&&obj.getString("msg").equals("登录成功")){
+			if(obj.getInteger("code")!=null&&obj.getInteger("code").equals(0)&&obj.getString("msg").equals("登录成功")){
 				ModHttpUtil.urlSessionId = resultMap.get("sessionId");
 				AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录成功！"});
 				return true;
