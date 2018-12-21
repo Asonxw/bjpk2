@@ -109,7 +109,7 @@ public class HotDelPreTwo_l_ClThread implements Runnable{
 					String[] kjArray = resultKj.split(",");
 					Double resultRound_i = Double.parseDouble(resultRound);
 					if(FFCRound == null || !FFCRound.equals(resultRound)){
-						
+						Integer failC = 0;
 						//判断是否有投注
 						if(FFCRound !=null && (Double.parseDouble(FFCRound) == (resultRound_i-1) || resultRound.endsWith("0001"))){
 							if(!preResultList.get(preResultList.size()-1).equals(resultKj.replace(",", "")))
@@ -171,6 +171,7 @@ public class HotDelPreTwo_l_ClThread implements Runnable{
 												btNumList.set(i, 0);
 											}
 										}else{
+											failC++;
 											//真实投注挂了则切换为模拟投注，保留真实投注倍数上升
 											if(mnOrSzStr.equals("真 实-投注")){
 												btNumList.set(i, btNumList.get(i)+1);
