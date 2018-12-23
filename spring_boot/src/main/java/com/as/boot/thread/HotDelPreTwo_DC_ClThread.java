@@ -124,13 +124,13 @@ public class HotDelPreTwo_DC_ClThread implements Runnable{
 					String[] kjArray = resultKj.split(",");
 					Double resultRound_i = Double.parseDouble(resultRound);
 					if(FFCRound == null || !FFCRound.equals(resultRound)){
+						Integer tempFailCount = 0;
 						//判断是否有投注
 						if(FFCRound !=null && (Double.parseDouble(FFCRound) == (resultRound_i-1) || resultRound.endsWith("0001"))){
 							if(!preResultList.get(preResultList.size()-1).equals(resultKj.replace(",", "")))
 								preResultList.add(resultKj.replace(",", ""));
 							if(preResultList.size()>30)
 								preResultList.remove(0);
-							
 							//获取表格第一行（判断是否有未开奖投注）
 							Object down_first = HotClFrame.tableDefaultmodel.getRowCount()>0?HotClFrame.tableDefaultmodel.getValueAt(0, 6):null;
 							/* ====所有策略中挂情况=== */
@@ -158,15 +158,14 @@ public class HotDelPreTwo_DC_ClThread implements Runnable{
 											zjFlagList.set(i, true);
 											//如果连错数大于3挂且本期中了则开始真实投注
 											failCountList.set(i, 0);
-											sulAllCount++;
 											sulCountList.set(i, sulCountList.get(i)+1);
 										}else{
+											tempFailCount++;
 											zjFlagList.set(i, false);
 											failCountList.set(i, failCountList.get(i) + 1);
 											sulCountList.set(i, 0);
 											if(failCountList.get(i)>maxFailCountList.get(i))
 												maxFailCountList.set(i, failCountList.get(i));
-											failAllCount++;
 										}
 									}
 								}
@@ -208,7 +207,7 @@ public class HotDelPreTwo_DC_ClThread implements Runnable{
 										if(hitClIndex.size()>2)
 											hitClIndex.remove(0);
 										//每3挂更换一次策略
-										//if(!btNum.equals(0)&&(btNum.equals(3)||btNum.equals(7))){
+										if(btNum<2){
 											Integer failMaxIndex = failMaxIndex(hitClIndex);
 											//正序和倒叙换着来
 											if(swhich){
@@ -227,11 +226,9 @@ public class HotDelPreTwo_DC_ClThread implements Runnable{
 												swhich = true;
 											}
 											HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"达到连挂值，更换策略，策略连挂值："+failCountList.get(failMaxIndex)});
-											if(hitClIndex.contains(failMaxIndex))
-												System.out.println(hitClIndex.toString()+"---"+failMaxIndex);
 											nowClIndex = failMaxIndex;
 											rfreshTXFFCL(failMaxIndex);
-										//}
+										}
 										
 										//判断是否已超出倍投
 										if(btNum >= btArr.length-1){
@@ -320,7 +317,8 @@ public class HotDelPreTwo_DC_ClThread implements Runnable{
 								initTXFFCL();
 								everyClYl = 0d;
 							}*/
-							startDownFFC();
+							if(tempFailCount<4)
+								startDownFFC();
 							
 						//}
 						//判断是否已经跨天
@@ -650,15 +648,15 @@ public class HotDelPreTwo_DC_ClThread implements Runnable{
 		Integer changeNum = Integer.parseInt(HotClFrame.changeYlField.getText());
 		for (int i = clList.size()-1; i>=0; i--) {
 			//中N期更换
-			/*if(sulCountList.get(i).equals(changeNum)){
-				rfreshTXFFCL(i);
-				sulCountList.set(i,0);
-			}*/
-			//挂后换
-			if(!zjFlagList.get(i)){
+			if(sulCountList.get(i).equals(changeNum)){
 				rfreshTXFFCL(i);
 				sulCountList.set(i,0);
 			}
+			//挂后换
+			/*if(!zjFlagList.get(i)){
+				rfreshTXFFCL(i);
+				sulCountList.set(i,0);
+			}*/
 		}
 		//判断是否需要投注，实战且开启真实投注
 		if(HotClFrame.downTypeSz.isSelected()&&HotClFrame.trueDownFlagField.isSelected()){

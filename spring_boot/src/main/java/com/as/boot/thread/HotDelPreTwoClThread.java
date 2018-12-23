@@ -109,7 +109,7 @@ public class HotDelPreTwoClThread implements Runnable{
 					String[] kjArray = resultKj.split(",");
 					Double resultRound_i = Double.parseDouble(resultRound);
 					if(FFCRound == null || !FFCRound.equals(resultRound)){
-						
+						Integer tempFailC = 0;
 						//判断是否有投注
 						if(FFCRound !=null && (Double.parseDouble(FFCRound) == (resultRound_i-1) || resultRound.endsWith("0001"))){
 							if(!preResultList.get(preResultList.size()-1).equals(resultKj.replace(",", "")))
@@ -167,6 +167,7 @@ public class HotDelPreTwoClThread implements Runnable{
 											btNumList.set(i, 0);
 											sulAllCount++;
 										}else{
+											tempFailC++;
 											zjFlagList.set(i, false);
 											failCountList.set(i, failCountList.get(i) + 1);
 											sulCountList.set(i, 0);
@@ -270,7 +271,7 @@ public class HotDelPreTwoClThread implements Runnable{
 								initTXFFCL();
 								everyClYl = 0d;
 							}*/
-							startDownFFC();
+							if(tempFailC<3)startDownFFC();
 							
 						//}
 						//判断是否已经跨天
