@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.as.boot.controller.ExampleControll;
+import com.as.boot.frame.AnyThreeFrame;
 import com.as.boot.frame.HotClFrame;
 import com.as.boot.utils.ModHttpUtil;
 import com.as.boot.utils.ZLinkStringUtils;
@@ -36,7 +37,7 @@ public class HotDelPreTwo_DC_ClThread implements Runnable{
 	//private HashMap<String,String> clMap = null;
 	public static List<HashMap<String, String>> clList = null;
 	public static HashMap<String, String> clMap = null;
-	public static Double baseMoney = 0.02;
+	public static Double baseMoney = 0.002;
 	//连挂数
 	public static List<Integer> failCountList = Arrays.asList(0,0,0,0,0);
 	//连中数
@@ -108,8 +109,11 @@ public class HotDelPreTwo_DC_ClThread implements Runnable{
 					String[] kjArray = resultKj.split(",");
 					Double resultRound_i = Double.parseDouble(resultRound);
 					if(HotClFrame.FFCRound == null || !HotClFrame.FFCRound.equals(resultRound)){
+						HotClFrame.kjTableDefaultmodel.insertRow(0, new String[]{resultRound,resultKj});
 						//判断是否有投注
 						if(HotClFrame.FFCRound !=null && (Double.parseDouble(HotClFrame.FFCRound) == (resultRound_i-1) || resultRound.endsWith("0001"))){
+							
+							
 							if(!preResultList.get(preResultList.size()-1).equals(resultKj.replace(",", "")))
 								preResultList.add(resultKj.replace(",", ""));
 							if(preResultList.size()>30)
@@ -623,7 +627,7 @@ public class HotDelPreTwo_DC_ClThread implements Runnable{
 	 * @throws
 	 */
 	public static void startDownFFC(){
-		
+		System.out.println(clList.size());
 		Boolean downSulFlag = false;
 		Integer changeNum = Integer.parseInt(HotClFrame.changeYlField.getText());
 		for (int i = clList.size()-1; i>=0; i--) {

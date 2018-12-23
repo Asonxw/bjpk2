@@ -122,7 +122,7 @@ public class ModHttpUtil {
 		Integer clCount = 1;
 		if(clMap!=null){
 			Integer nums = clMap.get("cl").split(",").length;
-			order = new ModOrder_DWD("dwd_dwd_dwd", serializeCode(clMap), btArr[btNum].toString(), df.format(price), "19.5", "0", df.format(btArr[btNum]*price*nums));
+			order = new ModOrder_DWD("dwd_dwd_dwd", serializeCode(clMap), btArr[btNum].toString(), df.format(price), "19.5", "0", df.format(btArr[btNum]*price*nums), "7");
 			orderList.add(order);
 		}
 		Integer betType = clCount>1?2:1;
@@ -154,7 +154,7 @@ public class ModHttpUtil {
 		String code = "";
 		for (int i = 0; i < 5; i++) {
 			if(position_i.equals(i)){
-				code += clMap.get("cl").replace("[", "").replace("]", "")+"|";
+				code += clMap.get("cl").replace("[", "").replace("]", "").replace(" ", "")+"|";
 			}else
 				code += "|";
 		}
