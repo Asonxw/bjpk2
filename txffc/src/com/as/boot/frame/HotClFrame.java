@@ -290,7 +290,7 @@ public class HotClFrame extends JFrame{
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
-  		btArrayField.setText("19,67,238,843,2989,10598");
+  		btArrayField.setText("6,20,70,247,874");
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值
@@ -363,7 +363,7 @@ public class HotClFrame extends JFrame{
   					/*HotClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   					//倍投情况
   					HotClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);*/
-  					HotDelPreTwo_DC_ClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					HotDelPreTwo_DC_ClThread.failCountList = Arrays.asList(0,0,0,0,0);
   					//倍投情况
   					//HotDelPreTwo_D_ClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   					HotDelPreTwo_DC_ClThread.btNum = 0;

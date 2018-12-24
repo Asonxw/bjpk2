@@ -17,7 +17,7 @@ public class ModOrder_DWD {
 	private String amount;
 	
 	public ModOrder_DWD(String method, String code, String piece, String price, String odds,
-			String point, String amount){
+			String point, String amount, String nums){
 		this.method = method;
 		this.piece = piece;
 		price = price.startsWith(".")?("0"+price):price;
@@ -26,7 +26,8 @@ public class ModOrder_DWD {
 		this.point = point;
 		amount = amount.startsWith(".")?("0"+amount):amount;
 		this.amount = amount; 
-		this.code = serializeCode(code);
+		this.code = code;
+		this.nums = nums;
 	}
 	
 	public String getMethod() {
