@@ -455,7 +455,7 @@ public class HotClFrame_mdpk extends JFrame{
 		pop.add(show);
 		pop.add(exit);
 
-		trayIcon = new TrayIcon(trayImg.getImage(), "any three positions - Replace after hit", pop);
+		trayIcon = new TrayIcon(trayImg.getImage(), "modPK-10", pop);
 		trayIcon.setImageAutoSize(true);
 
 		trayIcon.addMouseListener(new MouseAdapter() {
