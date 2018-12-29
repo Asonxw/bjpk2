@@ -23,9 +23,13 @@ public class ModHttpUtil {
 	
 	public static String mdKjUrl = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712";
 	
+	public static String mdKjUrl_mkpk = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=MDPK10";
+	
 	public static DecimalFormat df = new DecimalFormat("#.000");
 	
 	public static String mdLoginUrl = "https://www.modgame.vip/sso/login?callback=jsonp1&way=pwd&from=portal&cn=";
+	
+	public static String modHistoryUrl = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?lottery=TXFFC&method=dwd_dwd_dwd"; 
 	
 	/**
 	 * @Title: addOrder  
@@ -149,6 +153,60 @@ public class ModHttpUtil {
 		return false;
 	}
 	
+	/**
+	 * @Title: addTXFFCOrders_DWD1  
+	 * @Description:1码定位胆7注下注 批量订单
+	 * @author: Ason
+	 * @param issue 奖期
+	 * @param clMap 策略（包含position和cl）
+	 * @param btNum 倍投索引
+	 * @param btArr 倍投阶梯
+	 * @param baseMoney 基本金额
+	 * @return      
+	 * @return: Boolean
+	 * @throws
+	 */
+	public static Boolean addTXFFCOrders_DWD1(String issue, List<HashMap<String, String>> clList, List<Integer> btNumList,
+			Integer[] btArr, Double price) {
+		String lottery = "TXFFC";
+		
+		Integer sourceType = 0;
+		List<ModOrder_DWD> orderList = new ArrayList<>();
+		ModOrder_DWD order = null;
+		Integer clCount = 0;
+		for (int i = 0; i < clList.size(); i++) {
+			HashMap<String, String> clMap = clList.get(i);
+			if(clMap.get("cl")!=null&&!btArr[btNumList.get(i)].equals(0)){
+				Integer nums = clMap.get("cl").split(",").length;
+				order = new ModOrder_DWD("dwd_dwd_dwd", serializeCode(clMap), btArr[btNumList.get(i)].toString(), df.format(price), "19.5", "0", df.format(btArr[btNumList.get(i)]*price*nums), "7");
+				orderList.add(order);
+				clCount++;
+			}
+		}
+		Integer betType = clCount>1?2:1;
+		if(orderList.size()>0){
+			String params = "lottery="+lottery+"&issue="+issue+"&order="+ZLinkStringUtils.parseJsonToString(orderList)+"&betType="+betType+"&sourceType="+sourceType;
+			System.out.println(params);
+			//发送post请求
+			String result = HttpFuncUtil.postBySession(urlSessionId, addOrderUrl, params);
+			System.out.println(result);
+			if(ZLinkStringUtils.isNotEmpty(result)){
+				JSONObject resultJson = JSONObject.parseObject(result);
+				Integer resultCode = resultJson.getInteger("code");
+				String resultmsg = resultJson.getString("msg");
+				if(resultCode.equals(1)||resultmsg.equals("ok")){
+					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{issue+"期投注成功！"});
+					return true;
+				}else if(resultmsg.contains("奖期错误")){
+					//奖期错误，已错过投注时间
+					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败：改期投注时间已过！"});
+				}else
+					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败："+resultmsg});
+			}
+		}else return true;
+		return false;
+	}
+	
 	public static String serializeCode(HashMap<String, String> clMap){
 		Integer position_i = Integer.parseInt(clMap.get("position"));
 		String code = "";
@@ -159,5 +217,20 @@ public class ModHttpUtil {
 				code += "|";
 		}
 		return ZLinkStringUtils.removeLastStr(code);
+	}
+	
+	public static List<String> getHistoryIssue(Integer num){
+		String url = modHistoryUrl + "&size="+num;
+		String resultStr = HttpFuncUtil.getBySession(urlSessionId, url);
+		JSONObject resultO = JSONObject.parseObject(resultStr);
+		if(resultO.getString("code").equals("1")){
+			List<String> preHistory = new ArrayList<>();
+			JSONArray array = resultO.getJSONObject("result").getJSONArray("issue");
+			for (int i = array.size()-1; i >= 0 ; i--) {
+				preHistory.add(array.getJSONObject(i).getString("code").replace(",", ""));
+			}
+			return preHistory;
+		}else
+			return getHistoryIssue(num);
 	}
 }

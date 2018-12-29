@@ -43,7 +43,7 @@ import com.as.boot.thread.hotpre2.HotDelPreTwo_DC_ClThread;
 import com.as.boot.thread.hotpre2.HotDelPreTwo_D_ClThread;
 import com.as.boot.utils.ModHttpUtil;
 
-public class HotClFrame extends JFrame{
+public class HotClFrame_mdpk extends JFrame{
 
 	public static String FFCRound = null;
 	public static String FFCResult = null;
@@ -72,11 +72,16 @@ public class HotClFrame extends JFrame{
 	/**开始去重码**/
 	public static JCheckBox delPreResultCheckbox = new JCheckBox("是");
 	/**方案一**/
-	public static JCheckBox w = new JCheckBox("0");
-	public static JCheckBox q = new JCheckBox("1");
-	public static JCheckBox b = new JCheckBox("2");
-	public static JCheckBox g = new JCheckBox("3");
-	public static JCheckBox s = new JCheckBox("4");
+	public static JCheckBox _0 = new JCheckBox("1");
+	public static JCheckBox _1 = new JCheckBox("2");
+	public static JCheckBox _2 = new JCheckBox("3");
+	public static JCheckBox _3 = new JCheckBox("4");
+	public static JCheckBox _4 = new JCheckBox("5");
+	public static JCheckBox _5 = new JCheckBox("6");
+	public static JCheckBox _6 = new JCheckBox("7");
+	public static JCheckBox _7 = new JCheckBox("8");
+	public static JCheckBox _8 = new JCheckBox("9");
+	public static JCheckBox _9 = new JCheckBox("10");
     
 	public static JLabel roundCount = new JLabel("0期");
 	public static JLabel sulPercent = new JLabel("00%");
@@ -115,12 +120,12 @@ public class HotClFrame extends JFrame{
 	//开始投注按钮
 	public static JButton button = new JButton("开始执行");
 	
-	public static HotClFrame hotClFrame = new HotClFrame();
+	public static HotClFrame_mdpk hotClFrame = new HotClFrame_mdpk();
 	
 	
 	
-	public HotClFrame(){
-		this.setTitle("任三策略-中后换");
+	public HotClFrame_mdpk(){
+		this.setTitle("modPk-10");
 		this.setBounds(200, 200, 200, 200);
 		this.setSize(910, 700);
 		this.setLocation(200, 50);
@@ -195,6 +200,10 @@ public class HotClFrame extends JFrame{
   		historyNumPanel.add(historyNumField);
   		initParamsBox.add(historyNumPanel);
   		
+  		historyNumField.setText("20");
+  		historyNumPanel.add(historyNumField);
+  		initParamsBox.add(historyNumPanel);
+  		
   		JPanel delPreResultPanel = new JPanel();
   		delPreResultPanel.setPreferredSize(new Dimension(210,25));
   		JLabel delPreResultLabel = new JLabel("开启去重码:");
@@ -210,12 +219,28 @@ public class HotClFrame extends JFrame{
         positionBox.setPreferredSize(new Dimension(150,190));
         positionBox.setBorder(BorderFactory.createTitledBorder("投注方案"));
         
+        _0.setSelected(true);
+        _1.setSelected(true);
+        _2.setSelected(true);
+        _3.setSelected(true);
+        _4.setSelected(true);
+        _5.setSelected(true);
+        _6.setSelected(true);
+        _7.setSelected(true);
+        _8.setSelected(true);
+        _9.setSelected(true);
+        
         //万百个
-        positionBox.add(w);
-        positionBox.add(q);
-        positionBox.add(b);
-        positionBox.add(g);
-        positionBox.add(s);
+        positionBox.add(_0);
+        positionBox.add(_1);
+        positionBox.add(_2);
+        positionBox.add(_3);
+        positionBox.add(_4);
+        positionBox.add(_5);
+        positionBox.add(_6);
+        positionBox.add(_7);
+        positionBox.add(_8);
+        positionBox.add(_9);
         
         //已运行期数
         JPanel roundCountBox = new JPanel();
@@ -250,13 +275,13 @@ public class HotClFrame extends JFrame{
    		JLabel winStopLabel = new JLabel("止盈:");
   		downParamsBox.add(winStopLabel);
   		
-   		winStopField.setText("999");
+   		winStopField.setText("40");
    		downParamsBox.add(winStopField);
    		//止损
    		JLabel failStopLabel = new JLabel("止损:");
   		downParamsBox.add(failStopLabel);
   		
-   		failStopField.setText("999");
+   		failStopField.setText("100");
    		downParamsBox.add(failStopField);
    		//投注模式
         JLabel downTypeLabel = new JLabel("投注模式:");
@@ -291,7 +316,7 @@ public class HotClFrame extends JFrame{
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
-  		btArrayField.setText("8,36,135,486");
+  		btArrayField.setText("6,20,70,247,874");
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值
@@ -351,7 +376,7 @@ public class HotClFrame extends JFrame{
   					DelPreThreeThread.initTXFFCL();
   					button.setText("停止执行");
   					//初始化倍投阶梯
-  					String[] btStrArr = HotClFrame.btArrayField.getText().split(",");
+  					String[] btStrArr = HotClFrame_mdpk.btArrayField.getText().split(",");
   					//HotClThread.btArr = new Integer[btStrArr.length];
   					DelPreThreeThread.btArr = new Integer[btStrArr.length];
   					for (int i = 0; i < btStrArr.length; i++)
@@ -375,11 +400,16 @@ public class HotClFrame extends JFrame{
 		});
   		
   		clBoxList = new ArrayList<JCheckBox>();
-  		clBoxList.add(w);
-  		clBoxList.add(q);
-  		clBoxList.add(b);
-  		clBoxList.add(g);
-  		clBoxList.add(s);
+  		clBoxList.add(_0);
+  		clBoxList.add(_1);
+  		clBoxList.add(_2);
+  		clBoxList.add(_3);
+  		clBoxList.add(_4);
+  		clBoxList.add(_5);
+  		clBoxList.add(_6);
+  		clBoxList.add(_7);
+  		clBoxList.add(_8);
+  		clBoxList.add(_9);
   		
   		this.addWindowListener(new WindowAdapter() { // 窗口关闭事件
 

@@ -123,9 +123,9 @@ public class LoginFrame extends JFrame{
   					/*AnyThreeThread anythreeThread = new AnyThreeThread();//任三
   					*/
   					//DelPreThreeThread anythreeThread = new DelPreThreeThread();
-  					//DelPretClThread anythreeThread = new HotDelPreTwoClThread();
+  					DelPreThreeThread anythreeThread = new DelPreThreeThread();
   					//HotDelPreTwo_D_ClThread anythreeThread = new HotDelPreTwo_D_ClThread();
-  					HotDelPreTwo_DC_ClThread anythreeThread = new HotDelPreTwo_DC_ClThread();
+  					//HotDelPreTwo_DC_ClThread anythreeThread = new HotDelPreTwo_DC_ClThread();
   					Thread anythreeResult = new Thread(anythreeThread);
   					anythreeResult.start();
   					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});
