@@ -12,7 +12,6 @@ import com.as.boot.ModOrder;
 import com.as.boot.ModOrder_DWD;
 import com.as.boot.frame.AnyThreeFrame;
 import com.as.boot.frame.AnyThreeFrame5;
-import com.as.boot.frame.HotClFrame_mdpk;
 import com.as.boot.frame.LoginFrame;
 import com.as.boot.thread.AccountThread;
 
@@ -24,15 +23,13 @@ public class ModHttpUtil {
 	
 	public static String mdKjUrl = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712";
 	
-	public static String mdKjUrl_mkpk = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=MDPK10&method=qsm_zx_fs";
+	public static String mdKjUrl_mkpk = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=MDPK10";
 	
 	public static DecimalFormat df = new DecimalFormat("#.000");
 	
 	public static String mdLoginUrl = "https://www.modgame.vip/sso/login?callback=jsonp1&way=pwd&from=portal&cn=";
 	
 	public static String modHistoryUrl = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?lottery=TXFFC&method=dwd_dwd_dwd"; 
-	
-	public static String modHistoryUrl_mdpk = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?lottery=MDPK10&method=dwd_dwd_dwd";
 	
 	/**
 	 * @Title: addOrder  
@@ -99,7 +96,7 @@ public class ModHttpUtil {
 			JSONObject obj = JSONObject.parseObject(resultMap.get("result").replace("jsonp1(", "").replace(")", ""));
 			if(obj.getInteger("code")!=null&&obj.getInteger("code").equals(0)&&obj.getString("msg").equals("登录成功")){
 				ModHttpUtil.urlSessionId = resultMap.get("sessionId");
-				HotClFrame_mdpk.logTableDefaultmodel.insertRow(0, new String[]{"登录成功！"});
+				AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录成功！"});
 				return true;
 			}
 		}
@@ -222,22 +219,18 @@ public class ModHttpUtil {
 		return ZLinkStringUtils.removeLastStr(code);
 	}
 	
-	public static List<String> getHistoryIssue(Integer num, String url){
-		String purl = url + "&size="+num;
-		String resultStr = HttpFuncUtil.getBySession(urlSessionId, purl);
+	public static List<String> getHistoryIssue(Integer num){
+		String url = modHistoryUrl + "&size="+num;
+		String resultStr = HttpFuncUtil.getBySession(urlSessionId, url);
 		JSONObject resultO = JSONObject.parseObject(resultStr);
 		if(resultO.getString("code").equals("1")){
 			List<String> preHistory = new ArrayList<>();
 			JSONArray array = resultO.getJSONObject("result").getJSONArray("issue");
 			for (int i = array.size()-1; i >= 0 ; i--) {
-				String resultKj = array.getJSONObject(i).getString("code");
-				resultKj = resultKj.replace(",0", ",");
-				resultKj = resultKj.startsWith("0")?resultKj.substring(1,resultKj.length()):resultKj;
-				resultKj = resultKj.replace("10", "0");
-				preHistory.add(resultKj.replace(",", ""));
+				preHistory.add(array.getJSONObject(i).getString("code").replace(",", ""));
 			}
 			return preHistory;
 		}else
-			return getHistoryIssue(num, url);
+			return getHistoryIssue(num);
 	}
 }

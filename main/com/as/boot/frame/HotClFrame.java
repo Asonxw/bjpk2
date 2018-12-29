@@ -347,7 +347,7 @@ public class HotClFrame extends JFrame{
   					//初始化策略
   					//HotClThread.initTXFFCL();
   					//初始化历史20期数据
-  					DelPreThreeThread.preResultList = ModHttpUtil.getHistoryIssue(20, ModHttpUtil.modHistoryUrl);
+  					DelPreThreeThread.preResultList = ModHttpUtil.getHistoryIssue(20);
   					DelPreThreeThread.initTXFFCL();
   					button.setText("停止执行");
   					//初始化倍投阶梯

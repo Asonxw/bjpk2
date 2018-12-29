@@ -17,8 +17,9 @@ import com.as.boot.utils.ZLinkStringUtils;
  * @author Ason
  * @version 1.0
  */
-public class KjThread_mkpk implements Runnable{
+public class KjThread implements Runnable{
 	
+	private String[] urlArr = {"http://gf1.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf2.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf3.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf4.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf5.pkvip08.com:92/Shared/GetNewPeriod?gameid=81"};
 	
 	public static DecimalFormat ddf = new DecimalFormat("#");
 	private Integer urlIndex = 0; 
@@ -29,9 +30,9 @@ public class KjThread_mkpk implements Runnable{
 			try {
 				//获取最近几期开奖结果
 				//result = HttpFuncUtil.getString(urlArr[urlIndex]);
-				result = HttpFuncUtil.getBySession(ModHttpUtil.urlSessionId, ModHttpUtil.mdKjUrl_mkpk);
+				result = HttpFuncUtil.getBySession(ModHttpUtil.urlSessionId, ModHttpUtil.mdKjUrl);
 				if(ZLinkStringUtils.isNotEmpty(result)){
-					JSONObject resultObj = JSONObject.parseObject(result);//JSONObject.parseArray(result).getJSONObject(0);
+					JSONObject resultObj = JSONObject.parseObject(result);
 					//modGame
 					JSONObject kjJson = resultObj.getJSONObject("result").getJSONArray("issue").getJSONObject(0);
 					String resultRound = kjJson.getString("issueNo").replace("-", "");
@@ -54,9 +55,6 @@ public class KjThread_mkpk implements Runnable{
 					*/
 					if(ExampleControll.FFCRound == null || !ExampleControll.FFCRound.equals(resultRound)){
 						ExampleControll.FFCRound = resultRound;
-						resultKj = resultKj.replace(",0", ",");
-						resultKj = resultKj.startsWith("0")?resultKj.substring(1,resultKj.length()):resultKj;
-						resultKj = resultKj.replace("10", "0");
 						ExampleControll.FFCResult = resultKj;
 						ExampleControll.nextFFCRound = nextRound;
 						Thread.sleep(30000);//更新到数据后睡眠30s

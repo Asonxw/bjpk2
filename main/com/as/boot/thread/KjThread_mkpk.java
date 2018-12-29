@@ -31,7 +31,7 @@ public class KjThread_mkpk implements Runnable{
 				//result = HttpFuncUtil.getString(urlArr[urlIndex]);
 				result = HttpFuncUtil.getBySession(ModHttpUtil.urlSessionId, ModHttpUtil.mdKjUrl_mkpk);
 				if(ZLinkStringUtils.isNotEmpty(result)){
-					JSONObject resultObj = JSONObject.parseObject(result);//JSONObject.parseArray(result).getJSONObject(0);
+					JSONObject resultObj = JSONObject.parseObject(result);
 					//modGame
 					JSONObject kjJson = resultObj.getJSONObject("result").getJSONArray("issue").getJSONObject(0);
 					String resultRound = kjJson.getString("issueNo").replace("-", "");

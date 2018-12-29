@@ -35,15 +35,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import com.as.boot.thread.DelPreThreeThread;
-import com.as.boot.thread.HotClThread;
-import com.as.boot.thread.HotDelPreTwoClThread;
-import com.as.boot.thread.PreResultClThread;
-import com.as.boot.thread.hotpre2.HotDelPreTwo_DC_ClThread;
-import com.as.boot.thread.hotpre2.HotDelPreTwo_D_ClThread;
-import com.as.boot.utils.ModHttpUtil;
+import com.as.boot.thread.AnyThreeThread;
 
-public class HotClFrame extends JFrame{
+public class AnyThreeFrame extends JFrame{
 
 	public static String FFCRound = null;
 	public static String FFCResult = null;
@@ -65,22 +59,28 @@ public class HotClFrame extends JFrame{
 	public static String[] logDataTitle = {"log信息"};
 	public static DefaultTableModel logTableDefaultmodel = new DefaultTableModel(logTableDate,logDataTitle);
 	
+	/**初始化生成策略数**/
+	public static JTextField initClNumField = new JTextField(8);
+	/**目标最大连错**/
+	public static JTextField aimMaxFailField = new JTextField(8);
+	/**策略获取重置次数**/
+	public static JTextField maxRestNField = new JTextField(8);
 	/**目标策略注数**/
     public static JTextField clNumField = new JTextField(8);
     /**统计期数**/
 	public static JTextField historyNumField = new JTextField(8);
-	/**开始去重码**/
-	public static JCheckBox delPreResultCheckbox = new JCheckBox("是");
 	/**方案一**/
-	public static JCheckBox w = new JCheckBox("0");
-	public static JCheckBox q = new JCheckBox("1");
-	public static JCheckBox b = new JCheckBox("2");
-	public static JCheckBox g = new JCheckBox("3");
-	public static JCheckBox s = new JCheckBox("4");
+	public static JCheckBox wqb = new JCheckBox("012");
+	public static JCheckBox wqs = new JCheckBox("013");
+	public static JCheckBox wqg = new JCheckBox("014");
+	public static JCheckBox wbs = new JCheckBox("023");
+	public static JCheckBox wbg = new JCheckBox("024");
+	public static JCheckBox wsg = new JCheckBox("034");
+	public static JCheckBox qbs = new JCheckBox("123");
+	public static JCheckBox qbg = new JCheckBox("124");
+    public static JCheckBox qsg = new JCheckBox("134");
+    public static JCheckBox bsg = new JCheckBox("234");
     
-	public static JLabel roundCount = new JLabel("0期");
-	public static JLabel sulPercent = new JLabel("00%");
-	
     public static List<JCheckBox> clBoxList = null; 
     /**盈利回头值**/
 	public static JTextField returnField = new JTextField(8);
@@ -104,6 +104,9 @@ public class HotClFrame extends JFrame{
 	/**模拟连挂转换**/
 	public static JTextField mnFailSwhichField = new JTextField(5);
 	
+	/**初始连挂数**/
+	public static JTextField initFailCountField = new JTextField(4);
+	
 	/**是否开启真实投注**/
 	public static JCheckBox trueDownFlagField = new JCheckBox("开");
 	
@@ -115,11 +118,11 @@ public class HotClFrame extends JFrame{
 	//开始投注按钮
 	public static JButton button = new JButton("开始执行");
 	
-	public static HotClFrame hotClFrame = new HotClFrame();
+	public static AnyThreeFrame anythreeFrame = new AnyThreeFrame();
 	
 	
 	
-	public HotClFrame(){
+	public AnyThreeFrame(){
 		this.setTitle("任三策略-中后换");
 		this.setBounds(200, 200, 200, 200);
 		this.setSize(910, 700);
@@ -147,6 +150,7 @@ public class HotClFrame extends JFrame{
   		accountAmountLabel.setPreferredSize(new Dimension(55,30));
   		accountBox.add(accountAmountLabel);
   		
+		
    		//模拟盈亏
    		JLabel mnYkLabel = new JLabel("模拟盈亏:");
    		accountBox.add(mnYkLabel);
@@ -174,33 +178,56 @@ public class HotClFrame extends JFrame{
 		JPanel initParamsBox = new JPanel();
 		initParamsBox.setPreferredSize(new Dimension(220,190));
 		initParamsBox.setBorder(BorderFactory.createTitledBorder("初始参数"));
+		
+		//系统初始策略生成组数
+		JPanel initClNumPanel = new JPanel();
+		initClNumPanel.setPreferredSize(new Dimension(210,25));
+        JLabel initClNumLabel = new JLabel("初始策略数:");
+        initClNumPanel.add(initClNumLabel);
+  		
+  		initClNumField.setText("100");
+  		initClNumPanel.add(initClNumField);
+  		initParamsBox.add(initClNumPanel);
+  		
+  		//理想连挂数
+  		JPanel aimMaxFailPanel = new JPanel();
+  		aimMaxFailPanel.setPreferredSize(new Dimension(210,25));
+        JLabel aimMaxFailLabel = new JLabel("理想连挂数:");
+        aimMaxFailPanel.add(aimMaxFailLabel);
+  		
+  		aimMaxFailField.setText("0");
+  		aimMaxFailPanel.add(aimMaxFailField);
+  		initParamsBox.add(aimMaxFailPanel);
+  		
+  		//重置次数
+  		JPanel maxRestNPanel = new JPanel();
+  		maxRestNPanel.setPreferredSize(new Dimension(210,25));
+        JLabel maxRestNLabel = new JLabel("重置的次数:");
+        maxRestNPanel.add(maxRestNLabel);
+        
+  		maxRestNField.setText("200");
+  		maxRestNPanel.add(maxRestNField);
+  		initParamsBox.add(maxRestNPanel);
   		
   		//系统策略总组数
   		JPanel clNumPanel = new JPanel();
   		clNumPanel.setPreferredSize(new Dimension(210,25));
-        JLabel clNumLabel = new JLabel("策略码数:");
+        JLabel clNumLabel = new JLabel("策略总组数:");
         clNumPanel.add(clNumLabel);
        
-  		clNumField.setText("7");
+  		clNumField.setText("700");
   		clNumPanel.add(clNumField);
   		initParamsBox.add(clNumPanel);
   		
   		//统计期数
   		JPanel historyNumPanel = new JPanel();
   		historyNumPanel.setPreferredSize(new Dimension(210,25));
-  		JLabel historyNumLabel = new JLabel("统计期数:");
+  		JLabel historyNumLabel = new JLabel("统计总期数:");
   		historyNumPanel.add(historyNumLabel);
   		
-  		historyNumField.setText("4");
+  		historyNumField.setText("1115");
   		historyNumPanel.add(historyNumField);
   		initParamsBox.add(historyNumPanel);
-  		
-  		JPanel delPreResultPanel = new JPanel();
-  		delPreResultPanel.setPreferredSize(new Dimension(210,25));
-  		JLabel delPreResultLabel = new JLabel("开启去重码:");
-  		delPreResultPanel.add(delPreResultLabel);
-  		delPreResultPanel.add(delPreResultCheckbox);
-  		initParamsBox.add(delPreResultPanel);
   		
   		panel.add(initParamsBox);
   		
@@ -211,26 +238,18 @@ public class HotClFrame extends JFrame{
         positionBox.setBorder(BorderFactory.createTitledBorder("投注方案"));
         
         //万百个
-        positionBox.add(w);
-        positionBox.add(q);
-        positionBox.add(b);
-        positionBox.add(g);
-        positionBox.add(s);
+        positionBox.add(wqb);
+        positionBox.add(wqs);
+        positionBox.add(wqg);
+        positionBox.add(wbs);
+        positionBox.add(wbg);
         
-        //已运行期数
-        JPanel roundCountBox = new JPanel();
-        roundCountBox.setPreferredSize(new Dimension(130,35));
-        JLabel roundCountLabel = new JLabel("已运行:");
-        roundCountBox.add(roundCountLabel);
-        roundCountBox.add(roundCount);
-        positionBox.add(roundCountBox);
-        //命中率
-        JPanel sulPercentBox = new JPanel();
-        sulPercentBox.setPreferredSize(new Dimension(130,35));
-        JLabel sulPercentLabel = new JLabel("命中率:");
-        sulPercentBox.add(sulPercentLabel);
-        sulPercentBox.add(sulPercent);
-        positionBox.add(sulPercentBox);
+        positionBox.add(wsg);
+        positionBox.add(qbs);
+        positionBox.add(qbg);
+        positionBox.add(qsg);
+        positionBox.add(bsg);
+        
         
         panel.add(positionBox);
         
@@ -250,13 +269,13 @@ public class HotClFrame extends JFrame{
    		JLabel winStopLabel = new JLabel("止盈:");
   		downParamsBox.add(winStopLabel);
   		
-   		winStopField.setText("999");
+   		winStopField.setText("40");
    		downParamsBox.add(winStopField);
    		//止损
    		JLabel failStopLabel = new JLabel("止损:");
   		downParamsBox.add(failStopLabel);
   		
-   		failStopField.setText("999");
+   		failStopField.setText("100");
    		downParamsBox.add(failStopField);
    		//投注模式
         JLabel downTypeLabel = new JLabel("投注模式:");
@@ -274,24 +293,20 @@ public class HotClFrame extends JFrame{
   			@Override
   		    public void mouseClicked(MouseEvent arg0){
   				//将文字切换为实战
-  				//HotClThread.mnOrSzFlag = 1;
-  				DelPreThreeThread.mnOrSzFlag = 1;
-  				//HotDelPreTwoClThread.mnOrSzFlag = 1;
+  				AnyThreeThread.mnOrSzFlag = 1;
   		    }
 		});
         downTypeMn.addMouseListener(new MouseAdapter() {
   			@Override
   		    public void mouseClicked(MouseEvent arg0){
   				//将文字切换为模拟
-  				//HotClThread.mnOrSzFlag = 0;
-  				DelPreThreeThread.mnOrSzFlag = 0;
-  				//HotDelPreTwoClThread.mnOrSzFlag = 0;
+  				AnyThreeThread.mnOrSzFlag = 0;
   		    }
 		});
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
-  		btArrayField.setText("8,36,135,486");
+  		btArrayField.setText("0,0,0,3,12,45,165");
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值
@@ -312,6 +327,13 @@ public class HotClFrame extends JFrame{
 		mnFailSwhichField.setText("3");
 		downParamsBox.add(mnFailSwhichField);
 		
+		//初始连挂数
+		JLabel initFailCountLabel = new JLabel("初始连挂数:");
+		downParamsBox.add(initFailCountLabel);
+		initFailCountField.setText("10");
+		downParamsBox.add(initFailCountField);
+		
+		//初始连挂数
 		JLabel trueDownFlagLabel = new JLabel("开启真实投注:");
 		downParamsBox.add(trueDownFlagLabel);
 		//initFailCountFsield.setText("10");
@@ -345,46 +367,42 @@ public class HotClFrame extends JFrame{
   		    public void mouseClicked(MouseEvent arg0){
   				if(button.getText().equals("开始执行")){
   					//初始化策略
-  					//HotClThread.initTXFFCL();
-  					//初始化历史20期数据
-  					DelPreThreeThread.preResultList = ModHttpUtil.getHistoryIssue(20, ModHttpUtil.modHistoryUrl);
-  					DelPreThreeThread.initTXFFCL();
+  					AnyThreeThread.initTXFFCL();
   					button.setText("停止执行");
   					//初始化倍投阶梯
-  					String[] btStrArr = HotClFrame.btArrayField.getText().split(",");
-  					//HotClThread.btArr = new Integer[btStrArr.length];
-  					DelPreThreeThread.btArr = new Integer[btStrArr.length];
+  					String[] btStrArr = AnyThreeFrame.btArrayField.getText().split(",");
+  					AnyThreeThread.btArr = new Integer[btStrArr.length];
   					for (int i = 0; i < btStrArr.length; i++)
-  						//HotClThread.btArr[i] = Integer.parseInt(btStrArr[i]);
-  						DelPreThreeThread.btArr[i] = Integer.parseInt(btStrArr[i]);
-  					//HoHotDelPreTwoClThreadwnFFC();
-  					DelPreThreeThread.startDownFFC();
+  						AnyThreeThread.btArr[i] = Integer.parseInt(btStrArr[i]);
+  					AnyThreeThread.startDownFFC(Integer.parseInt(AnyThreeFrame.initFailCountField.getText()));
   				}else{
   					button.setText("开始执行");
   					//初始化连挂及倍投
   					//连挂数
-  					/*HotClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
+  					AnyThreeThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   					//倍投情况
-  					HotClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);*/
-  					DelPreThreeThread.failCountList = Arrays.asList(0,0,0,0,0);
-  					//倍投情况
-  					DelPreThreeThread.btNumList = Arrays.asList(0,0,0,0,0);
-  					//HotDelPreTwo_DC_ClThread.btNum = 0;
+  					AnyThreeThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   				}
   		    }
 		});
   		
   		clBoxList = new ArrayList<JCheckBox>();
-  		clBoxList.add(w);
-  		clBoxList.add(q);
-  		clBoxList.add(b);
-  		clBoxList.add(g);
-  		clBoxList.add(s);
+  		clBoxList.add(wqb);
+  		clBoxList.add(wqs);
+  		clBoxList.add(wqg);
+  		clBoxList.add(wbs);
+  		clBoxList.add(wbg);
+        
+  		clBoxList.add(wsg);
+  		clBoxList.add(qbs);
+  		clBoxList.add(qbg);
+  		clBoxList.add(qsg);
+  		clBoxList.add(bsg);
   		
   		this.addWindowListener(new WindowAdapter() { // 窗口关闭事件
 
 			public void windowIconified(WindowEvent e) { // 窗口最小化事件
-				hotClFrame.setVisible(false);
+				anythreeFrame.setVisible(false);
 				miniTray();
 
 			}
@@ -408,9 +426,9 @@ public class HotClFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) { // 按下还原键
 
 				tray.remove(trayIcon);
-				hotClFrame.setVisible(true);
-				hotClFrame.setExtendedState(JFrame.NORMAL);
-				hotClFrame.toFront();
+				anythreeFrame.setVisible(true);
+				anythreeFrame.setExtendedState(JFrame.NORMAL);
+				anythreeFrame.toFront();
 			}
 
 		});
@@ -439,9 +457,9 @@ public class HotClFrame extends JFrame{
 				if (e.getClickCount() == 2) {
 
 					tray.remove(trayIcon); // 移去托盘图标
-					hotClFrame.setVisible(true);
-					hotClFrame.setExtendedState(JFrame.NORMAL); // 还原窗口
-					hotClFrame.toFront();
+					anythreeFrame.setVisible(true);
+					anythreeFrame.setExtendedState(JFrame.NORMAL); // 还原窗口
+					anythreeFrame.toFront();
 				}
 
 			}

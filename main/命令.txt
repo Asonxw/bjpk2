@@ -1,0 +1,1 @@
+jar cvfm new.jar meta-inf/manifest.mf .

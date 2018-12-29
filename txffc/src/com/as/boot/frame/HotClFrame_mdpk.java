@@ -35,7 +35,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import com.as.boot.thread.DelPreThreeThread;
+import com.as.boot.thread.DelPreThreeThread_mdpk;
 import com.as.boot.thread.HotClThread;
 import com.as.boot.thread.HotDelPreTwoClThread;
 import com.as.boot.thread.PreResultClThread;
@@ -200,10 +200,6 @@ public class HotClFrame_mdpk extends JFrame{
   		historyNumPanel.add(historyNumField);
   		initParamsBox.add(historyNumPanel);
   		
-  		historyNumField.setText("20");
-  		historyNumPanel.add(historyNumField);
-  		initParamsBox.add(historyNumPanel);
-  		
   		JPanel delPreResultPanel = new JPanel();
   		delPreResultPanel.setPreferredSize(new Dimension(210,25));
   		JLabel delPreResultLabel = new JLabel("开启去重码:");
@@ -216,7 +212,7 @@ public class HotClFrame_mdpk extends JFrame{
   	
         //投注策略panel
         JPanel positionBox = new JPanel();
-        positionBox.setPreferredSize(new Dimension(150,190));
+        positionBox.setPreferredSize(new Dimension(170,190));
         positionBox.setBorder(BorderFactory.createTitledBorder("投注方案"));
         
         _0.setSelected(true);
@@ -300,7 +296,7 @@ public class HotClFrame_mdpk extends JFrame{
   		    public void mouseClicked(MouseEvent arg0){
   				//将文字切换为实战
   				//HotClThread.mnOrSzFlag = 1;
-  				DelPreThreeThread.mnOrSzFlag = 1;
+  				DelPreThreeThread_mdpk.mnOrSzFlag = 1;
   				//HotDelPreTwoClThread.mnOrSzFlag = 1;
   		    }
 		});
@@ -309,14 +305,14 @@ public class HotClFrame_mdpk extends JFrame{
   		    public void mouseClicked(MouseEvent arg0){
   				//将文字切换为模拟
   				//HotClThread.mnOrSzFlag = 0;
-  				DelPreThreeThread.mnOrSzFlag = 0;
+  				DelPreThreeThread_mdpk.mnOrSzFlag = 0;
   				//HotDelPreTwoClThread.mnOrSzFlag = 0;
   		    }
 		});
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
-  		btArrayField.setText("6,20,70,247,874");
+  		btArrayField.setText("10,45,169,609,2169");
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值
@@ -372,18 +368,18 @@ public class HotClFrame_mdpk extends JFrame{
   					//初始化策略
   					//HotClThread.initTXFFCL();
   					//初始化历史20期数据
-  					DelPreThreeThread.preResultList = ModHttpUtil.getHistoryIssue(20);
-  					DelPreThreeThread.initTXFFCL();
+  					DelPreThreeThread_mdpk.preResultList = ModHttpUtil.getHistoryIssue(20, ModHttpUtil.modHistoryUrl_mdpk);
+  					DelPreThreeThread_mdpk.initTXFFCL();
   					button.setText("停止执行");
   					//初始化倍投阶梯
   					String[] btStrArr = HotClFrame_mdpk.btArrayField.getText().split(",");
   					//HotClThread.btArr = new Integer[btStrArr.length];
-  					DelPreThreeThread.btArr = new Integer[btStrArr.length];
+  					DelPreThreeThread_mdpk.btArr = new Integer[btStrArr.length];
   					for (int i = 0; i < btStrArr.length; i++)
   						//HotClThread.btArr[i] = Integer.parseInt(btStrArr[i]);
-  						DelPreThreeThread.btArr[i] = Integer.parseInt(btStrArr[i]);
+  						DelPreThreeThread_mdpk.btArr[i] = Integer.parseInt(btStrArr[i]);
   					//HoHotDelPreTwoClThreadwnFFC();
-  					DelPreThreeThread.startDownFFC();
+  					DelPreThreeThread_mdpk.startDownFFC();
   				}else{
   					button.setText("开始执行");
   					//初始化连挂及倍投
@@ -391,9 +387,9 @@ public class HotClFrame_mdpk extends JFrame{
   					/*HotClThread.failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
   					//倍投情况
   					HotClThread.btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);*/
-  					DelPreThreeThread.failCountList = Arrays.asList(0,0,0,0,0);
+  					DelPreThreeThread_mdpk.failCountList = Arrays.asList(0,0,0,0,0);
   					//倍投情况
-  					DelPreThreeThread.btNumList = Arrays.asList(0,0,0,0,0);
+  					DelPreThreeThread_mdpk.btNumList = Arrays.asList(0,0,0,0,0);
   					//HotDelPreTwo_DC_ClThread.btNum = 0;
   				}
   		    }

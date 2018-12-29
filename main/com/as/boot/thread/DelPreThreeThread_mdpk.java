@@ -35,7 +35,7 @@ public class DelPreThreeThread_mdpk implements Runnable{
 	
 	//private HashMap<String,String> clMap = null;
 	public static List<HashMap<String, String>> clList = null;
-	public static Double baseMoney = 0.02;
+	public static Double baseMoney = 0.002;
 	//连挂数
 	public static List<Integer> failCountList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
 	//记录近期开奖情况，共记录10期
@@ -117,11 +117,11 @@ public class DelPreThreeThread_mdpk implements Runnable{
 										String key = clItem.get("position");
 										//累计投入值
 										tempLr += -clArr.length * baseMoney *  btArr[btNumList.get(i)];
-										String result = kjArray[Integer.parseInt(key)-1];
+										String result = "";
 										//获取下注位置并截取开奖结果
-										/*for (int j = 0; j < key.length(); j++) {
+										for (int j = 0; j < key.length(); j++) {
 											result += kjArray[Integer.parseInt(key.charAt(j)+"")];
-										}*/
+										}
 										//判断是否中奖
 										if(clItem.get("cl").contains(result)){
 											zjFlagList.set(i, true);
@@ -283,7 +283,7 @@ public class DelPreThreeThread_mdpk implements Runnable{
 		//策略数
 		Integer clNum = Integer.parseInt(HotClFrame_mdpk.clNumField.getText());
 		List<HashMap<String, String>> temClList = new ArrayList<HashMap<String,String>>();
-		temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);
+		temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);temClList.add(null);
 		HashMap<String, String> tempClMap = null;
 		String clname = "";
 		//是否去重码
@@ -351,7 +351,7 @@ public class DelPreThreeThread_mdpk implements Runnable{
 	
 	public static String getTXFFCL(String putPosition){
 		//解析需要投注的位置
-		Integer putPosition_i = Integer.parseInt(putPosition)-1;
+		Integer putPosition_i = Integer.parseInt(putPosition);
 		List<Integer> delList = new ArrayList<>();
 		Integer count = 0;
 		//倒叙循环获取最近开奖的三个号码进行剔除

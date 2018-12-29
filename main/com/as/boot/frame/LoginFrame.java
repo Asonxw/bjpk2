@@ -29,11 +29,10 @@ import javax.swing.table.DefaultTableModel;
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.thread.AccountThread;
 import com.as.boot.thread.AnyThreeThread;
-import com.as.boot.thread.DelPreThreeThread_mdpk;
+import com.as.boot.thread.DelPreThreeThread;
 import com.as.boot.thread.HotClThread;
 import com.as.boot.thread.HotDelPreTwoClThread;
 import com.as.boot.thread.KjThread;
-import com.as.boot.thread.KjThread_mkpk;
 import com.as.boot.thread.PreResultClThread;
 import com.as.boot.thread.hotpre2.HotDelPreTwo_DC_ClThread;
 import com.as.boot.thread.hotpre2.HotDelPreTwo_D_ClThread;
@@ -115,21 +114,21 @@ public class LoginFrame extends JFrame{
   					
   					LoginFrame.loginFrame.setVisible(false);
   					//AnyThreeFrame.anythreeFrame.setVisible(true);  //任三
-  					HotClFrame_mdpk.hotClFrame.setVisible(true);
+  					HotClFrame.hotClFrame.setVisible(true);
   					//启动线程
-  					KjThread_mkpk kjThread = new KjThread_mkpk();
+  					KjThread kjThread = new KjThread();
   					Thread threadKJ = new Thread(kjThread);
   					threadKJ.start();
   					
   					/*AnyThreeThread anythreeThread = new AnyThreeThread();//任三
   					*/
-  					//DelPreThreeThread_mdpk anythreeThread = new DelPreThreeThread_mdpk();
-  					DelPreThreeThread_mdpk anythreeThread = new DelPreThreeThread_mdpk();
+  					//DelPreThreeThread anythreeThread = new DelPreThreeThread();
+  					DelPreThreeThread anythreeThread = new DelPreThreeThread();
   					//HotDelPreTwo_D_ClThread anythreeThread = new HotDelPreTwo_D_ClThread();
   					//HotDelPreTwo_DC_ClThread anythreeThread = new HotDelPreTwo_DC_ClThread();
   					Thread anythreeResult = new Thread(anythreeThread);
   					anythreeResult.start();
-  					HotClFrame_mdpk.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});
+  					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});
   				}
   		    }
 		});
@@ -141,7 +140,7 @@ public class LoginFrame extends JFrame{
   		    public void mouseClicked(MouseEvent arg0){
   					LoginFrame.loginFrame.setVisible(false);
   					//AnyThreeFrame.anythreeFrame.setVisible(true);
-  					HotClFrame_mdpk.hotClFrame.setVisible(true);
+  					HotClFrame.hotClFrame.setVisible(true);
   					//启动线程
   					KjThread kjThread = new KjThread();
   					Thread threadKJ = new Thread(kjThread);
@@ -154,7 +153,7 @@ public class LoginFrame extends JFrame{
   					HotDelPreTwo_DC_ClThread anythreeThread = new HotDelPreTwo_DC_ClThread();
   					Thread anythreeResult = new Thread(anythreeThread);
   					anythreeResult.start();
-  					HotClFrame_mdpk.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});
+  					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});
   		    }
 		});
 	}
