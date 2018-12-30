@@ -11,29 +11,22 @@ import java.util.HashMap;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import com.as.boot.controller.ExampleControll;
-import com.as.boot.frame.AnyThreeFrame;
-
 public class HttpFuncUtil {
 
 	public static String getString(String request) {
 		String respond = "";
 		// String uniID = CommonUtils.getUniqString();
 		RestTemplate restTemplate = null;
-		try {
-			restTemplate = new RestTemplate();
-			// httpClient连接配置，底层是配置RequestConfig
-			// HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
-			// new HttpComponentsClientHttpRequestFactory();
-			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-			requestFactory.setReadTimeout(3000);
-			requestFactory.setConnectTimeout(3000);// 3秒钟访问限制，否则定为超时
-			
-			restTemplate.setRequestFactory(requestFactory);
-			respond = restTemplate.getForObject(request, String.class);
-		} catch (Exception e) {
-			AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！"+ExampleControll.nextFFCRound+"期，获取开奖失败！！！"});
-		}
+		restTemplate = new RestTemplate();
+		// httpClient连接配置，底层是配置RequestConfig
+		// HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
+		// new HttpComponentsClientHttpRequestFactory();
+		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+		requestFactory.setReadTimeout(3000);
+		requestFactory.setConnectTimeout(3000);// 3秒钟访问限制，否则定为超时
+		
+		restTemplate.setRequestFactory(requestFactory);
+		respond = restTemplate.getForObject(request, String.class);
 		return respond;
 	}
 

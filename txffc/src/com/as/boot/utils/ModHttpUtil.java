@@ -1,8 +1,8 @@
 package com.as.boot.utils;
 
-import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,11 +10,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.ModOrder;
 import com.as.boot.ModOrder_DWD;
-import com.as.boot.frame.AnyThreeFrame;
-import com.as.boot.frame.AnyThreeFrame5;
-import com.as.boot.frame.HotClFrame_mdpk;
-import com.as.boot.frame.LoginFrame;
-import com.as.boot.thread.AccountThread;
+import com.as.boot.txffc.frame.AnyThreeFrame;
+import com.as.boot.txffc.frame.HotClFrame;
 
 public class ModHttpUtil {
 
@@ -99,7 +96,6 @@ public class ModHttpUtil {
 			JSONObject obj = JSONObject.parseObject(resultMap.get("result").replace("jsonp1(", "").replace(")", ""));
 			if(obj.getInteger("code")!=null&&obj.getInteger("code").equals(0)&&obj.getString("msg").equals("登录成功")){
 				ModHttpUtil.urlSessionId = resultMap.get("sessionId");
-				HotClFrame_mdpk.logTableDefaultmodel.insertRow(0, new String[]{"登录成功！"});
 				return true;
 			}
 		}
@@ -144,13 +140,13 @@ public class ModHttpUtil {
 				Integer resultCode = resultJson.getInteger("code");
 				String resultmsg = resultJson.getString("msg");
 				if(resultCode.equals(1)||resultmsg.equals("ok")){
-					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{issue+"期投注成功！"});
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{issue+"期投注成功！"});
 					return true;
 				}else if(resultmsg.contains("奖期错误")){
 					//奖期错误，已错过投注时间
-					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败：改期投注时间已过！"});
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败：改期投注时间已过！"});
 				}else
-					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败："+resultmsg});
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败："+resultmsg});
 			}
 		}else return true;
 		return false;
@@ -198,13 +194,13 @@ public class ModHttpUtil {
 				Integer resultCode = resultJson.getInteger("code");
 				String resultmsg = resultJson.getString("msg");
 				if(resultCode.equals(1)||resultmsg.equals("ok")){
-					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{issue+"期投注成功！"});
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+issue+"期投注成功！"});
 					return true;
 				}else if(resultmsg.contains("奖期错误")){
 					//奖期错误，已错过投注时间
-					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败：改期投注时间已过！"});
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"！！！！！！！！！！！！！！"+issue+"期投注失败：改期投注时间已过！"});
 				}else
-					AnyThreeFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！！！！！"+issue+"期投注失败："+resultmsg});
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"！！！！！！！！！！！！！！"+issue+"期投注失败："+resultmsg});
 			}
 		}else return true;
 		return false;
@@ -231,9 +227,11 @@ public class ModHttpUtil {
 			JSONArray array = resultO.getJSONObject("result").getJSONArray("issue");
 			for (int i = array.size()-1; i >= 0 ; i--) {
 				String resultKj = array.getJSONObject(i).getString("code");
-				resultKj = resultKj.replace(",0", ",");
-				resultKj = resultKj.startsWith("0")?resultKj.substring(1,resultKj.length()):resultKj;
-				resultKj = resultKj.replace("10", "0");
+				if(url.contains("PK10")){
+					resultKj = resultKj.replace(",0", ",");
+					resultKj = resultKj.startsWith("0")?resultKj.substring(1,resultKj.length()):resultKj;
+					resultKj = resultKj.replace("10", "0");
+				}
 				preHistory.add(resultKj.replace(",", ""));
 			}
 			return preHistory;
