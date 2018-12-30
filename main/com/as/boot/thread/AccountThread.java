@@ -3,7 +3,6 @@ package com.as.boot.thread;
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.controller.ExampleControll;
 import com.as.boot.frame.HotClFrame;
-import com.as.boot.frame.HotClFrame_mdpk;
 import com.as.boot.frame.HotClFrame;
 import com.as.boot.utils.HttpFuncUtil;
 import com.as.boot.utils.ModHttpUtil;
@@ -33,17 +32,17 @@ public class AccountThread implements Runnable{
 							JSONObject resultJson = resultObj.getJSONObject("result");
 							accountName = resultJson.getString("name");
 							accountAmount = resultJson.getJSONObject("userMoney").getString("avail");
-							HotClFrame_mdpk.accountAmountLabel.setText(accountAmount);
-							HotClFrame_mdpk.accountNameLabel.setText(accountName);
+							HotClFrame.accountAmountLabel.setText(accountAmount);
+							HotClFrame.accountNameLabel.setText(accountName);
 						}
 						
 					}else{
-						HotClFrame_mdpk.logTableDefaultmodel.insertRow(0, new String[]{"登录已失效，尝试重新登录..."});
+						HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录已失效，尝试重新登录..."});
 						//重新登录
 						ModHttpUtil.logind(accountName, accountPass);
 					}
 				}else{
-					HotClFrame_mdpk.logTableDefaultmodel.insertRow(0, new String[]{"登录已失效，尝试重新登录..."});
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录已失效，尝试重新登录..."});
 					//重新登录
 					ModHttpUtil.logind(accountName, accountPass);
 				}
