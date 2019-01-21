@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 
 import com.as.boot.common.AccountThread;
 import com.as.boot.mdpk10.frame.HotClFrame_mdpk;
+import com.as.boot.txffc.controller.ExampleControll;
 import com.as.boot.txffc.thread.DelPreThreeThread;
 import com.as.boot.txffc.thread.KjThread;
 import com.as.boot.utils.ModHttpUtil;
@@ -28,9 +29,9 @@ import com.as.boot.utils.ZLinkStringUtils;
  */
 public class LoginFrame extends JFrame{
 
-	private static JTextField accountField = new JTextField(20);
+	public static JTextField accountField = new JTextField(20);
 	
-	private static JPasswordField passField = new JPasswordField(20);
+	public static JPasswordField passField = new JPasswordField(20);
 	
 	public static JFrame loginFrame = new LoginFrame();
 	public LoginFrame(){
@@ -54,7 +55,6 @@ public class LoginFrame extends JFrame{
 		JLabel accountLable = new JLabel("帐号:");
 		accountPanel.add(accountLable);
 		accountPanel.add(accountField);
-		accountField.setText("ason_x");
 		//accountField.setText("zzn1280388052");
 		panel.add(accountPanel);
 		
@@ -63,7 +63,6 @@ public class LoginFrame extends JFrame{
 		passPanel.setPreferredSize(new Dimension(880,35));
 		JLabel passLable = new JLabel("密码:");
 		passPanel.add(passLable);
-		passField.setText("nhmasonxt950203");
 		//passField.setText("qi951102");
 		passPanel.add(passField);
 		panel.add(passPanel);
@@ -82,6 +81,8 @@ public class LoginFrame extends JFrame{
   		    public void mouseClicked(MouseEvent arg0){
   				char[] values = passField.getPassword();
   				String password = new String(values);
+  				ExampleControll.addIniItem("account", accountField.getText());
+  				ExampleControll.addIniItem("password", password);
   				password = ZLinkStringUtils.MD5_32(password, null);
   				//记录密码，用于登录失效后重新登录
   				AccountThread.accountPass = password;

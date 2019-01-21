@@ -33,6 +33,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import org.dtools.ini.IniItem;
+
+import com.as.boot.txffc.controller.ExampleControll;
 import com.as.boot.txffc.thread.DelPreThreeThread;
 
 public class HotClFrame extends JFrame{
@@ -175,8 +178,11 @@ public class HotClFrame extends JFrame{
   		clNumPanel.setPreferredSize(new Dimension(210,25));
         JLabel clNumLabel = new JLabel("策略码数:");
         clNumPanel.add(clNumLabel);
-       
-  		clNumField.setText("7");
+        
+        IniItem clNum = ExampleControll.getIniItem("clNum");
+        if(clNum != null)
+        	clNumField.setText(clNum.getValue());
+        
   		clNumPanel.add(clNumField);
   		initParamsBox.add(clNumPanel);
   		
@@ -186,8 +192,11 @@ public class HotClFrame extends JFrame{
   		JLabel historyNumLabel = new JLabel("统计期数:");
   		historyNumPanel.add(historyNumLabel);
   		
-  		historyNumField.setText("4");
-  		historyNumPanel.add(historyNumField);
+  		IniItem historyNum = ExampleControll.getIniItem("historyNum");
+        if(historyNum != null)
+        	 historyNumField.setText(historyNum.getValue());
+  		
+        historyNumPanel.add(historyNumField);
   		initParamsBox.add(historyNumPanel);
   		
   		//投注单位
@@ -200,7 +209,13 @@ public class HotClFrame extends JFrame{
   		price.addItem(0.02);//分
   		price.addItem(0.2);//角
   		price.addItem(2.0);//元
+  		
+  		IniItem price_item = ExampleControll.getIniItem("price");
+  		if(price_item != null)
+  			price.setSelectedItem(Double.parseDouble(price_item.getValue()));
+  		
   		price.setVisible(true);
+       
   		pricePanel.add(price);
   		initParamsBox.add(pricePanel);
   		
@@ -258,19 +273,28 @@ public class HotClFrame extends JFrame{
   		JLabel returnLabel = new JLabel("盈利回头:");
   		downParamsBox.add(returnLabel);
   		
-   		returnField.setText("0.01");
+  		IniItem returnYl = ExampleControll.getIniItem("returnYl");
+        if(returnYl != null)
+        	returnField.setText(returnYl.getValue());
+        
    		downParamsBox.add(returnField);
   		//止盈
    		JLabel winStopLabel = new JLabel("止盈:");
   		downParamsBox.add(winStopLabel);
-  		
-   		winStopField.setText("999");
+
+  		IniItem winStop = ExampleControll.getIniItem("winStop");
+        if(winStop != null)
+        	winStopField.setText(winStop.getValue());
+        else winStopField.setText("999");
    		downParamsBox.add(winStopField);
    		//止损
    		JLabel failStopLabel = new JLabel("止损:");
   		downParamsBox.add(failStopLabel);
   		
-   		failStopField.setText("999");
+  		IniItem failStop = ExampleControll.getIniItem("failStop");
+        if(failStop != null)
+        	failStopField.setText(failStop.getValue());
+        else failStopField.setText("999");
    		downParamsBox.add(failStopField);
    		//投注模式
         JLabel downTypeLabel = new JLabel("投注模式:");
@@ -305,25 +329,42 @@ public class HotClFrame extends JFrame{
    		//倍率
         JLabel btArrayLabel = new JLabel("倍投阶梯:");
   		downParamsBox.add(btArrayLabel);
-  		btArrayField.setText("2,9,34,123");
+
+  		IniItem btArray = ExampleControll.getIniItem("btArray");
+        if(btArray != null)
+        	btArrayField.setText(btArray.getValue());
+        else btArrayField.setText("0");
    		downParamsBox.add(btArrayField);
    		
    		//切换策略盈利值
    		JLabel changeYlLabel = new JLabel("中N期换号:");
 		downParamsBox.add(changeYlLabel);
-		changeYlField.setText("1");
+
+  		IniItem changeYl = ExampleControll.getIniItem("changeYl");
+        if(changeYl != null)
+        	changeYlField.setText(changeYl.getValue());
+  		
 		downParamsBox.add(changeYlField);
 		
 		//切换策略盈利值
    		JLabel ylSwhichLabel = new JLabel("盈利转换:");
 		downParamsBox.add(ylSwhichLabel);
-		ylSwhichField.setText("");
+
+  		IniItem ylSwhich = ExampleControll.getIniItem("ylSwhich");
+        if(ylSwhich != null)
+        	ylSwhichField.setText(ylSwhich.getValue());
+  		
 		downParamsBox.add(ylSwhichField);
 		
 		//模拟连挂转换
    		JLabel mnFailSwhichLabel = new JLabel("模拟连挂转换:");
 		downParamsBox.add(mnFailSwhichLabel);
-		mnFailSwhichField.setText("3");
+
+  		IniItem mnFailSwhich = ExampleControll.getIniItem("mnFailSwhich");
+        if(mnFailSwhich != null)
+        	mnFailSwhichField.setText(mnFailSwhich.getValue());
+        else mnFailSwhichField.setText("3");
+        
 		downParamsBox.add(mnFailSwhichField);
 		
 		JLabel trueDownFlagLabel = new JLabel("开启真实投注:");
@@ -371,6 +412,9 @@ public class HotClFrame extends JFrame{
   						DelPreThreeThread.btArr[i] = Integer.parseInt(btStrArr[i]);
   					//HoHotDelPreTwoClThreadwnFFC();
   					DelPreThreeThread.startDownFFC();
+  					
+  					//每次开始投注保存配置
+  					saveParams();
   				}else{
   					button.setText("开始执行");
   					//初始化连挂及倍投
@@ -470,4 +514,34 @@ public class HotClFrame extends JFrame{
 
 	}
 	
+	/**
+	 * @Title: saveParams  
+	 * @Description:保存参数 
+	 * @author: Ason      
+	 * @return: void      
+	 * @throws
+	 */
+	public void saveParams(){
+		
+        ExampleControll.addIniItem("clNum", clNumField.getText());
+        
+        ExampleControll.addIniItem("historyNum", historyNumField.getText());
+
+        ExampleControll.addIniItem("price", price.getSelectedItem().toString());
+        
+        ExampleControll.addIniItem("returnYl", returnField.getText());
+
+        ExampleControll.addIniItem("winStop", winStopField.getText());
+
+        ExampleControll.addIniItem("failStop", failStopField.getText());
+
+        ExampleControll.addIniItem("btArray", btArrayField.getText());
+
+        ExampleControll.addIniItem("changeYl", changeYlField.getText());
+
+        ExampleControll.addIniItem("ylSwhich", ylSwhichField.getText());
+
+        ExampleControll.addIniItem("mnFailSwhich", mnFailSwhichField.getText());
+        
+	}
 }
