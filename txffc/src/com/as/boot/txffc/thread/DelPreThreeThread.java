@@ -85,8 +85,8 @@ public class DelPreThreeThread implements Runnable{
 			mnOrSzList = Arrays.asList(true,true,true,true,true);
 		else 
 			mnOrSzList = Arrays.asList(false,false,false,false,false);
-		
 		while (true) {
+			
 			try {
 				//初始化投注单位
 				baseMoney = Double.parseDouble(HotClFrame.price.getSelectedItem().toString());
@@ -189,7 +189,7 @@ public class DelPreThreeThread implements Runnable{
 										tableIndex++;
 										//判断盈利转换
 										if(ZLinkStringUtils.isNotEmpty(HotClFrame.ylSwhichField.getText())&&mnOrSzList.get(i)){
-											Integer ylSwhich = Integer.parseInt(HotClFrame.ylSwhichField.getText());
+											Double ylSwhich = Double.parseDouble(HotClFrame.ylSwhichField.getText());
 											HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"策略<"+i+">真实投注盈利转换积累值："+df.format(zsYkList.get(i))});
 											//真实盈利达到盈利转换值
 											if(zsYkList.get(i) >= ylSwhich){
@@ -332,6 +332,7 @@ public class DelPreThreeThread implements Runnable{
 					Thread.sleep(1000);
 			} catch (Exception e) {
 				e.printStackTrace();
+				
 			}
 		}
 	}
@@ -372,7 +373,7 @@ public class DelPreThreeThread implements Runnable{
 					//获取投注位置
 					clname = HotClFrame.clBoxList.get(i).getText();
 					tempClMap.put("position", clname);
-					cl = getTXFFCL(clname);
+					cl = getTXFFCL_presev(clname);
 					tempClMap.put("cl", cl);
 					if(cl!=null)HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+clname+"策略初始化成功，注数：7"});
 				}else
@@ -411,7 +412,7 @@ public class DelPreThreeThread implements Runnable{
 						String clname = HotClFrame.clBoxList.get(i).getText();
 						tempClMap = new HashMap<String, String>();
 						tempClMap.put("position", clname);
-						cl = getTXFFCL(clname);
+						cl = getTXFFCL_presev(clname);
 						tempClMap.put("cl", cl);
 						clList.set(clIndex, tempClMap);
 						break;
@@ -446,6 +447,32 @@ public class DelPreThreeThread implements Runnable{
 		}
 		if(count > (Integer.parseInt(HotClFrame.historyNumField.getText())))
 			return tempClList.toString();
+		return null;
+	}
+	
+	public static String getTXFFCL_presev(String putPosition){
+		//解析需要投注的位置
+		Integer putPosition_i = Integer.parseInt(putPosition);
+		List<Integer> delList = new ArrayList<>();
+		Integer count = 0;
+		//倒叙循环获取最近开奖的7个号码进行剔除
+		for (int i = preResultList.size()-1; i >= 0; i--) {
+			Integer item = Integer.parseInt(preResultList.get(i).charAt(putPosition_i)+"");
+			count++;
+			if(!delList.contains(item)&&delList.size()<7){
+				delList.add(item);
+				if(delList.size()>=7)break;
+			}else if(delList.size()>=7)break;
+		}
+		
+		//List<Integer> tempClList = new ArrayList<>();
+		//生成策略
+		/*for (int i = 0; i < 10; i++) {
+			if(!delList.contains(i))
+				tempClList.add(i);
+		}*/
+		if(count > (Integer.parseInt(HotClFrame.historyNumField.getText())))
+			return delList.toString();
 		return null;
 	}
 	
@@ -566,23 +593,26 @@ public class DelPreThreeThread implements Runnable{
 		Integer changeNum = Integer.parseInt(HotClFrame.changeYlField.getText());
 		for (int i = clList.size()-1; i >= 0; i--) {
 			//中N期更换
-			if(sulCountList.get(i).equals(changeNum)||clList.get(i).get("cl")==null){
+			//if(sulCountList.get(i).equals(changeNum)||clList.get(i).get("cl")==null){
 				rfreshTXFFCL(i);
 				sulCountList.set(i,0);
-			}
+			//}
 		}
 		//判断是否需要投注，实战且开启真实投注
-		if(HotClFrame.downTypeSz.isSelected()&&HotClFrame.trueDownFlagField.isSelected()){
+		if(HotClFrame.trueDownFlagField.isSelected()){
 			List<HashMap<String, String>> clList_tru = new ArrayList<>();
 			//筛选出需要投注的策略
 			for (int i = 0; i < mnOrSzList.size(); i++) {
 				if(mnOrSzList.get(i))
 					clList_tru.add(clList.get(i));
 			}
-			//格式化奖期
-			String issue = ExampleControll.nextFFCRound;
-			issue = issue.substring(0,8)+"-"+issue.substring(8,12);
-			downSulFlag = ModHttpUtil.addTXFFCOrders_DWD1(issue, clList_tru, btNumList, btArr, baseMoney);
+			if(clList_tru.size()>0){
+				//格式化奖期
+				String issue = ExampleControll.nextFFCRound;
+				issue = issue.substring(0,8)+"-"+issue.substring(8,12);
+				downSulFlag = ModHttpUtil.addTXFFCOrders_DWD1(issue, clList_tru, btNumList, btArr, baseMoney);
+			}else
+				downSulFlag = true;
 		}else
 			downSulFlag = true;
 		//下注成功后再表格追加
