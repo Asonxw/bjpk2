@@ -315,6 +315,8 @@ public class HotClFrame extends JFrame{
   				//HotClThread.mnOrSzFlag = 1;
   				DelPreThreeThread.mnOrSzFlag = 1;
   				//HotDelPreTwoClThread.mnOrSzFlag = 1;
+  				//初始化模拟实战数据
+				DelPreThreeThread.mnOrSzList = Arrays.asList(true,true,true,true,true);
   		    }
 		});
         downTypeMn.addMouseListener(new MouseAdapter() {
@@ -324,6 +326,7 @@ public class HotClFrame extends JFrame{
   				//HotClThread.mnOrSzFlag = 0;
   				DelPreThreeThread.mnOrSzFlag = 0;
   				//HotDelPreTwoClThread.mnOrSzFlag = 0;
+  				DelPreThreeThread.mnOrSzList = Arrays.asList(false,false,false,false,false);
   		    }
 		});
    		//倍率
