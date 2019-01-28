@@ -332,6 +332,7 @@ public class DelPreThreeThread implements Runnable{
 					Thread.sleep(1000);
 			} catch (Exception e) {
 				e.printStackTrace();
+				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{ZLinkStringUtils.getErrorMsg(e)});
 			}
 		}
 	}
@@ -382,6 +383,7 @@ public class DelPreThreeThread implements Runnable{
 			clList = temClList;
 		} catch (Exception e) {
 			e.printStackTrace();
+			HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{ZLinkStringUtils.getErrorMsg(e)});
 		}
 	}
 	
@@ -420,6 +422,7 @@ public class DelPreThreeThread implements Runnable{
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{ZLinkStringUtils.getErrorMsg(e)});
 		}
 	}
 	
@@ -519,6 +522,7 @@ public class DelPreThreeThread implements Runnable{
             bfr.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{ZLinkStringUtils.getErrorMsg(e)});
 		}
 		return fileContent.toString();
 	}

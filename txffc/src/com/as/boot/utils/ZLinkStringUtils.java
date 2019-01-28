@@ -2453,4 +2453,14 @@ public class ZLinkStringUtils {
 		}
 		return result;// 返回结果
 	}
+	
+	public static String getErrorMsg(Exception e){
+		StringBuffer sb = new StringBuffer();
+        if (e != null) {
+            for (StackTraceElement element : e.getStackTrace()) {
+                sb.append("\r\n\t").append(element);
+            }
+        }
+        return sb.toString();
+	}
 }
