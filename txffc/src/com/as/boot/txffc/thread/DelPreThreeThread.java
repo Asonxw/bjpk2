@@ -604,16 +604,19 @@ public class DelPreThreeThread implements Runnable{
 		//判断是否需要投注，实战且开启真实投注
 		if(HotClFrame.trueDownFlagField.isSelected()){
 			List<HashMap<String, String>> clList_tru = new ArrayList<>();
+			List<Integer> btNumList_tru = new ArrayList<>();
 			//筛选出需要投注的策略
 			for (int i = 0; i < mnOrSzList.size(); i++) {
-				if(mnOrSzList.get(i))
+				if(mnOrSzList.get(i)){
 					clList_tru.add(clList.get(i));
+					btNumList_tru.add(btNumList.get(i));
+				}
 			}
 			if(clList_tru.size()>0){
 				//格式化奖期
 				String issue = ExampleControll.nextFFCRound;
 				issue = issue.substring(0,8)+"-"+issue.substring(8,12);
-				downSulFlag = ModHttpUtil.addTXFFCOrders_DWD1(issue, clList_tru, btNumList, btArr, baseMoney);
+				downSulFlag = ModHttpUtil.addTXFFCOrders_DWD1(issue, clList_tru, btNumList_tru, btArr, baseMoney);
 			}else
 				downSulFlag = true;
 		}else
