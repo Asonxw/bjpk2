@@ -360,13 +360,13 @@ public class HotClFrame extends JFrame{
 		downParamsBox.add(ylSwhichField);
 		
 		//模拟连挂转换
-   		JLabel mnFailSwhichLabel = new JLabel("模拟连挂转换:");
+   		JLabel mnFailSwhichLabel = new JLabel("投注监控:");
 		downParamsBox.add(mnFailSwhichLabel);
 
   		IniItem mnFailSwhich = ExampleControll.getIniItem("mnFailSwhich");
         if(mnFailSwhich != null)
         	mnFailSwhichField.setText(mnFailSwhich.getValue());
-        else mnFailSwhichField.setText("3");
+        else mnFailSwhichField.setText("000010000");
         
 		downParamsBox.add(mnFailSwhichField);
 		

@@ -68,6 +68,9 @@ public class DelPreThreeThread implements Runnable{
 	private static Integer sulAllCount = 0;
 	private static Integer failAllCount = 0;
 	private static Integer roundAllCount = 0;
+	//开投策略
+	//private static String changeStr = "000010000";//0代表未中奖1代表中奖
+	private static List<String> zjFlagStrList = Arrays.asList("","","","",""); 
 	@Override
 	public void run() {
 		//初始化盈利回头
@@ -91,8 +94,8 @@ public class DelPreThreeThread implements Runnable{
 				//初始化投注单位
 				baseMoney = Double.parseDouble(HotClFrame.price.getSelectedItem().toString());
 				
-				//获取模拟连挂转换数
-				Integer mnFailSwhich = Integer.parseInt(HotClFrame.mnFailSwhichField.getText());
+				//获取中奖监控
+				String changeStr = HotClFrame.mnFailSwhichField.getText();
 				Double winStop = Double.parseDouble(HotClFrame.winStopField.getText());
 				Double failStop = Double.parseDouble(HotClFrame.failStopField.getText());
 				
@@ -140,9 +143,15 @@ public class DelPreThreeThread implements Runnable{
 											result += kjArray[Integer.parseInt(key.charAt(j)+"")];
 										}
 										Integer tempFailc = failCountList.get(i);
+										String tempzjFalgStr = zjFlagStrList.get(i);
+										//判断目前的中奖结果长度是否达到设定值的长度，如果达到则需要删除一个最远的开奖结果
+										if(tempzjFalgStr.length() == changeStr.length())
+											tempzjFalgStr = tempzjFalgStr.substring(1, tempzjFalgStr.length());
 										//判断是否中奖
 										if(clItem.get("cl").contains(result)){
 											zjFlagList.set(i, true);
+											//赋值中奖结果
+											tempzjFalgStr += "1";
 											
 											HotClFrame.tableDefaultmodel.setValueAt("中", tableIndex, 7);
 											//计算盈利值
@@ -164,6 +173,8 @@ public class DelPreThreeThread implements Runnable{
 											sulAllCount++;
 										}else{
 											zjFlagList.set(i, false);
+											//赋值中奖结果
+											tempzjFalgStr += "0";
 											failCountList.set(i, failCountList.get(i) + 1);
 											sulCountList.set(i, 0);
 											if(failCountList.get(i)>maxFailCountList.get(i))
@@ -185,6 +196,7 @@ public class DelPreThreeThread implements Runnable{
 											}
 											
 										}
+										zjFlagStrList.set(i, tempzjFalgStr);
 										HotClFrame.tableDefaultmodel.setValueAt(resultKj, tableIndex, 6);
 										tableIndex++;
 										//判断盈利转换
@@ -200,8 +212,9 @@ public class DelPreThreeThread implements Runnable{
 												mnOrSzList.set(i, false);
 											}
 										}
-										//当前处于模拟且判断连挂是否大于目标设定
-										if(!mnOrSzList.get(i) && tempFailc >= mnFailSwhich && zjFlagList.get(i)){
+										//当前处于模拟且与设定的投注策略一致则开启实战
+										if(!mnOrSzList.get(i) && tempzjFalgStr.equals(changeStr)){
+											//撒旦法
 											//设置为实战
 											mnOrSzList.set(i,true);
 											HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"策略<"+i+">转实战。"});
