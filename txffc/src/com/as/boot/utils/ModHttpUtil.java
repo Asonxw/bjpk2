@@ -91,6 +91,7 @@ public class ModHttpUtil {
 	}
 	
 	public static Boolean logind(String accountName, String password){
+		password = ZLinkStringUtils.MD5_32(password, null);
 		HashMap<String, String> resultMap = HttpFuncUtil.getUrlConnection(ModHttpUtil.mdLoginUrl+accountName+"&appId=5&password="+password);
 		if(resultMap!=null&&ZLinkStringUtils.isNotEmpty(resultMap.get("result"))){
 			JSONObject obj = JSONObject.parseObject(resultMap.get("result").replace("jsonp1(", "").replace(")", ""));

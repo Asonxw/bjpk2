@@ -60,14 +60,17 @@ public class KjThread implements Runnable{
 						Thread.sleep(3000);//未更新到数据睡眠3s
 					}
 				}else{
-					Thread.sleep(3000);//未更新到数据睡眠3s
 					urlIndex++;
 					if(urlIndex>2)urlIndex=0;
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！"+ExampleControll.nextFFCRound+"期，获取开奖为null，尝试重新登录！！！"});
+					if(ModHttpUtil.logind(ExampleControll.getIniItem("account").getValue(), ExampleControll.getIniItem("password").getValue()))
+						HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"重新登录成功！"});
+					Thread.sleep(2000);//未更新到数据睡眠2s
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println(result);
 				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！"+ExampleControll.nextFFCRound+"期，获取开奖失败！！！"});
+				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"错误result:"+result});
 				urlIndex++;
 				if(urlIndex>2)urlIndex=0;
 			}

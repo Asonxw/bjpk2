@@ -16,6 +16,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -37,6 +38,7 @@ import org.dtools.ini.IniItem;
 
 import com.as.boot.txffc.controller.ExampleControll;
 import com.as.boot.txffc.thread.DelPreThreeThread;
+import com.as.boot.utils.ZLinkStringUtils;
 
 public class HotClFrame extends JFrame{
 
@@ -64,10 +66,12 @@ public class HotClFrame extends JFrame{
     public static JTextField clNumField = new JTextField(8);
     /**统计期数**/
 	public static JTextField historyNumField = new JTextField(8);
+	/**投注次数**/
+	public static JTextField evTimeField = new JTextField(8);
 	/**投注单位**/
 	public static JComboBox<Double> price = new JComboBox<>();
 	
-	/**爆仓才开启真实投注**/
+	/**开启去重码**/
 	public static JCheckBox delPreResultCheckbox = new JCheckBox("是");
 	/**方案一**/
 	public static JCheckBox w = new JCheckBox("0");
@@ -109,7 +113,8 @@ public class HotClFrame extends JFrame{
 	public static JLabel mnYkValueLabel = new JLabel("0.00");
 	/**真实盈亏值**/
 	public static JLabel szYkValueLabel = new JLabel("0.00");
-	public static JLabel maxFailValueLabel = new JLabel("0.000");
+	/**实投盈亏值**/
+	public static JLabel trueYkValueLabel = new JLabel("0.000");
 	//开始投注按钮
 	public static JButton button = new JButton("开始执行");
 	
@@ -153,9 +158,14 @@ public class HotClFrame extends JFrame{
 		//真实盈亏
    		JLabel szYkLabel = new JLabel("真实盈亏:");
    		accountBox.add(szYkLabel);
-		
    		szYkValueLabel.setPreferredSize(new Dimension(55,30));
    		accountBox.add(szYkValueLabel);
+   		
+   		//实投盈亏
+   		JLabel trueYkLabel = new JLabel("实投盈亏:");
+   		accountBox.add(trueYkLabel);
+   		trueYkValueLabel.setPreferredSize(new Dimension(55,30));
+   		accountBox.add(trueYkValueLabel);
   		
   		panel.add(accountBox);
 		
@@ -198,6 +208,20 @@ public class HotClFrame extends JFrame{
   		
         historyNumPanel.add(historyNumField);
   		initParamsBox.add(historyNumPanel);
+  		
+  		//每天投注次数
+  		//统计期数
+  		JPanel evTimePanel = new JPanel();
+  		evTimePanel.setPreferredSize(new Dimension(210,25));
+  		JLabel evTimeLabel = new JLabel("投注次数:");
+  		evTimePanel.add(evTimeLabel);
+  		
+  		IniItem evTime = ExampleControll.getIniItem("evTime");
+        if(evTime != null)
+        	evTimeField.setText(evTime.getValue());
+  		
+        evTimePanel.add(evTimeField);
+  		initParamsBox.add(evTimePanel);
   		
   		//投注单位
   		//统计期数
@@ -418,6 +442,8 @@ public class HotClFrame extends JFrame{
   					
   					//每次开始投注保存配置
   					saveParams();
+  					//初始化投注点
+  					DelPreThreeThread.initEvTime();
   				}else{
   					button.setText("开始执行");
   					//初始化连挂及倍投
@@ -545,6 +571,8 @@ public class HotClFrame extends JFrame{
         ExampleControll.addIniItem("ylSwhich", ylSwhichField.getText());
 
         ExampleControll.addIniItem("mnFailSwhich", mnFailSwhichField.getText());
+        
+        ExampleControll.addIniItem("evTime", evTimeField.getText());
         
 	}
 }

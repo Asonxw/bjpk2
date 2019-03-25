@@ -5,11 +5,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.Log4JLogger;
 
 import com.as.boot.txffc.controller.ExampleControll;
 import com.as.boot.txffc.frame.HotClFrame;
@@ -30,6 +35,9 @@ public class DelPreThreeThread implements Runnable{
 	private Double mnlr = 0d;
 	//模拟盈利回头
 	private Double mnlr_return = null;
+	
+	//实投盈利
+	private Double truelr = 0d;
 	//盈利转换
 	public static Double zslr_swhich = 0d;
 	
@@ -71,8 +79,14 @@ public class DelPreThreeThread implements Runnable{
 	//开投策略
 	//private static String changeStr = "000010000";//0代表未中奖1代表中奖
 	private static List<String> zjFlagStrList = Arrays.asList("","","","",""); 
+	//每日投注时间点
+	public static List<String> evTimeList = new ArrayList<>();
+	
+	//当前日期，用于判断投点更新
+	public static String nowDateStr = "";
 	@Override
 	public void run() {
+		
 		//初始化盈利回头
 		if(ZLinkStringUtils.isNotEmpty(HotClFrame.returnField.getText())){
 			zslr_return = zslr + Double.parseDouble(HotClFrame.returnField.getText());
@@ -89,7 +103,30 @@ public class DelPreThreeThread implements Runnable{
 		else 
 			mnOrSzList = Arrays.asList(false,false,false,false,false);
 		while (true) {
-			
+
+			//判断是否到达投点
+			if(evTimeList.size()>0){
+				SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+				SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
+				String time =  format.format(new Date()).substring(0,4);
+				
+				//判断是否需要初始化投点（每日00:00进行更新）
+				if(!nowDateStr.equals(formatDate.format(new Date())))
+					initEvTime();
+				
+				if(evTimeList.contains(time)){
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"到达投注点:"+time+"，开启真实投注。"});
+					//将真实投注开启
+					HotClFrame.trueDownFlagField.setSelected(true);
+					//全量初始化投注倍数
+					initBtNumList();
+					//设置成功后移除该投点避免重复执行
+					for (int i = 0; i < evTimeList.size(); i++) {
+						if(evTimeList.get(i).equals(time))
+							evTimeList.remove(i);
+					}
+				}
+			}
 			try {
 				//初始化投注单位
 				baseMoney = Double.parseDouble(HotClFrame.price.getSelectedItem().toString());
@@ -126,9 +163,12 @@ public class DelPreThreeThread implements Runnable{
 								//Double tempLr = 0d;
 								Integer tableIndex = 0;
 								//判断已投注方案类型
-								String mnOrSzStr = HotClFrame.tableDefaultmodel.getValueAt(0, 8).toString();
+								//String mnOrSzStr = HotClFrame.tableDefaultmodel.getValueAt(0, 8).toString();
 								//利润
 								for (int i = 0, il = clList.size(); i<il;i++) {
+									//用于判断是否需要初始化倍投（刚从模拟转实战需要记录）
+									Boolean zsChange = false;
+									
 									HashMap<String, String> clItem = clList.get(i);
 									//key为0则代表无策略
 									if(clItem.get("cl")!=null){
@@ -165,6 +205,9 @@ public class DelPreThreeThread implements Runnable{
 												//真实投注
 												zslr += itemIn;
 												zsYkList.set(i, zsYkList.get(i)+itemIn);
+												//实投盈利
+												if(HotClFrame.trueDownFlagField.isSelected())
+													truelr += itemIn;
 											}else{
 												//模拟投注
 												mnlr += itemIn;
@@ -190,6 +233,9 @@ public class DelPreThreeThread implements Runnable{
 												//真实投注
 												zslr += itemIn;
 												zsYkList.set(i, zsYkList.get(i)+itemIn);
+												//实投盈利
+												if(HotClFrame.trueDownFlagField.isSelected())
+													truelr += itemIn;
 											}else{
 												//模拟投注
 												mnlr += itemIn;
@@ -210,6 +256,9 @@ public class DelPreThreeThread implements Runnable{
 												//changeDownType();
 												zsYkList.set(i, 0d);
 												mnOrSzList.set(i, false);
+												//判断是否需要取消真实投注
+												if(evTimeList.size()>0)
+													HotClFrame.trueDownFlagField.setSelected(false);
 											}
 										}
 										//当前处于模拟且与设定的投注策略一致则开启实战
@@ -219,13 +268,13 @@ public class DelPreThreeThread implements Runnable{
 											mnOrSzList.set(i,true);
 											HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"策略<"+i+">转实战。"});
 											zsYkList.set(i, 0d);
+											//初始化倍投
+											zsChange = true;
 										}
 										//真实投注爆仓判断
 										if(mnOrSzList.get(i)&&btNumList.get(i) >= (btArr.length-1)){
 											HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"策略<"+i+">真实投注爆仓，初始化策略盈利继续投注。"});
 											zsYkList.set(i, 0d);
-											//判断是否爆仓后开启真实投注
-											
 										}
 										if(!zjFlagList.get(i)){
 											//增加倍投
@@ -233,10 +282,14 @@ public class DelPreThreeThread implements Runnable{
 												btNumList.set(i, 0);
 											else btNumList.set(i, btNumList.get(i)+1);
 										}
+										//如果是刚才从模拟转实战则需要初始化倍投
+										if(zsChange)
+											btNumList.set(i, 0);
 									}
 								}
 								HotClFrame.mnYkValueLabel.setText(df.format(mnlr));
 								HotClFrame.szYkValueLabel.setText(df.format(zslr));
+								HotClFrame.trueYkValueLabel.setText(df.format(truelr));
 								/*if(mnOrSzStr.equals("模拟-投注")){
 									mnlr += tempLr;
 								}else{
@@ -289,12 +342,12 @@ public class DelPreThreeThread implements Runnable{
 								}else if(!boomFlag)*/
 								//addBtnNumList();
 								//如果是刚从模拟转到实战，则初始化倍投
-								if(ZLinkStringUtils.isNotEmpty(HotClFrame.returnField.getText())){
+								/*if(ZLinkStringUtils.isNotEmpty(HotClFrame.returnField.getText())){
 									if(mnOrSzStr.equals("模拟-投注"))
 										//检查到已经切换为真实投注，初始化倍投
 										if(mnOrSzFlag.equals(1))
 											initBtNumList();
-								}
+								}*/
 							}
 						}else{
 							//断期
@@ -390,7 +443,7 @@ public class DelPreThreeThread implements Runnable{
 					tempClMap.put("position", clname);
 					cl = getTXFFCL_presev(clname);
 					tempClMap.put("cl", cl);
-					if(cl!=null)HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+clname+"策略初始化成功，注数：7"});
+					//if(cl!=null)HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+clname+"策略初始化成功，注数：7"});
 				}else
 					tempClMap.put("position", "00");//未选中则标记为空策略
 				temClList.set(i, tempClMap);
@@ -569,12 +622,11 @@ public class DelPreThreeThread implements Runnable{
 	}
 	
 	public static void initBtNumList(){
-		//达到盈利回头目标，所有倍投全部回到起点
+		//初始化所有倍投
 		btNumList = Arrays.asList(0,0,0,0,0,0,0,0,0,0);
 	}
 	//叠加倍投
 	public void addBtnNumList(){
-		//未达到盈利回头目标，所有挂的增加倍数
 		for (int i = 0; i < zjFlagList.size(); i++) {
 			if(zjFlagList.get(i)){
 				//中的初始化倍投
@@ -688,5 +740,26 @@ public class DelPreThreeThread implements Runnable{
 		/*String round = "181205-1363,26290;181205-1362,15581;181205-1361,56074;181205-1360,25586;181205-1359,45834;181205-1358,24056;181205-1357,75038;181205-1356,97744;181205-1355,20852;181205-1354,77895;181205-1353,42406;181205-1352,98001;181205-1351,04250;181205-1350,59136;181205-1349,94690;181205-1348,40005;181205-1347,10858;181205-1346,66738;181205-1345,99593;181205-1344,68887;181205-1343,59987";
 		getTXFFCL(round, "0", 7, true);*/
 		System.err.println((1*100d/(1+2)));
+	}
+	/**
+	 * @Title: initEvTime  
+	 * @Description:初始化投注时间 
+	 * @author: Ason      
+	 * @return: void      
+	 * @throws
+	 */
+	public static void initEvTime(){
+		//判断是否需要限定投注次数
+		if(ZLinkStringUtils.isNotEmpty(HotClFrame.evTimeField.getText())){
+			DelPreThreeThread.evTimeList = new ArrayList<>();
+			//初始化N次投注时间
+			Integer evTime = Integer.parseInt(HotClFrame.evTimeField.getText());
+			for (int i = 0; i < evTime; i++) 
+				DelPreThreeThread.evTimeList.add(ExampleControll.initDownTime());
+			HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"投注时间初始化为:"+DelPreThreeThread.evTimeList.toString()});
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			//初始化当前日期
+			nowDateStr = format.format(new Date());
+		}
 	}
 }

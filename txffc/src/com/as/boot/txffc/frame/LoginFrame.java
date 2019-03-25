@@ -83,11 +83,9 @@ public class LoginFrame extends JFrame{
   				String password = new String(values);
   				ExampleControll.addIniItem("account", accountField.getText());
   				ExampleControll.addIniItem("password", password);
-  				password = ZLinkStringUtils.MD5_32(password, null);
   				//记录密码，用于登录失效后重新登录
   				AccountThread.accountPass = password;
   				if(ModHttpUtil.logind(accountField.getText(), password)){
-  					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录成功！"});
   					//启动线程获取账户信息
   					AccountThread account = new AccountThread();
   					Thread accountThread = new Thread(account);
