@@ -257,7 +257,7 @@ public class DelPreThreeThread implements Runnable{
 												zsYkList.set(i, 0d);
 												mnOrSzList.set(i, false);
 												//判断是否需要取消真实投注
-												if(evTimeList.size()>0)
+												if(ZLinkStringUtils.isNotEmpty(HotClFrame.evTimeField.getText()))
 													HotClFrame.trueDownFlagField.setSelected(false);
 											}
 										}
