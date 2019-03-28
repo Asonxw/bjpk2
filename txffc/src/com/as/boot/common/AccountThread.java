@@ -38,16 +38,18 @@ public class AccountThread implements Runnable{
 							HotClFrame.accountNameLabel.setText(accountName);
 						}
 					}else{
-						HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录已失效，尝试重新登录..."});
+						HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"获取账户信息失败，登录已失效，尝试重新登录..."});
 						//重新登录
-						ModHttpUtil.logind(accountName, accountPass);
+						if(ModHttpUtil.logind(accountName, accountPass))
+							HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录成功！"});
 					}
 				}else{
-					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录已失效，尝试重新登录..."});
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"获取账户信息失败，登录已失效，尝试重新登录..."});
 					//重新登录
-					ModHttpUtil.logind(accountName, accountPass);
+					if(ModHttpUtil.logind(accountName, accountPass))
+						HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录成功！"});
 				}
-				Thread.sleep(4000);
+				Thread.sleep(5000);
 			} catch (Exception e) {
 				e.printStackTrace();
 				urlIndex++;

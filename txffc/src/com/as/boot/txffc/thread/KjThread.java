@@ -1,7 +1,9 @@
 package com.as.boot.txffc.thread;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.txffc.controller.ExampleControll;
@@ -71,6 +73,25 @@ public class KjThread implements Runnable{
 				e.printStackTrace();
 				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"！！！！！！！！！！"+ExampleControll.nextFFCRound+"期，获取开奖失败！！！"});
 				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"错误result:"+result});
+				if(ZLinkStringUtils.isNotEmpty(result)){
+					JSONObject resultObj = JSONObject.parseObject(result);
+					if(resultObj.getString("time")!=null&&resultObj.getString("server").equals("maintenance")){
+						String tTime = resultObj.getString("time");
+						Date now = new Date();
+						//计算休眠时间
+						long systime = now.getTime();
+						SimpleDateFormat f1 = new SimpleDateFormat("yyyy-MM-dd");
+						SimpleDateFormat f2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						String dateStr = f1.format("now") +" "+tTime+":00";
+						try {
+							long time = f2.parse(dateStr).getTime() - systime;
+							HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"系统维护-"+tTime+"开启，系统睡眠 "+time+"ms"});
+							Thread.sleep(time);
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
 				urlIndex++;
 				if(urlIndex>2)urlIndex=0;
 			}
