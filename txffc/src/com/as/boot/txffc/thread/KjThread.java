@@ -82,7 +82,7 @@ public class KjThread implements Runnable{
 						long systime = now.getTime();
 						SimpleDateFormat f1 = new SimpleDateFormat("yyyy-MM-dd");
 						SimpleDateFormat f2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-						String dateStr = f1.format("now") +" "+tTime+":00";
+						String dateStr = f1.format(now) +" "+tTime+":00";
 						try {
 							long time = f2.parse(dateStr).getTime() - systime;
 							HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"系统维护-"+tTime+"开启，系统睡眠 "+time+"ms"});
