@@ -3,7 +3,9 @@ package com.as.boot.txffc.thread;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,10 +13,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.impl.Log4JLogger;
 
 import com.as.boot.txffc.controller.ExampleControll;
 import com.as.boot.txffc.frame.HotClFrame;
@@ -46,12 +44,16 @@ public class DelPreThreeThread implements Runnable{
 	public static Double baseMoney = 0.002;
 	//连挂数
 	public static List<Integer> failCountList = Arrays.asList(0,0,0,0,0);
+	//真实投注连挂数
+	public static List<Integer> failCountList_t = Arrays.asList(0,0,0,0,0);
 	//记录近期开奖情况，共记录10期
 	public static List<String> preResultList = new ArrayList<>();
 	//连中数
 	public static List<Integer> sulCountList = Arrays.asList(0,0,0,0,0);
 	//最大连挂
 	private List<Integer> maxFailCountList = Arrays.asList(0,0,0,0,0);
+	//真实投注最大连挂
+	private List<Integer> maxFailCountList_t = Arrays.asList(0,0,0,0,0);
 	//倍投情况
 	public static List<Integer> btNumList = Arrays.asList(0,0,0,0,0);
 	
@@ -182,7 +184,6 @@ public class DelPreThreeThread implements Runnable{
 										for (int j = 0; j < key.length(); j++) {
 											result += kjArray[Integer.parseInt(key.charAt(j)+"")];
 										}
-										Integer tempFailc = failCountList.get(i);
 										String tempzjFalgStr = zjFlagStrList.get(i);
 										//判断目前的中奖结果长度是否达到设定值的长度，如果达到则需要删除一个最远的开奖结果
 										if(tempzjFalgStr.length() == changeStr.length())
@@ -198,6 +199,7 @@ public class DelPreThreeThread implements Runnable{
 											Double itemLr = (btArr[btNumList.get(i)] * baseMoney * pl)/2;
 											itemIn += itemLr;
 											HotClFrame.tableDefaultmodel.setValueAt("0/"+maxFailCountList.get(i), tableIndex, 4);
+											HotClFrame.tableDefaultmodel.setValueAt("0/"+maxFailCountList_t.get(i), tableIndex, 5);
 											HotClFrame.tableDefaultmodel.setValueAt(df.format(itemLr), tableIndex, 3);
 											sulCountList.set(i, sulCountList.get(i) + 1);
 											btNumList.set(i, 0);
@@ -212,19 +214,32 @@ public class DelPreThreeThread implements Runnable{
 												//模拟投注
 												mnlr += itemIn;
 											}
+											//清空连挂数
 											failCountList.set(i, 0);
+											failCountList_t.set(i, 0);
 											sulAllCount++;
 										}else{
 											zjFlagList.set(i, false);
 											//赋值中奖结果
 											tempzjFalgStr += "0";
+											
+											//累计连挂数
 											failCountList.set(i, failCountList.get(i) + 1);
 											sulCountList.set(i, 0);
 											if(failCountList.get(i)>maxFailCountList.get(i))
 												maxFailCountList.set(i, failCountList.get(i));
-											tempFailc ++;
+											if(mnOrSzList.get(i)){
+												//累计真实连挂数
+												failCountList_t.set(i, failCountList_t.get(i) + 1);
+												if(failCountList_t.get(i)>maxFailCountList_t.get(i))
+													maxFailCountList_t.set(i, failCountList_t.get(i));
+											}
+												
 											//记录连挂数
 											HotClFrame.tableDefaultmodel.setValueAt(failCountList.get(i)+"/"+maxFailCountList.get(i), tableIndex, 4);
+											//记录真实投注连挂数
+											HotClFrame.tableDefaultmodel.setValueAt(failCountList_t.get(i)+"/"+maxFailCountList_t.get(i), tableIndex, 5);
+											
 											HotClFrame.tableDefaultmodel.setValueAt("挂", tableIndex, 7);
 											Double tempFailP = -clArr.length * baseMoney *  btArr[btNumList.get(i)];
 											HotClFrame.tableDefaultmodel.setValueAt(df.format(tempFailP), tableIndex, 3);
@@ -290,6 +305,8 @@ public class DelPreThreeThread implements Runnable{
 								HotClFrame.mnYkValueLabel.setText(df.format(mnlr));
 								HotClFrame.szYkValueLabel.setText(df.format(zslr));
 								HotClFrame.trueYkValueLabel.setText(df.format(truelr));
+								//投注新增日志
+								addDownLog();
 								/*if(mnOrSzStr.equals("模拟-投注")){
 									mnlr += tempLr;
 								}else{
@@ -660,7 +677,7 @@ public class DelPreThreeThread implements Runnable{
 	public static void startDownFFC(){
 		
 		Boolean downSulFlag = false;
-		Integer changeNum = Integer.parseInt(HotClFrame.changeYlField.getText());
+		//Integer changeNum = Integer.parseInt(HotClFrame.changeYlField.getText());
 		for (int i = clList.size()-1; i >= 0; i--) {
 			//中N期更换
 			//if(sulCountList.get(i).equals(changeNum)||clList.get(i).get("cl")==null){
@@ -760,6 +777,39 @@ public class DelPreThreeThread implements Runnable{
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			//初始化当前日期
 			nowDateStr = format.format(new Date());
+		}
+	}
+	
+	/**
+	 * @Title: addDownLog  
+	 * @Description:添加日志 
+	 * @author: Ason      
+	 * @return: void      
+	 * @throws
+	 */
+	public static void addDownLog(){
+		//获取当前路径
+		File file = new File(System.getProperty("user.dir")+"\\"+"downLog.txt");
+		try {
+			if(!file.exists())
+				//创建文件
+				file.createNewFile();
+			StringBuffer log = new StringBuffer();
+			for (int i = 0; i < 5; i++) {
+				for (int j = 0; j < 9; j++) 
+					log.append(HotClFrame.tableDefaultmodel.getValueAt(i, j)+"  ");
+				log.append("\r\n");
+			}
+			FileWriter fw = new FileWriter(file, true);
+			PrintWriter pw = new PrintWriter(fw);
+			pw.println(log.toString());
+			pw.flush();
+			
+			fw.flush();
+			pw.close();
+			fw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -55,7 +55,7 @@ public class HotClFrame extends JFrame{
 	
 	//投注情况
 	public static String[][] tableDate = {};
-	public static String[] dataTitle = {"期数","方案","倍数","方案盈亏","连挂","连中","开奖情况","中挂","投注类型"};
+	public static String[] dataTitle = {"期数","方案","倍数","方案盈亏","连挂","真实连挂","开奖情况","中挂","投注类型"};
 	public static DefaultTableModel tableDefaultmodel = new DefaultTableModel(tableDate,dataTitle);
 	//操作日志
 	public static String[][] logTableDate = {};
