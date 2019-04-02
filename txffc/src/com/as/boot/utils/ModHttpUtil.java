@@ -100,6 +100,7 @@ public class ModHttpUtil {
 				return true;
 			}
 		}
+		HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"登录失败，结果为："+JSONObject.toJSONString(resultMap)});
 		return false;
 	}
 

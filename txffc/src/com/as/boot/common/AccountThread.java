@@ -36,7 +36,8 @@ public class AccountThread implements Runnable{
 							accountAmount = resultJson.getJSONObject("userMoney").getString("avail");
 							HotClFrame.accountAmountLabel.setText(accountAmount);
 							HotClFrame.accountNameLabel.setText(accountName);
-						}
+						}else
+							HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"获取账户信息失败，信息为："+result});
 					}else{
 						HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"获取账户信息失败，登录已失效，尝试重新登录..."});
 						//重新登录
@@ -51,9 +52,15 @@ public class AccountThread implements Runnable{
 				}
 				Thread.sleep(5000);
 			} catch (Exception e) {
+				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"获取账户信息异常："+e.getMessage()});
 				e.printStackTrace();
 				urlIndex++;
 				if(urlIndex>2)urlIndex=0;
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
