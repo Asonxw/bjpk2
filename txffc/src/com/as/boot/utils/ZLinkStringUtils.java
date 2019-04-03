@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.as.boot.txffc.frame.HotClFrame;
 
 
 public class ZLinkStringUtils {
@@ -2462,5 +2464,34 @@ public class ZLinkStringUtils {
             }
         }
         return sb.toString();
+	}
+	
+	/**
+	 * @Title: addDownLog  
+	 * @Description:添加日志 
+	 * @author: Ason      
+	 * @return: void      
+	 * @throws
+	 */
+	public static void addLog(Class c, String funcName, String str){
+		//获取当前路径
+		File file = new File(System.getProperty("user.dir")+"\\"+"log.txt");
+		try {
+			if(!file.exists())
+				//创建文件
+				file.createNewFile();
+			FileWriter fw = new FileWriter(file, true);
+			PrintWriter pw = new PrintWriter(fw);
+			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date d = new Date();
+			pw.println("["+f.format(d)+"]"+"-"+" ["+c.getName()+"]-["+funcName+"]"+str+"\r\n");
+			pw.flush();
+			
+			fw.flush();
+			pw.close();
+			fw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

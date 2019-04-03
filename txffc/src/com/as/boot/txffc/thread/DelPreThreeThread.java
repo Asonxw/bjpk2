@@ -186,8 +186,9 @@ public class DelPreThreeThread implements Runnable{
 										}
 										String tempzjFalgStr = zjFlagStrList.get(i);
 										//判断目前的中奖结果长度是否达到设定值的长度，如果达到则需要删除一个最远的开奖结果
-										if(tempzjFalgStr.length() == changeStr.length())
+										if(ZLinkStringUtils.isNotEmpty(changeStr)&&tempzjFalgStr.length() == changeStr.length())
 											tempzjFalgStr = tempzjFalgStr.substring(1, tempzjFalgStr.length());
+										else tempzjFalgStr = null;
 										//判断是否中奖
 										if(clItem.get("cl").contains(result)){
 											zjFlagList.set(i, true);
@@ -277,7 +278,7 @@ public class DelPreThreeThread implements Runnable{
 											}
 										}
 										//当前处于模拟且与设定的投注策略一致则开启实战
-										if(!mnOrSzList.get(i) && tempzjFalgStr.equals(changeStr)){
+										if((!mnOrSzList.get(i) && ZLinkStringUtils.isEmpty(changeStr))||(!mnOrSzList.get(i) && tempzjFalgStr.equals(changeStr))){
 											//撒旦法
 											//设置为实战
 											mnOrSzList.set(i,true);

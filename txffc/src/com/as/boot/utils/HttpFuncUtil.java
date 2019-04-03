@@ -15,18 +15,22 @@ public class HttpFuncUtil {
 
 	public static String getString(String request) {
 		String respond = "";
-		// String uniID = CommonUtils.getUniqString();
-		RestTemplate restTemplate = null;
-		restTemplate = new RestTemplate();
-		// httpClient连接配置，底层是配置RequestConfig
-		// HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
-		// new HttpComponentsClientHttpRequestFactory();
-		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-		requestFactory.setReadTimeout(3000);
-		requestFactory.setConnectTimeout(3000);// 3秒钟访问限制，否则定为超时
-		
-		restTemplate.setRequestFactory(requestFactory);
-		respond = restTemplate.getForObject(request, String.class);
+		try {
+			// String uniID = CommonUtils.getUniqString();
+			RestTemplate restTemplate = null;
+			restTemplate = new RestTemplate();
+			// httpClient连接配置，底层是配置RequestConfig
+			// HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
+			// new HttpComponentsClientHttpRequestFactory();
+			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+			requestFactory.setReadTimeout(3000);
+			requestFactory.setConnectTimeout(3000);// 3秒钟访问限制，否则定为超时
+			
+			restTemplate.setRequestFactory(requestFactory);
+			respond = restTemplate.getForObject(request, String.class);
+		} catch (Exception e) {
+			ZLinkStringUtils.addLog(HttpFuncUtil.class, "getString", "["+request+"]"+e.getMessage()+" 【异常】");
+		}
 		return respond;
 	}
 
@@ -57,8 +61,10 @@ public class HttpFuncUtil {
             	BufferedReader reader2 = new BufferedReader(reader);
             	
                 params.put("result", reader2.readLine());
-	        }
+	        }else
+            	ZLinkStringUtils.addLog(HttpFuncUtil.class, "getUrlConnection", "["+urlStr+"]get结果码"+con.getResponseCode());
 		} catch (Exception e) {
+			ZLinkStringUtils.addLog(HttpFuncUtil.class, "getUrlConnection", "["+urlStr+"]"+e.getMessage()+" 【异常】");
 			e.printStackTrace();
 			return null;
 		} finally {
@@ -107,8 +113,10 @@ public class HttpFuncUtil {
             	reader = new InputStreamReader(con.getInputStream(),"utf-8"); 
             	breader = new BufferedReader(reader);
             	result = breader.readLine();
-	        }
+	        }else
+            	ZLinkStringUtils.addLog(HttpFuncUtil.class, "postBySession", "["+url+"]post结果码"+con.getResponseCode());
         }catch(Exception e){
+        	ZLinkStringUtils.addLog(HttpFuncUtil.class, "postBySession", "["+url+"]"+e.getMessage()+" 【异常】");
             e.printStackTrace();
         }finally{
             try {
@@ -146,8 +154,10 @@ public class HttpFuncUtil {
             	breader= new BufferedReader(reader);
             	
                 return breader.readLine();
-            }
+            }else
+            	ZLinkStringUtils.addLog(HttpFuncUtil.class, "getBySession", "["+url+"]get结果码"+con.getResponseCode());
         }catch(Exception e){
+        	ZLinkStringUtils.addLog(HttpFuncUtil.class, "getBySession", "["+url+"]"+e.getMessage()+" 【异常】 ");
             e.printStackTrace();
         }finally {
         	 try {

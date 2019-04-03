@@ -90,7 +90,7 @@ public class ModHttpUtil {
 		return false;
 	}
 	
-	public static Boolean logind(String accountName, String password){
+	public synchronized static Boolean logind(String accountName, String password){
 		password = ZLinkStringUtils.MD5_32(password, null);
 		HashMap<String, String> resultMap = HttpFuncUtil.getUrlConnection(ModHttpUtil.mdLoginUrl+accountName+"&appId=5&password="+password);
 		if(resultMap!=null&&ZLinkStringUtils.isNotEmpty(resultMap.get("result"))){
