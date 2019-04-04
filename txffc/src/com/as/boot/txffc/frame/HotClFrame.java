@@ -16,7 +16,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -38,7 +37,6 @@ import org.dtools.ini.IniItem;
 
 import com.as.boot.txffc.controller.ExampleControll;
 import com.as.boot.txffc.thread.DelPreThreeThread;
-import com.as.boot.utils.ZLinkStringUtils;
 
 public class HotClFrame extends JFrame{
 
@@ -84,8 +82,8 @@ public class HotClFrame extends JFrame{
 	public static JLabel sulPercent = new JLabel("00%");
 	
     public static List<JCheckBox> clBoxList = null; 
-    /**盈利回头值**/
-	public static JTextField returnField = new JTextField(8);
+    /*开启测试**/
+	public static JCheckBox testFlagField = new JCheckBox("开启");
 	/**止盈值**/
 	public static JTextField winStopField = new JTextField(8);
 	/**止损值**/
@@ -120,10 +118,8 @@ public class HotClFrame extends JFrame{
 	
 	public static HotClFrame hotClFrame = new HotClFrame();
 	
-	
-	
 	public HotClFrame(){
-		this.setTitle("txffc");
+		this.setTitle("preSeven_v1_05");
 		this.setBounds(200, 200, 200, 200);
 		this.setSize(910, 700);
 		this.setLocation(200, 50);
@@ -294,14 +290,14 @@ public class HotClFrame extends JFrame{
   		downParamsBox.setBorder(BorderFactory.createTitledBorder("投注参数"));
   		
   		//盈利回头
-  		JLabel returnLabel = new JLabel("盈利回头:");
-  		downParamsBox.add(returnLabel);
+  		JLabel testFlagLabel = new JLabel("是否开启测试:");
+  		downParamsBox.add(testFlagLabel);
   		
-  		IniItem returnYl = ExampleControll.getIniItem("returnYl");
-        if(returnYl != null)
-        	returnField.setText(returnYl.getValue());
+  		IniItem testFlag = ExampleControll.getIniItem("testFlag");
+        if(testFlag != null&&testFlag.getValue().equals("true"))
+        	testFlagField.setSelected(true);
         
-   		downParamsBox.add(returnField);
+   		downParamsBox.add(testFlagField);
   		//止盈
    		JLabel winStopLabel = new JLabel("止盈:");
   		downParamsBox.add(winStopLabel);
@@ -514,7 +510,7 @@ public class HotClFrame extends JFrame{
 		pop.add(show);
 		pop.add(exit);
 
-		trayIcon = new TrayIcon(trayImg.getImage(), "any three positions - Replace after hit", pop);
+		trayIcon = new TrayIcon(trayImg.getImage(), "any seven positions - Replace after hit v1_05", pop);
 		trayIcon.setImageAutoSize(true);
 
 		trayIcon.addMouseListener(new MouseAdapter() {
@@ -558,7 +554,7 @@ public class HotClFrame extends JFrame{
 
         ExampleControll.addIniItem("price", price.getSelectedItem().toString());
         
-        ExampleControll.addIniItem("returnYl", returnField.getText());
+        ExampleControll.addIniItem("testFlag", testFlagField.isSelected()?"true":"false");
 
         ExampleControll.addIniItem("winStop", winStopField.getText());
 

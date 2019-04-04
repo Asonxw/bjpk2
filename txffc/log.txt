@@ -4698,3 +4698,27 @@
 
 [2019-04-03 01:11:59]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712]get结果码302
 
+[2019-04-03 17:51:01]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712]get结果码302
+
+[2019-04-03 18:02:58]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712]get结果码302
+
+[2019-04-03 18:15:08]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712]get结果码302
+
+[2019-04-03 18:20:09]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712]get结果码302
+
+[2019-04-03 18:20:44]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712]get结果码302
+
+[2019-04-03 18:20:52]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712]get结果码302
+
+[2019-04-03 18:22:07]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712]Connection timed out: connect 【异常】 
+
+[2019-04-04 01:49:21]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/sso/u/getUserBalance?appId=5]Connection timed out: connect 【异常】 
+
+[2019-04-04 01:58:48]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/sso/u/getUserBalance?appId=5]Connection timed out: connect 【异常】 
+
+[2019-04-04 03:19:38]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/sso/u/getUserBalance?appId=5]Connection timed out: connect 【异常】 
+
+[2019-04-04 03:19:58]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712]Connection timed out: connect 【异常】 
+
+[2019-04-04 03:20:07]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/sso/u/getUserBalance?appId=5]Connection timed out: connect 【异常】 
+

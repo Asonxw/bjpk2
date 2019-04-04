@@ -41,19 +41,12 @@ public class AccountThread implements Runnable{
 							HotClFrame.accountNameLabel.setText(accountName);
 							failTime = 0;
 						}else{
-							HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"获取账户信息失败，信息为："+result});
 							failTime++;
+							HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"获取账户信息失败，信息为："+result+"   已失败次数："+failTime});
 						}
 					}else{
 						failTime++;
 						HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"获取账户信息失败，已失败次数："+failTime});
-						
-						//重新登录
-						if(failTime%timeReset==0){
-							HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"失败次数达限，尝试重新登录"});
-							if(ModHttpUtil.logind(accountName, accountPass))
-								HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"重新登录成功！"});
-						}
 					}
 				}
 				Thread.sleep(8000);
@@ -65,6 +58,14 @@ public class AccountThread implements Runnable{
 					Thread.sleep(8000);
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
+				}
+			}
+			//重新登录
+			if(failTime!=0&&failTime%timeReset==0){
+				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"失败次数达限，尝试重新登录"});
+				if(ModHttpUtil.logind(accountName, accountPass)){
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"重新登录成功！"});
+					failTime = 0;
 				}
 			}
 		}
