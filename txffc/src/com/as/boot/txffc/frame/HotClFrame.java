@@ -123,7 +123,7 @@ public class HotClFrame extends JFrame{
 	
 	
 	public HotClFrame(){
-		this.setTitle("txffc");
+		this.setTitle("preSeven_v1_04");
 		this.setBounds(200, 200, 200, 200);
 		this.setSize(910, 700);
 		this.setLocation(200, 50);
@@ -514,7 +514,7 @@ public class HotClFrame extends JFrame{
 		pop.add(show);
 		pop.add(exit);
 
-		trayIcon = new TrayIcon(trayImg.getImage(), "any three positions - Replace after hit", pop);
+		trayIcon = new TrayIcon(trayImg.getImage(), "pre seven v1_04", pop);
 		trayIcon.setImageAutoSize(true);
 
 		trayIcon.addMouseListener(new MouseAdapter() {
