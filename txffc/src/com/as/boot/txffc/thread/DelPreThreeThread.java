@@ -23,6 +23,7 @@ import com.as.boot.utils.ZLinkStringUtils;
 * @Description:删除最近出的三个号码作为下期投注策略 
 * @author Ason
 * @date 2018年12月7日 上午9:28:26
+* @version v1_04
  */
 public class DelPreThreeThread implements Runnable{
 	
