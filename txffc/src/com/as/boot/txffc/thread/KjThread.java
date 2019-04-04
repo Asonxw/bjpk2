@@ -19,10 +19,8 @@ import com.as.boot.utils.ZLinkStringUtils;
  */
 public class KjThread implements Runnable{
 	
-	private String[] urlArr = {"http://gf1.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf2.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf3.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf4.pkvip08.com:92/Shared/GetNewPeriod?gameid=81","http://gf5.pkvip08.com:92/Shared/GetNewPeriod?gameid=81"};
 	
 	public static DecimalFormat ddf = new DecimalFormat("#");
-	private Integer urlIndex = 0; 
 	public static Integer failTime = 0;
 	public static Integer timeReset = 3;
 	@Override
@@ -34,48 +32,47 @@ public class KjThread implements Runnable{
 				result = HttpFuncUtil.getBySession(ModHttpUtil.urlSessionId, ModHttpUtil.mdKjUrl);
 				if(ZLinkStringUtils.isNotEmpty(result)){
 					JSONObject resultObj = JSONObject.parseObject(result);
-					//modGame
-					JSONObject kjJson = resultObj.getJSONObject("result").getJSONArray("issue").getJSONObject(0);
-					String resultRound = kjJson.getString("issueNo").replace("-", "");
-					String resultKj = kjJson.getString("code");
+					if(resultObj.getJSONObject("result")!=null){
+						//modGame
+						JSONObject kjJson = resultObj.getJSONObject("result").getJSONArray("issue").getJSONObject(0);
+						String resultRound = kjJson.getString("issueNo").replace("-", "");
+						String resultKj = kjJson.getString("code");
+						
+						String nextRound = null;
+						if(resultRound.endsWith("1440")){
+							//获取明日日期，当前时间+1小时
+							Long nextDate = System.currentTimeMillis() + 60*60*1000;
+							nextRound = new SimpleDateFormat("yyyyMMdd").format(nextDate) + "0001";
+						}else{
+							//获取下一期
+							Double num = Double.parseDouble(resultRound) + 1;
+							nextRound = ddf.format(num);
+						}
 					
-					String nextRound = null;
-					if(resultRound.endsWith("1440")){
-						//获取明日日期，当前时间+1小时
-						Long nextDate = System.currentTimeMillis() + 60*60*1000;
-						nextRound = new SimpleDateFormat("yyyyMMdd").format(nextDate) + "0001";
+						/*String resultRound = resultObj.getString("fpreviousperiod");
+						String resultKj = resultObj.getString("fpreviousresult");
+						String nextRound = resultObj.getString("fnumberofperiod");
+						*/
+						failTime = 0;
+						if(ExampleControll.FFCRound == null || !ExampleControll.FFCRound.equals(resultRound)){
+							ExampleControll.FFCRound = resultRound;
+							ExampleControll.FFCResult = resultKj;
+							ExampleControll.nextFFCRound = nextRound;
+							Thread.sleep(30000);//更新到数据后睡眠30s
+						}else if(ExampleControll.FFCRound.equals(resultRound)){
+							Thread.sleep(4000);//未更新到数据睡眠4s
+						}
 					}else{
-						//获取下一期
-						Double num = Double.parseDouble(resultRound) + 1;
-						nextRound = ddf.format(num);
-					}
-				
-					/*String resultRound = resultObj.getString("fpreviousperiod");
-					String resultKj = resultObj.getString("fpreviousresult");
-					String nextRound = resultObj.getString("fnumberofperiod");
-					*/
-					failTime = 0;
-					if(ExampleControll.FFCRound == null || !ExampleControll.FFCRound.equals(resultRound)){
-						ExampleControll.FFCRound = resultRound;
-						ExampleControll.FFCResult = resultKj;
-						ExampleControll.nextFFCRound = nextRound;
-						Thread.sleep(30000);//更新到数据后睡眠30s
-					}else if(ExampleControll.FFCRound.equals(resultRound)){
-						Thread.sleep(4000);//未更新到数据睡眠4s
+						failTime++;
+						HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+ExampleControll.nextFFCRound+"期，获取开奖失败，结果为："+result+"，已失败次数："+failTime});
+						Thread.sleep(3000);//未更新到数据睡眠3s
 					}
 				}else{
 					failTime++;
 					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+ExampleControll.nextFFCRound+"期，获取开奖为null，已失败次数："+failTime});
-					//重新登录
-					if(failTime%timeReset==0){
-						HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"获取奖期失败次数达限，尝试重新登录"});
-						if(ModHttpUtil.logind(ExampleControll.getIniItem("account").getValue(), ExampleControll.getIniItem("password").getValue()))
-							HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"重新登录成功！"});
-					}
 					Thread.sleep(3000);//未更新到数据睡眠3s
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
 				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+ExampleControll.nextFFCRound+"期，获取开奖失败！！！"});
 				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"错误result:"+result});
 				if(ZLinkStringUtils.isNotEmpty(result)){
@@ -97,6 +94,13 @@ public class KjThread implements Runnable{
 						}
 					}
 				}
+				e.printStackTrace();
+			}
+			//重新登录
+			if(failTime!=0&&failTime%timeReset==0){
+				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"获取奖期失败次数达限，尝试重新登录"});
+				if(ModHttpUtil.logind(ExampleControll.getIniItem("account").getValue(), ExampleControll.getIniItem("password").getValue()))
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"重新登录成功！"});
 			}
 		}
 	}
