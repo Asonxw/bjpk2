@@ -30,7 +30,7 @@ public class AccountThread implements Runnable{
 			try {
 				if(ZLinkStringUtils.isNotEmpty(ModHttpUtil.urlSessionId)){
 					//获取账户余额
-					String result = HttpFuncUtil.getBySession(ModHttpUtil.urlSessionId, "https://www.modgame.vip/sso/u/getUserBalance?appId=5");
+					String result = HttpFuncUtil.getBySession(ModHttpUtil.urlSessionId, "http://14.29.47.220:16668/sso/u/getUserBalance?appId=5");
 					if(ZLinkStringUtils.isNotEmpty(result)){
 						JSONObject resultObj = JSONObject.parseObject(result);
 						if(resultObj.getInteger("code")!=null&&resultObj.getInteger("code").equals(0)){
