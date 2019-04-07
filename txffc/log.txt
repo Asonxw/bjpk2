@@ -4698,3 +4698,5 @@
 
 [2019-04-03 01:11:59]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712]get结果码302
 
+[2019-04-07 09:25:50]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/sso/u/getUserBalance?appId=5]java.security.cert.CertificateException: No subject alternative DNS name matching www.modgame.vip found. 【异常】 
+
