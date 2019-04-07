@@ -15,21 +15,23 @@ import com.as.boot.txffc.frame.HotClFrame;
 
 public class ModHttpUtil {
 
-	public static String addOrderUrl = "https://www.modgame.vip/lottery/api/u/v1/lottery/add_order";
+	public static String[] urlArray = {"http://14.29.47.220:16668","http://www.moden168.space","http://www.modeng666.com","http://www.mod666.cc","http://www.moden688.space"};
+	
+	public static String addOrderUrl = "http://14.29.47.220:16668/lottery/api/u/v1/lottery/add_order";
 	
 	public static String urlSessionId = null;//"SIG=OoaPUBd/ll692/ZWTNx/Hurqi3BcXDpKqbFo+RhqIf9mNwtp3nmOumC7hFHwoSq9";
 	
-	public static String mdKjUrl = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712";
+	public static String mdKjUrl = "http://14.29.47.220:16668/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712";
 	
-	public static String mdKjUrl_mkpk = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=MDPK10&method=qsm_zx_fs";
+	public static String mdKjUrl_mkpk = "http://14.29.47.220:16668/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=MDPK10&method=qsm_zx_fs";
 	
 	public static DecimalFormat df = new DecimalFormat("#.000");
 	
-	public static String mdLoginUrl = "https://www.modgame.vip/sso/login?callback=jsonp1&way=pwd&from=portal&cn=";
+	public static String mdLoginUrl = "http://14.29.47.220:16668/sso/login?callback=jsonp1&way=pwd&from=portal&cn=";
 	
-	public static String modHistoryUrl = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?lottery=TXFFC&method=dwd_dwd_dwd"; 
+	public static String modHistoryUrl = "http://14.29.47.220:16668/lottery/api/anon/v1/lottery/simpleLast?lottery=TXFFC&method=dwd_dwd_dwd"; 
 	
-	public static String modHistoryUrl_mdpk = "https://www.modgame.vip/lottery/api/anon/v1/lottery/simpleLast?lottery=MDPK10&method=dwd_dwd_dwd";
+	public static String modHistoryUrl_mdpk = "http://14.29.47.220:16668/lottery/api/anon/v1/lottery/simpleLast?lottery=MDPK10&method=dwd_dwd_dwd";
 	
 	/**
 	 * @Title: addOrder  
