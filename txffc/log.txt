@@ -4708,3 +4708,5 @@
 
 [2019-04-09 12:42:36]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][http://14.29.47.220:16668/sso/u/getUserBalance?appId=5]Connection timed out: connect 【异常】 
 
+[2019-04-07 09:25:50]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/sso/u/getUserBalance?appId=5]java.security.cert.CertificateException: No subject alternative DNS name matching www.modgame.vip found. 【异常】 
+
