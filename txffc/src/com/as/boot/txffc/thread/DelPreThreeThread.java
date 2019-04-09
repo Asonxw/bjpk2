@@ -189,7 +189,6 @@ public class DelPreThreeThread implements Runnable{
 										//判断目前的中奖结果长度是否达到设定值的长度，如果达到则需要删除一个最远的开奖结果
 										if(ZLinkStringUtils.isNotEmpty(changeStr)&&tempzjFalgStr.length() == changeStr.length())
 											tempzjFalgStr = tempzjFalgStr.substring(1, tempzjFalgStr.length());
-										else tempzjFalgStr = null;
 										//判断是否中奖
 										if(clItem.get("cl").contains(result)){
 											zjFlagList.set(i, true);
