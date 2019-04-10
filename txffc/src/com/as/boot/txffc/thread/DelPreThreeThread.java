@@ -106,16 +106,16 @@ public class DelPreThreeThread implements Runnable{
 		else 
 			mnOrSzList = Arrays.asList(false,false,false,false,false);
 		Boolean downFlag = false;
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+		SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
 		while (true) {
+			//判断是否需要初始化投点（每日00:00进行更新）
+			if(!nowDateStr.equals(formatDate.format(new Date()))&&ZLinkStringUtils.isNotEmpty(nowDateStr))
+				initEvTime();
 			//判断是否到达投点
 			if(evTimeList.size()>0){
-				SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-				SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
 				String time =  format.format(new Date()).substring(0,4);
 				
-				//判断是否需要初始化投点（每日00:00进行更新）
-				if(!nowDateStr.equals(formatDate.format(new Date())))
-					initEvTime();
 				
 				if(evTimeList.contains(time)){
 					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"到达投注点:"+time+"，开启真实投注。"});
