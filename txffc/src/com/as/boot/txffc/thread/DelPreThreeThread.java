@@ -110,7 +110,7 @@ public class DelPreThreeThread implements Runnable{
 		while (true) {
 
 			//判断是否需要初始化投点（每日00:00进行更新）
-			if(!nowDateStr.equals(formatDate.format(new Date())))
+			if(!nowDateStr.equals(formatDate.format(new Date()))&&ZLinkStringUtils.isNotEmpty(nowDateStr))
 				initEvTime();
 			//判断是否到达投点
 			if(evTimeList.size()>0){
