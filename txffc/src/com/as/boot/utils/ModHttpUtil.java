@@ -15,21 +15,40 @@ import com.as.boot.txffc.frame.HotClFrame;
 
 public class ModHttpUtil {
 
-	public static String addOrderUrl = "http://14.29.47.220:16668/lottery/api/u/v1/lottery/add_order";
+	public static String urlM = "";
+	
+	public static String addOrderUrl = null;
 	
 	public static String urlSessionId = null;//"SIG=OoaPUBd/ll692/ZWTNx/Hurqi3BcXDpKqbFo+RhqIf9mNwtp3nmOumC7hFHwoSq9";
 	
-	public static String mdKjUrl = "http://14.29.47.220:16668/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712";
+	public static String mdKjUrl = null;
 	
-	public static String mdKjUrl_mkpk = "http://14.29.47.220:16668/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=MDPK10&method=qsm_zx_fs";
+	public static String mdKjUrl_mkpk = null;
 	
 	public static DecimalFormat df = new DecimalFormat("#.000");
 	
-	public static String mdLoginUrl = "http://14.29.47.220:16668/sso/login?callback=jsonp1&way=pwd&from=portal&cn=";
+	public static String mdLoginUrl = null;
 	
-	public static String modHistoryUrl = "http://14.29.47.220:16668/lottery/api/anon/v1/lottery/simpleLast?lottery=TXFFC&method=dwd_dwd_dwd"; 
+	public static String modHistoryUrl = null; 
 	
-	public static String modHistoryUrl_mdpk = "http://14.29.47.220:16668/lottery/api/anon/v1/lottery/simpleLast?lottery=MDPK10&method=dwd_dwd_dwd";
+	public static String modHistoryUrl_mdpk = null;
+	
+	public static String accountUrl = null;
+	public static void initUrl(){
+		addOrderUrl = urlM+"/lottery/api/u/v1/lottery/add_order";
+		
+		mdKjUrl = urlM+"/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712";
+		
+		mdKjUrl_mkpk = urlM+"/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=MDPK10&method=qsm_zx_fs";
+		
+		mdLoginUrl = urlM+"/sso/login?callback=jsonp1&way=pwd&from=portal&cn=";
+		
+		modHistoryUrl = urlM+"/lottery/api/anon/v1/lottery/simpleLast?lottery=TXFFC&method=dwd_dwd_dwd"; 
+		
+		modHistoryUrl_mdpk = urlM+"/lottery/api/anon/v1/lottery/simpleLast?lottery=MDPK10&method=dwd_dwd_dwd";
+		
+		accountUrl = urlM +"/sso/u/getUserBalance?appId=5";
+	}
 	
 	/**
 	 * @Title: addOrder  

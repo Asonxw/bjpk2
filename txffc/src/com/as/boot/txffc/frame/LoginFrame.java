@@ -33,6 +33,8 @@ public class LoginFrame extends JFrame{
 	
 	public static JPasswordField passField = new JPasswordField(20);
 	
+	public static JTextField urlMField = new JTextField(20);
+	
 	public static JFrame loginFrame = new LoginFrame();
 	public LoginFrame(){
 		this.setTitle("mod_game");
@@ -67,6 +69,13 @@ public class LoginFrame extends JFrame{
 		passPanel.add(passField);
 		panel.add(passPanel);
 		
+		JPanel urlMPanel = new JPanel();
+		urlMPanel.setPreferredSize(new Dimension(880,35));
+		JLabel urlMLable = new JLabel("线路:");
+		urlMPanel.add(urlMLable);
+		urlMPanel.add(urlMField);
+		panel.add(urlMPanel);
+		
 		JPanel btnPanel = new JPanel();
 		btnPanel.setPreferredSize(new Dimension(880,35));
 		JButton buttom = new JButton("登录");
@@ -83,6 +92,9 @@ public class LoginFrame extends JFrame{
   				String password = new String(values);
   				ExampleControll.addIniItem("account", accountField.getText());
   				ExampleControll.addIniItem("password", password);
+  				ExampleControll.addIniItem("urlM", urlMField.getText());
+  				ModHttpUtil.urlM = urlMField.getText();
+  				ModHttpUtil.initUrl();
   				//记录密码，用于登录失效后重新登录
   				AccountThread.accountPass = password;
   				if(ModHttpUtil.logind(accountField.getText(), password)){

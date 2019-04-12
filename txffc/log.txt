@@ -4722,3 +4722,13 @@
 
 [2019-04-04 03:20:07]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.modgame.vip/sso/u/getUserBalance?appId=5]Connection timed out: connect 【异常】 
 
+[2019-04-12 18:58:20]- [com.as.boot.utils.HttpFuncUtil]-[getUrlConnection][/sso/login?callback=jsonp1&way=pwd&from=portal&cn=ason_x4&appId=5&password=9c3db9e8694b4dec98f60858ea8b8d67]no protocol: /sso/login?callback=jsonp1&way=pwd&from=portal&cn=ason_x4&appId=5&password=9c3db9e8694b4dec98f60858ea8b8d67 【异常】
+
+[2019-04-12 18:58:21]- [com.as.boot.utils.HttpFuncUtil]-[getUrlConnection][/sso/login?callback=jsonp1&way=pwd&from=portal&cn=ason_x4&appId=5&password=9c3db9e8694b4dec98f60858ea8b8d67]no protocol: /sso/login?callback=jsonp1&way=pwd&from=portal&cn=ason_x4&appId=5&password=9c3db9e8694b4dec98f60858ea8b8d67 【异常】
+
+[2019-04-12 18:58:36]- [com.as.boot.utils.HttpFuncUtil]-[getUrlConnection][/sso/login?callback=jsonp1&way=pwd&from=portal&cn=ason_x4&appId=5&password=9c3db9e8694b4dec98f60858ea8b8d67]no protocol: /sso/login?callback=jsonp1&way=pwd&from=portal&cn=ason_x4&appId=5&password=9c3db9e8694b4dec98f60858ea8b8d67 【异常】
+
+[2019-04-12 19:02:02]- [com.as.boot.utils.HttpFuncUtil]-[getUrlConnection][/sso/login?callback=jsonp1&way=pwd&from=portal&cn=ason_x4&appId=5&password=9c3db9e8694b4dec98f60858ea8b8d67]no protocol: /sso/login?callback=jsonp1&way=pwd&from=portal&cn=ason_x4&appId=5&password=9c3db9e8694b4dec98f60858ea8b8d67 【异常】
+
+[2019-04-12 19:02:48]- [com.as.boot.utils.HttpFuncUtil]-[getUrlConnection][http://www.modgame.vip/sso/login?callback=jsonp1&way=pwd&from=portal&cn=ason_x4&appId=5&password=9c3db9e8694b4dec98f60858ea8b8d67]get结果码301
+

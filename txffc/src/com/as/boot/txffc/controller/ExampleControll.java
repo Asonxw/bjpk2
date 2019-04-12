@@ -26,8 +26,9 @@ public class ExampleControll{
 		
 		initParams();
 		if(ini_config.getItem("account")!=null){
-			LoginFrame.accountField.setText(ini_config.getItem("account").getValue());
-			LoginFrame.passField.setText(ini_config.getItem("password").getValue());
+			LoginFrame.accountField.setText(ini_config.getItem("account")==null?"":ini_config.getItem("account").getValue());
+			LoginFrame.passField.setText(ini_config.getItem("password")==null?"":ini_config.getItem("password").getValue());
+			LoginFrame.urlMField.setText(ini_config.getItem("urlM")==null?"":ini_config.getItem("urlM").getValue());
 		}
 		LoginFrame.loginFrame.setVisible(true);
 	}
