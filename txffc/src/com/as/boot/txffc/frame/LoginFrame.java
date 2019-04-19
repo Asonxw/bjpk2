@@ -140,6 +140,7 @@ public class LoginFrame extends JFrame{
   					Thread threadKJ = new Thread(kjThread);
   					threadKJ.start();
   					
+  					DelPreThreeThread.preResultList = ModHttpUtil.getHistoryIssue(20, ModHttpUtil.modHistoryUrl);
   					/*AnyThreeThread anythreeThread = new AnyThreeThread();
   					*/
   					//HotDelPreTwo_D_ClThread anythreeThread = new HotDelPreTwo_D_ClThread();
