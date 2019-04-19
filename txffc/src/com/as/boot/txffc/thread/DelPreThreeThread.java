@@ -199,8 +199,8 @@ public class DelPreThreeThread implements Runnable{
 											//计算盈利值
 											Double itemLr = (btArr[btNumList.get(i)] * baseMoney * pl)/2;
 											itemIn += itemLr;
-											HotClFrame.tableDefaultmodel.setValueAt("0/"+maxFailCountList.get(i), tableIndex, 4);
-											HotClFrame.tableDefaultmodel.setValueAt("0/"+maxFailCountList_t.get(i), tableIndex, 5);
+											HotClFrame.tableDefaultmodel.setValueAt("m_0/"+maxFailCountList.get(i)+"_M", tableIndex, 4);
+											HotClFrame.tableDefaultmodel.setValueAt("z_0/"+maxFailCountList_t.get(i)+"_Z", tableIndex, 5);
 											HotClFrame.tableDefaultmodel.setValueAt(df.format(itemLr), tableIndex, 3);
 											sulCountList.set(i, sulCountList.get(i) + 1);
 											btNumList.set(i, 0);
@@ -237,9 +237,9 @@ public class DelPreThreeThread implements Runnable{
 											}
 												
 											//记录连挂数
-											HotClFrame.tableDefaultmodel.setValueAt(failCountList.get(i)+"/"+maxFailCountList.get(i), tableIndex, 4);
+											HotClFrame.tableDefaultmodel.setValueAt("m_"+failCountList.get(i)+"/"+maxFailCountList.get(i)+"_M", tableIndex, 4);
 											//记录真实投注连挂数
-											HotClFrame.tableDefaultmodel.setValueAt(failCountList_t.get(i)+"/"+maxFailCountList_t.get(i), tableIndex, 5);
+											HotClFrame.tableDefaultmodel.setValueAt("z_"+failCountList_t.get(i)+"/"+maxFailCountList_t.get(i)+"_Z", tableIndex, 5);
 											
 											HotClFrame.tableDefaultmodel.setValueAt("挂", tableIndex, 7);
 											Double tempFailP = -clArr.length * baseMoney *  btArr[btNumList.get(i)];
@@ -797,11 +797,8 @@ public class DelPreThreeThread implements Runnable{
 				file.createNewFile();
 			StringBuffer log = new StringBuffer();
 			for (int i = 0; i < 5; i++) {
-				for (int j = 0; j < 9; j++) {
-					if(i!=5)
-						log.append(HotClFrame.tableDefaultmodel.getValueAt(i, j)+"  ");
-					else log.append("_"+HotClFrame.tableDefaultmodel.getValueAt(i, j)+"  ");
-				}
+				for (int j = 0; j < 9; j++)
+					log.append(HotClFrame.tableDefaultmodel.getValueAt(i, j)+"  ");
 				log.append("\r\n");
 			}
 			FileWriter fw = new FileWriter(file, true);
