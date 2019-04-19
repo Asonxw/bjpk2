@@ -809,8 +809,11 @@ public class DelPreThreeThread implements Runnable{
 				file.createNewFile();
 			StringBuffer log = new StringBuffer();
 			for (int i = 0; i < 5; i++) {
-				for (int j = 0; j < 9; j++) 
-					log.append(HotClFrame.tableDefaultmodel.getValueAt(i, j)+"  ");
+				for (int j = 0; j < 9; j++) {
+					if(j!=5)
+						log.append(HotClFrame.tableDefaultmodel.getValueAt(i, j)+"  ");
+					else log.append("_"+HotClFrame.tableDefaultmodel.getValueAt(i, j)+"  ");
+				}
 				log.append("\r\n");
 			}
 			FileWriter fw = new FileWriter(file, true);
