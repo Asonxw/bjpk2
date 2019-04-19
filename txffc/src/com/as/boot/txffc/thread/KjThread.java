@@ -29,14 +29,21 @@ public class KjThread implements Runnable{
 			String result = null;
 			try {
 				//获取最近几期开奖结果
-				result = HttpFuncUtil.getBySession(ModHttpUtil.urlSessionId, ModHttpUtil.mdKjUrl);
+				//result = HttpFuncUtil.getBySession(ModHttpUtil.urlSessionId, ModHttpUtil.mdKjUrl);
+				result = HttpFuncUtil.getString(ModHttpUtil.mdKjUrl);
 				if(ZLinkStringUtils.isNotEmpty(result)){
 					JSONObject resultObj = JSONObject.parseObject(result);
-					if(resultObj.getJSONObject("result")!=null){
+					//if(resultObj.getJSONObject("result")!=null){
+					if(resultObj.getString("result")!=null){
 						//modGame
-						JSONObject kjJson = resultObj.getJSONObject("result").getJSONArray("issue").getJSONObject(0);
+						/*JSONObject kjJson = resultObj.getJSONObject("result").getJSONArray("issue").getJSONObject(0);
 						String resultRound = kjJson.getString("issueNo").replace("-", "");
-						String resultKj = kjJson.getString("code");
+						String resultKj = kjJson.getString("code");*/
+						//other
+						String kjStr = resultObj.getString("result").substring(0,19);
+						String resultRound = kjStr.substring(0, 13).replace("-", "");
+						String resultKj = kjStr.substring(14,19);
+						resultKj = resultKj.charAt(0)+","+resultKj.charAt(1)+","+resultKj.charAt(2)+","+resultKj.charAt(3)+","+resultKj.charAt(4);
 						
 						String nextRound = null;
 						if(resultRound.endsWith("1440")){

@@ -4754,3 +4754,9 @@
 
 [2019-04-12 17:47:58]- [com.as.boot.utils.HttpFuncUtil]-[getUrlConnection][nullason_x&appId=5&password=9c3db9e8694b4dec98f60858ea8b8d67]no protocol: nullason_x&appId=5&password=9c3db9e8694b4dec98f60858ea8b8d67 【异常】
 
+[2019-04-19 10:01:11]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.150106.com/api/lastOpenedIssues.php?id=1&issueCount=50]get结果码400
+
+[2019-04-19 10:01:14]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.150106.com/api/lastOpenedIssues.php?id=1&issueCount=50]get结果码400
+
+[2019-04-19 10:01:50]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.150106.com/api/lastOpenedIssues.php?id=1&issueCount=50]get结果码400
+

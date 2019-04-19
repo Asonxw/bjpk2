@@ -21,7 +21,7 @@ public class ModHttpUtil {
 	
 	public static String urlSessionId = null;//"SIG=OoaPUBd/ll692/ZWTNx/Hurqi3BcXDpKqbFo+RhqIf9mNwtp3nmOumC7hFHwoSq9";
 	
-	public static String mdKjUrl = null;
+	public static String mdKjUrl = "https://www.150106.com/api/lastOpenedIssues.php?id=1&issueCount=50";
 	
 	public static String mdKjUrl_mkpk = null;
 	
@@ -29,7 +29,7 @@ public class ModHttpUtil {
 	
 	public static String mdLoginUrl = null;
 	
-	public static String modHistoryUrl = null; 
+	public static String modHistoryUrl = "https://www.150106.com/api/lastOpenedIssues.php?id=1&issueCount=50";; 
 	
 	public static String modHistoryUrl_mdpk = null;
 	
@@ -39,13 +39,13 @@ public class ModHttpUtil {
 		
 		addOrderUrl = urlM+"/lottery/api/u/v1/lottery/add_order";
 		
-		mdKjUrl = urlM+"/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712";
+		//mdKjUrl = urlM+"/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=TXFFC&method=qsm_zx_fs&_=1542874378712";
 		
 		mdKjUrl_mkpk = urlM+"/lottery/api/anon/v1/lottery/simpleLast?size=1&lottery=MDPK10&method=qsm_zx_fs";
 		
 		mdLoginUrl = urlM+"/sso/login?callback=jsonp1&way=pwd&from=portal&cn=";
 		
-		modHistoryUrl = urlM+"/lottery/api/anon/v1/lottery/simpleLast?lottery=TXFFC&method=dwd_dwd_dwd"; 
+		//modHistoryUrl = urlM+"/lottery/api/anon/v1/lottery/simpleLast?lottery=TXFFC&method=dwd_dwd_dwd"; 
 		
 		modHistoryUrl_mdpk = urlM+"/lottery/api/anon/v1/lottery/simpleLast?lottery=MDPK10&method=dwd_dwd_dwd";
 		
@@ -242,7 +242,7 @@ public class ModHttpUtil {
 	}
 	
 	public static List<String> getHistoryIssue(Integer num, String url){
-		String purl = url + "&size="+num;
+		/*String purl = url + "&size="+num;
 		String resultStr = HttpFuncUtil.getBySession(urlSessionId, purl);
 		JSONObject resultO = JSONObject.parseObject(resultStr);
 		if(resultO.getString("code").equals("1")){
@@ -256,6 +256,18 @@ public class ModHttpUtil {
 					resultKj = resultKj.replace("10", "0");
 				}
 				preHistory.add(resultKj.replace(",", ""));
+			}
+			return preHistory;
+		}else
+			return getHistoryIssue(num, url);*/
+		String purl = url;
+		String resultStr = HttpFuncUtil.getString(purl);
+		JSONObject resultO = JSONObject.parseObject(resultStr);
+		if(resultO.getString("code").equals("1")){
+			List<String> preHistory = new ArrayList<>();
+			String[] array = resultO.getString("result").split(",");
+			for (int i = 0; i < num; i++) {
+				preHistory.add(array[i].substring(14, 19));
 			}
 			return preHistory;
 		}else

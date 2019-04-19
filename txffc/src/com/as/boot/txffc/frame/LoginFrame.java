@@ -146,9 +146,11 @@ public class LoginFrame extends JFrame{
   					//HotDelPreTwo_D_ClThread anythreeThread = new HotDelPreTwo_D_ClThread();
   					//HotDelPreTwoClThread anythreeThread = new HotDelPreTwoClThread();
   					DelPreThreeThread anythreeThread = new DelPreThreeThread();
+  					//初始化历史20期数据
+  					DelPreThreeThread.preResultList = ModHttpUtil.getHistoryIssue(20, ModHttpUtil.modHistoryUrl);
   					Thread anythreeResult = new Thread(anythreeThread);
   					anythreeResult.start();
-  					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"登录成功！"});
+  					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{"("+(new Date())+")"+"数据初始化成功！"});
   		    }
 		});
 	}

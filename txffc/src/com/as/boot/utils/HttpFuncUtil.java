@@ -23,7 +23,6 @@ public class HttpFuncUtil {
 			// HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
 			// new HttpComponentsClientHttpRequestFactory();
 			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-			SslUtils.ignoreSsl();
 			requestFactory.setReadTimeout(3000);
 			requestFactory.setConnectTimeout(3000);// 3秒钟访问限制，否则定为超时
 			restTemplate.setRequestFactory(requestFactory);
@@ -49,7 +48,6 @@ public class HttpFuncUtil {
 			URL url = new URL(urlStr);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
-			SslUtils.ignoreSsl();
 			String cookieValue = con.getHeaderField("Set-Cookie");
 			String sessionId = ZLinkStringUtils.isNotEmpty(cookieValue)?cookieValue.substring(0, cookieValue.indexOf(";")):null;
 			params = new HashMap<>();
@@ -95,7 +93,6 @@ public class HttpFuncUtil {
             URL u=new URL(url);
             HttpURLConnection con=(HttpURLConnection)u.openConnection();
             con.setRequestMethod("POST");
-            SslUtils.ignoreSsl();
             con.setRequestProperty("Cookie", sessionId);
             con.setDoOutput(true);
             con.setDoInput(true);
@@ -147,7 +144,6 @@ public class HttpFuncUtil {
             URL u=new URL(url);
             HttpURLConnection con=(HttpURLConnection)u.openConnection();
             con.setRequestMethod("GET");
-            SslUtils.ignoreSsl();
             con.setRequestProperty("Cookie", sessionId);
             con.connect();
             if(con.getResponseCode() == 200){
