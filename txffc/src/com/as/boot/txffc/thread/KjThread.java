@@ -82,7 +82,7 @@ public class KjThread implements Runnable{
 			} catch (Exception e) {
 				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+ExampleControll.nextFFCRound+"期，获取开奖失败！！！"});
 				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"错误result:"+result});
-				if(ZLinkStringUtils.isNotEmpty(result)){
+			/*	if(ZLinkStringUtils.isNotEmpty(result)){
 					JSONObject resultObj = JSONObject.parseObject(result);
 					if(resultObj.getString("time")!=null&&resultObj.getString("server").equals("maintenance")){
 						String tTime = resultObj.getString("time");
@@ -100,15 +100,15 @@ public class KjThread implements Runnable{
 							e1.printStackTrace();
 						}
 					}
-				}
+				}*/
 				e.printStackTrace();
 			}
 			//重新登录
-			if(failTime!=0&&failTime%timeReset==0){
+			/*if(failTime!=0&&failTime%timeReset==0){
 				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"获取奖期失败次数达限，尝试重新登录"});
 				if(ModHttpUtil.logind(ExampleControll.getIniItem("account").getValue(), ExampleControll.getIniItem("password").getValue()))
 					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"重新登录成功！"});
-			}
+			}*/
 		}
 	}
 
