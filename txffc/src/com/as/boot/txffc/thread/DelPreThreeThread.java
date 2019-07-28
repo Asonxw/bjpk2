@@ -1,6 +1,7 @@
 package com.as.boot.txffc.thread;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -189,6 +190,11 @@ public class DelPreThreeThread implements Runnable{
 										//判断目前的中奖结果长度是否达到设定值的长度，如果达到则需要删除一个最远的开奖结果
 										if(ZLinkStringUtils.isNotEmpty(changeStr)&&tempzjFalgStr.length() == changeStr.length())
 											tempzjFalgStr = tempzjFalgStr.substring(1, tempzjFalgStr.length());
+										else if(tempzjFalgStr.length() > changeStr.length()) {
+											Integer t = tempzjFalgStr.length() - changeStr.length();
+											//缩短了changeStr，导至字符出问题，需重新计算
+											tempzjFalgStr = tempzjFalgStr.substring(t,tempzjFalgStr.length());
+										}
 										//判断是否中奖
 										if(clItem.get("cl").contains(result)){
 											zjFlagList.set(i, true);
@@ -707,9 +713,43 @@ public class DelPreThreeThread implements Runnable{
 		}else
 			downSulFlag = true;
 		//下注成功后再表格追加
-		if(downSulFlag)
+		if(downSulFlag) {
+			try {
+				//将实战策略输出至文件
+				File file = new File(System.getProperty("user.dir")+"\\"+"cl.txt");
+				if(file.exists()) {
+					/*
+					 * file.delete(); //创建文件 file.createNewFile();
+					 */
+				}else {
+					//创建文件
+					file.createNewFile();
+				}
+				StringBuilder log = new StringBuilder();
+				//筛选出需要投注的策略
+				for (int i = 0; i < mnOrSzList.size(); i++) {
+					if(mnOrSzList.get(i)){
+						log.append(clList.get(i).get("cl"));
+					}else
+						log.append("null");
+					log.append(";");
+				}
+				String result = log.toString().substring(0, log.length()-1).replace("[", "").replace("]", "");
+				System.out.println(mnOrSzList+"----"+result);
+				FileWriter fw = new FileWriter(file, false);
+				PrintWriter pw = new PrintWriter(fw);
+				pw.println(result);
+				pw.flush();
+				
+				fw.flush();
+				pw.close();
+				fw.close();
+			} catch (Exception e) {
+
+			}
 			//投注成功或者模拟模式时添加表格投注记录
 			insertDownToTable();
+		}
 		
 	}
 	

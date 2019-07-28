@@ -4776,3 +4776,5 @@
 
 [2019-07-28 11:06:15]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][http://www.bssjzt.com/sso/u/getUserBalance?appId=5]get结果码502
 
+[2019-07-28 11:40:12]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][null&size=20]no protocol: null&size=20 【异常】 
+

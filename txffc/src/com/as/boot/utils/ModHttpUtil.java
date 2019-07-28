@@ -1,12 +1,15 @@
 package com.as.boot.utils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.as.boot.ModOrder;
 import com.as.boot.ModOrder_DWD;
@@ -245,24 +248,50 @@ public class ModHttpUtil {
 	}
 	
 	public static List<String> getHistoryIssue(Integer num, String url){
-		String purl = url + "&size="+num;
-		String resultStr = HttpFuncUtil.getBySession(urlSessionId, purl);
-		JSONObject resultO = JSONObject.parseObject(resultStr);
-		if(resultO.getString("code").equals("1")){
-			List<String> preHistory = new ArrayList<>();
-			JSONArray array = resultO.getJSONObject("result").getJSONArray("issue");
-			for (int i = array.size()-1; i >= 0 ; i--) {
-				String resultKj = array.getJSONObject(i).getString("code");
-				if(url.contains("PK10")){
-					resultKj = resultKj.replace(",0", ",");
-					resultKj = resultKj.startsWith("0")?resultKj.substring(1,resultKj.length()):resultKj;
-					resultKj = resultKj.replace("10", "0");
+//		String purl = url + "&size="+num;
+//		String resultStr = HttpFuncUtil.getBySession(urlSessionId, purl);
+//		JSONObject resultO = JSONObject.parseObject(resultStr);
+//		if(resultO.getString("code").equals("1")){
+//			List<String> preHistory = new ArrayList<>();
+//			JSONArray array = resultO.getJSONObject("result").getJSONArray("issue");
+//			for (int i = array.size()-1; i >= 0 ; i--) {
+//				String resultKj = array.getJSONObject(i).getString("code");
+//				if(url.contains("PK10")){
+//					resultKj = resultKj.replace(",0", ",");
+//					resultKj = resultKj.startsWith("0")?resultKj.substring(1,resultKj.length()):resultKj;
+//					resultKj = resultKj.replace("10", "0");
+//				}
+//				preHistory.add(resultKj.replace(",", ""));
+//			}
+//			return preHistory;
+//		}else
+//			return getHistoryIssue(num, url);
+		BufferedReader reader = null;
+		List<String> preHistory = new ArrayList<>();
+		try {
+			//获取最近几期开奖结果
+			File file = new File(ModHttpUtil.modOpenFile+"\\"+"TXFFC.txt");
+			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			if(file.exists()) {
+				String temp = null;
+				Integer i = 0;
+				while ((temp = reader.readLine()) != null&&i<=20){
+					temp = temp.replace("	", "").replace("-", "");
+					preHistory.add(temp.substring(10,temp.length()));
+					i++;
 				}
-				preHistory.add(resultKj.replace(",", ""));
 			}
-			return preHistory;
-		}else
-			return getHistoryIssue(num, url);
+		}catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			try {
+				if(reader!= null)reader.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		return preHistory;
+		
 		/*
 		 * String purl = url; String resultStr = HttpFuncUtil.getString(purl);
 		 * JSONObject resultO = JSONObject.parseObject(resultStr);

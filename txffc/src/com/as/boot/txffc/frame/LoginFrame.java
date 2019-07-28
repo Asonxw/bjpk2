@@ -148,6 +148,12 @@ public class LoginFrame extends JFrame{
   					LoginFrame.loginFrame.setVisible(false);
   					//AnyThreeFrame.anythreeFrame.setVisible(true);
   					HotClFrame.hotClFrame.setVisible(true);
+  					
+  					ExampleControll.addIniItem("urlM", urlMField.getText());
+  	  				ExampleControll.addIniItem("modOpenFile", openFile.getText());
+  	  				ModHttpUtil.urlM = urlMField.getText();
+  	  				ModHttpUtil.modOpenFile = openFile.getText();
+  					
   					//启动线程
   					KjThread kjThread = new KjThread();
   					Thread threadKJ = new Thread(kjThread);
