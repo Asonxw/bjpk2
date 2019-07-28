@@ -1,7 +1,10 @@
 package com.as.boot.txffc.thread;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -11,6 +14,7 @@ import com.as.boot.txffc.frame.HotClFrame;
 import com.as.boot.utils.HttpFuncUtil;
 import com.as.boot.utils.ModHttpUtil;
 import com.as.boot.utils.ZLinkStringUtils;
+
 /**
  * 用于更新开奖的线程
  * <p>Title:KjThread</p>
@@ -27,6 +31,61 @@ public class KjThread implements Runnable{
 	public void run() {
 		while (true) {
 			String result = null;
+			BufferedReader reader = null;
+			try {
+				//获取最近几期开奖结果
+				File file = new File(ModHttpUtil.modOpenFile+"\\"+"TXFFC.txt");
+				if(file.exists()) {
+					reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+					result = reader.readLine();
+					if(ZLinkStringUtils.isNotEmpty(result)){
+						result = result.replace("	", "").replace("-", "");
+						String resultRound = result.substring(0,10);
+						String resultKj = result.substring(10,result.length());
+						
+						String nextRound = null;
+						if(resultRound.endsWith("1440")){
+							//获取明日日期，当前时间+1小时
+							Long nextDate = System.currentTimeMillis() + 60*60*1000;
+							nextRound = new SimpleDateFormat("yyyyMMdd").format(nextDate) + "0001";
+						}else{
+							//获取下一期
+							Double num = Double.parseDouble(resultRound) + 1;
+							nextRound = ddf.format(num);
+						}
+						failTime = 0;
+						if(ExampleControll.FFCRound == null || !ExampleControll.FFCRound.equals(resultRound)){
+							ExampleControll.FFCRound = resultRound;
+							//格式化开奖结果，用逗号将开奖项隔开
+							ExampleControll.FFCResult = serializeCode(resultKj);
+							ExampleControll.nextFFCRound = nextRound;
+							Thread.sleep(30000);//更新到数据后睡眠30s
+						}else if(ExampleControll.FFCRound.equals(resultRound)){
+							Thread.sleep(700);//未更新到数据睡眠4s
+						}
+					}else{
+						failTime++;
+						HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+ExampleControll.nextFFCRound+"期，获取开奖为null，已失败次数："+failTime});
+						Thread.sleep(700);//未更新到数据睡眠3s
+					}
+				}else
+					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"开奖文件不存在，请重启软件填写开奖文件目录，TXFFC.txt不需要填写。"});
+				
+			} catch (Exception e) {
+				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+ExampleControll.nextFFCRound+"期，获取开奖失败！！！"});
+				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"错误result:"+result});
+				e.printStackTrace();
+			}finally {
+				try {
+					if(reader!=null)reader.close();
+				} catch (Exception e2) {
+				}
+			}
+		}
+	}
+	/*public void run() {
+		while (true) {
+			String result = null;
 			try {
 				//获取最近几期开奖结果
 				//result = HttpFuncUtil.getBySession(ModHttpUtil.urlSessionId, ModHttpUtil.mdKjUrl);
@@ -36,9 +95,9 @@ public class KjThread implements Runnable{
 					//if(resultObj.getJSONObject("result")!=null){
 					if(resultObj.getString("result")!=null){
 						//modGame
-						/*JSONObject kjJson = resultObj.getJSONObject("result").getJSONArray("issue").getJSONObject(0);
+						JSONObject kjJson = resultObj.getJSONObject("result").getJSONArray("issue").getJSONObject(0);
 						String resultRound = kjJson.getString("issueNo").replace("-", "");
-						String resultKj = kjJson.getString("code");*/
+						String resultKj = kjJson.getString("code");
 						//other
 						String kjStr = resultObj.getString("result").substring(0,19);
 						String resultRound = kjStr.substring(0, 13).replace("-", "");
@@ -56,10 +115,10 @@ public class KjThread implements Runnable{
 							nextRound = ddf.format(num);
 						}
 					
-						/*String resultRound = resultObj.getString("fpreviousperiod");
+						String resultRound = resultObj.getString("fpreviousperiod");
 						String resultKj = resultObj.getString("fpreviousresult");
 						String nextRound = resultObj.getString("fnumberofperiod");
-						*/
+						
 						failTime = 0;
 						if(ExampleControll.FFCRound == null || !ExampleControll.FFCRound.equals(resultRound)){
 							ExampleControll.FFCRound = resultRound;
@@ -82,7 +141,7 @@ public class KjThread implements Runnable{
 			} catch (Exception e) {
 				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+ExampleControll.nextFFCRound+"期，获取开奖失败！！！"});
 				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"错误result:"+result});
-			/*	if(ZLinkStringUtils.isNotEmpty(result)){
+				if(ZLinkStringUtils.isNotEmpty(result)){
 					JSONObject resultObj = JSONObject.parseObject(result);
 					if(resultObj.getString("time")!=null&&resultObj.getString("server").equals("maintenance")){
 						String tTime = resultObj.getString("time");
@@ -100,16 +159,24 @@ public class KjThread implements Runnable{
 							e1.printStackTrace();
 						}
 					}
-				}*/
+				}
 				e.printStackTrace();
 			}
 			//重新登录
-			/*if(failTime!=0&&failTime%timeReset==0){
+			if(failTime!=0&&failTime%timeReset==0){
 				HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"获取奖期失败次数达限，尝试重新登录"});
 				if(ModHttpUtil.logind(ExampleControll.getIniItem("account").getValue(), ExampleControll.getIniItem("password").getValue()))
 					HotClFrame.logTableDefaultmodel.insertRow(0, new String[]{(new Date())+"重新登录成功！"});
-			}*/
+			}
 		}
+	}*/
+	
+	private String serializeCode(String code) {
+		String resultCode = "";
+		for (int i = 0; i < code.length(); i++) {
+			resultCode += code.charAt(i)+",";
+		}
+		return resultCode.substring(0, resultCode.length()-1);
 	}
 
 }

@@ -35,6 +35,8 @@ public class LoginFrame extends JFrame{
 	
 	public static JTextField urlMField = new JTextField(20);
 	
+	public static JTextField openFile = new JTextField(20);
+	
 	public static JFrame loginFrame = new LoginFrame();
 	public LoginFrame(){
 		this.setTitle("mod_game");
@@ -77,6 +79,13 @@ public class LoginFrame extends JFrame{
 		urlMPanel.add(urlMField);
 		panel.add(urlMPanel);
 		
+		JPanel openFilePanel = new JPanel();
+		urlMPanel.setPreferredSize(new Dimension(880,35));
+		JLabel openFileLable = new JLabel("开奖文件:");
+		openFilePanel.add(openFileLable);
+		openFilePanel.add(openFile);
+		panel.add(openFilePanel);
+		
 		JPanel btnPanel = new JPanel();
 		btnPanel.setPreferredSize(new Dimension(880,35));
 		JButton buttom = new JButton("登录");
@@ -94,15 +103,18 @@ public class LoginFrame extends JFrame{
   				ExampleControll.addIniItem("account", accountField.getText());
   				ExampleControll.addIniItem("password", password);
   				ExampleControll.addIniItem("urlM", urlMField.getText());
+  				ExampleControll.addIniItem("modOpenFile", openFile.getText());
   				ModHttpUtil.urlM = urlMField.getText();
+  				ModHttpUtil.modOpenFile = openFile.getText();
   				ModHttpUtil.initUrl();
   				//记录密码，用于登录失效后重新登录
   				AccountThread.accountPass = password;
   				if(ModHttpUtil.logind(accountField.getText(), password)){
   					//启动线程获取账户信息
-  					AccountThread account = new AccountThread();
-  					Thread accountThread = new Thread(account);
-  					accountThread.start();
+					
+  					AccountThread account = new AccountThread(); 
+  					Thread accountThread = new Thread(account); accountThread.start();
+					
   					
   					LoginFrame.loginFrame.setVisible(false);
   					//AnyThreeFrame.anythreeFrame.setVisible(true);  //任三

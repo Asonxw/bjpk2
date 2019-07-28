@@ -4760,3 +4760,19 @@
 
 [2019-04-19 10:01:50]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][https://www.150106.com/api/lastOpenedIssues.php?id=1&issueCount=50]get结果码400
 
+[2019-07-28 10:33:12]- [com.as.boot.utils.HttpFuncUtil]-[getString][https://www.150106.com/api/lastOpenedIssues.php?id=1&issueCount=50]404 Not Found 【异常】
+
+[2019-07-28 10:35:01]- [com.as.boot.utils.HttpFuncUtil]-[getString][https://www.150106.com/api/lastOpenedIssues.php?id=1&issueCount=50]404 Not Found 【异常】
+
+[2019-07-28 10:35:34]- [com.as.boot.utils.HttpFuncUtil]-[getUrlConnection][D:\software\摩登挂机软件\摩登挂机软件\OpenCode/sso/login?callback=jsonp1&way=pwd&from=portal&cn=ason_x8&appId=5&password=9c3db9e8694b4dec98f60858ea8b8d67]unknown protocol: d 【异常】
+
+[2019-07-28 10:43:38]- [com.as.boot.utils.HttpFuncUtil]-[getString][https://www.150106.com/api/lastOpenedIssues.php?id=1&issueCount=50]404 Not Found 【异常】
+
+[2019-07-28 11:05:43]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][http://www.bssjzt.com/sso/u/getUserBalance?appId=5]get结果码502
+
+[2019-07-28 11:05:51]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][http://www.bssjzt.com/sso/u/getUserBalance?appId=5]get结果码502
+
+[2019-07-28 11:06:07]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][http://www.bssjzt.com/sso/u/getUserBalance?appId=5]get结果码502
+
+[2019-07-28 11:06:15]- [com.as.boot.utils.HttpFuncUtil]-[getBySession][http://www.bssjzt.com/sso/u/getUserBalance?appId=5]get结果码502
+

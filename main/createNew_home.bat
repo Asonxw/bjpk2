@@ -1,3 +1,3 @@
 H:
-cd H:\tortoiseGitSource\bjpk2\main
-jar cvfm txffc_preSeven_v1_04(定点投注版).jar meta-inf/manifest.mf .
+cd D:\mySources\bjpk2\main
+jar cvfm txffc_preSeven_v1_04(定点投注版).jar META-INF/MANIFEST.MF .
