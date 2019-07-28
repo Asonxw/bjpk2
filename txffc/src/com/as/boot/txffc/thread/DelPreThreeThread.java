@@ -706,7 +706,7 @@ public class DelPreThreeThread implements Runnable{
 			if(clList_tru.size()>0){
 				//格式化奖期
 				String issue = ExampleControll.nextFFCRound;
-				issue = issue.substring(0,8)+"-"+issue.substring(8,12);
+				issue = "20"+issue.substring(0,6)+"-"+issue.substring(6,issue.length());
 				downSulFlag = ModHttpUtil.addTXFFCOrders_DWD1(issue, clList_tru, btNumList_tru, btArr, baseMoney);
 			}else
 				downSulFlag = true;
